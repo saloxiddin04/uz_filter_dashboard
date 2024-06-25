@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {APIS} from "../../../config";
 import axios from "axios";
+import {toast} from "react-toastify";
 
 const user = JSON.parse(localStorage.getItem("user") ? localStorage.getItem("user") : null)
 
@@ -82,6 +83,39 @@ export const oneIdGetUser = createAsyncThunk(
   }
 )
 
+export const refreshToken = createAsyncThunk(
+  'auth/getRefreshToken',
+  async (data, {dispatch }) => {
+    try {
+      const response = await axios.post(
+        APIS.refreshToken,
+        data.data
+      )
+      dispatch(setRefresh(response.data))
+      if (data.role === 'mijoz') {
+        toast('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+        dispatch(logOut())
+      } else if (data.role === null) {
+        toast('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+        dispatch(logOut())
+      } else {
+        data.navigate('/orders')
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  },
+  {
+    pending: (state) => {
+      state.loading = true
+    },
+    fulfilled: (state, {payload}) => {
+      state.refresh_token = payload
+      state.loading = false
+    }
+  }
+)
+
 export const oneIdGetUserDetail = createAsyncThunk(
   "auth/oneIdGetUserDetail",
   async (access) => {
@@ -132,6 +166,14 @@ export const logOut = createAsyncThunk(
       state.loading = true
     },
     fulfilled: (state, _) => {
+      localStorage.removeItem('user')
+      localStorage.removeItem('oneIdCode')
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      state.user = null
+      state.loading = false
+    },
+    rejected: (state, _) => {
       localStorage.removeItem('user')
       localStorage.removeItem('oneIdCode')
       localStorage.removeItem('access_token')

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {API_URL, APIS} from '../config';
+import {toast} from "react-toastify";
 
 const user = localStorage.getItem("token") || "";
 
@@ -25,6 +26,7 @@ const logout = async () => {
       }
     );
   } catch (error) {
+    toast.error(error.message)
     console.log('Logout error:', error.message);
   } finally {
     localStorage.removeItem('user');
@@ -56,6 +58,7 @@ instance.interceptors.request.use(
     return config;
   },
   (error) => {
+    toast.error(error.message)
     return Promise.reject(error);
   }
 );

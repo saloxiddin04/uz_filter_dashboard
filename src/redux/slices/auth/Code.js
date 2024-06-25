@@ -16,7 +16,6 @@ function Code() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {search} = useLocation()
-  const {access_token, access} = useSelector(state => state.user)
   const code = search.substring(search.lastIndexOf('code=') + 5).split('&', 1)[0]
 
   const getUser = async (tok) => {
@@ -49,7 +48,7 @@ function Code() {
   useEffect(() => {
     if (code) {
       dispatch(setCode(code))
-      login()
+      login().then()
     } else {
       toast.error('Something went error')
     }
