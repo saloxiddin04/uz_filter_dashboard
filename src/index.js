@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import './index.css';
+import 'react-toastify/dist/ReactToastify.css';
 import App from './App';
 import {ContextProvider} from './contexts/ContextProvider';
 import {ToastContainer} from "react-toastify";

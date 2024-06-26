@@ -3,42 +3,38 @@ import {Button, Input} from "../../components";
 import Logo from "../../assets/images/logo";
 import AuthLogo from "../../assets/images/AuthLogo";
 import {useNavigate} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {toast} from "react-toastify";
 import axios from "axios";
 import {APIS} from "../../config";
 import {
-  logOut,
   oneIdGetUserDetail,
   refreshToken,
-  setAccessToken,
-  setUser
+  setAccessToken, setUser,
 } from "../../redux/slices/auth/authSlice";
 
 const Login = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const {access, access_token, refresh_token} = useSelector(state => state.user)
-
   const [pin_or_tin, setPinOrTin] = useState('')
   const [password, setPassword] = useState('')
 
   const login = async () => {
     try {
-      const response = await axios.post(APIS.customLogin, {pin_or_tin,password})
+      const response = await axios.post(APIS.customLogin, {pin_or_tin, password})
       if (response?.data?.success) {
         dispatch(setAccessToken(response?.data?.access))
         dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))
-        await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
-          dispatch(setUser(res))
-          if (res?.userdata?.role?.name === 'mijoz' || res?.userdata?.role?.name === null) {
-            toast('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
-            await dispatch(logOut({access, access_token, refresh_token}))
-          } else {
+        if (response?.data?.role !== 'mijoz') {
+          await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
+            dispatch(setUser(res))
             navigate('/orders')
-          }
-        })
+          })
+        } else {
+          setPinOrTin('')
+          setPassword('')
+        }
       }
     } catch (e) {
       toast.error(e.message)

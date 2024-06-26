@@ -93,14 +93,15 @@ export const refreshToken = createAsyncThunk(
       )
       dispatch(setRefresh(response.data?.access))
       if (data.role === 'mijoz') {
-        toast('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
-        dispatch(logOut())
+        toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+        dispatch(logOut({refresh_token: data.refresh, access: data.access, access_token: data.access}))
       } else if (data.role === null) {
-        toast('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
-        dispatch(logOut())
+        toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+        dispatch(logOut({refresh_token: data.refresh, access: data.access, access_token: data.access}))
       } else {
         data.navigate('/orders')
       }
+      return response.data
     } catch (e) {
       console.log(e)
     }
@@ -116,11 +117,9 @@ export const refreshToken = createAsyncThunk(
   }
 )
 
-export const oneIdGetUserDetail = createAsyncThunk(
-  "auth/oneIdGetUserDetail",
-  async (access) => {
+export const oneIdGetUserDetail = createAsyncThunk("auth/oneIdGetUserDetail", async (access) => {
     try {
-      return await axios.get(
+      const response = await axios.get(
         APIS.getUserDetail,
         {
           headers: {
@@ -128,6 +127,7 @@ export const oneIdGetUserDetail = createAsyncThunk(
           }
         }
       )
+      return response.data
     } catch (e) {
       console.log(e.message)
     }
@@ -158,23 +158,11 @@ export const logOut = createAsyncThunk(
         }
       )
       dispatch(setLogout())
+      console.log(tokens)
     } catch (e) {
+      console.log("catch", tokens)
       dispatch(setLogout())
       console.log(e.message)
-      localStorage.clear()
-    }
-  },
-  {
-    pending: (state, _) => {
-      state.loading = true
-    },
-    fulfilled: (state, _) => {
-      localStorage.removeItem('user')
-      localStorage.removeItem('oneIdCode')
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-      state.user = null
-      state.loading = false
     }
   }
 )
@@ -210,22 +198,43 @@ const authSlice = createSlice({
     setUser: (
       state, action
     ) => {
-      state.user = action.payload?.payload?.data
-      localStorage.setItem('user', JSON.stringify(action.payload?.payload?.data))
+      state.user = action.payload?.payload
+      localStorage.setItem('user', JSON.stringify(action.payload?.payload))
     },
     setLogout: (state) => {
       state.user = null
       state.loading = false
+      state.error = null
+      state.oneIdCode = null
+      state.access = null
+      state.access_token = null
+      state.refresh_token = null
       localStorage.clear()
     }
   },
-  extraReducers: (builder) => {
-    builder.addCase(logOut.rejected, (state, _) => {
-      localStorage.clear()
-      state.user = null
-      state.loading = false
-    })
-  }
+  // extraReducers: (builder) => {
+  //   builder.addCase(logOut.pending, (state, _) => {
+  //     state.loading = true
+  //   })
+  //   builder.addCase(logOut.fulfilled, (state, _) => {
+  //     state.user = null
+  //     state.loading = false
+  //     state.error = null
+  //     state.oneIdCode = null
+  //     state.access = null
+  //     state.access_token = null
+  //     state.refresh_token = null
+  //   })
+  //   builder.addCase(logOut.rejected, (state, _) => {
+  //     state.user = null
+  //     state.loading = false
+  //     state.error = null
+  //     state.oneIdCode = null
+  //     state.access = null
+  //     state.access_token = null
+  //     state.refresh_token = null
+  //   })
+  // }
 })
 
 export const {
