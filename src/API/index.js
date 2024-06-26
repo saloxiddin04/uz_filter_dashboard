@@ -1,14 +1,18 @@
 import axios from 'axios';
 import {API_URL, APIS} from '../config';
 import {toast} from "react-toastify";
+import {useDispatch} from "react-redux";
+import {setLogout} from "../redux/slices/auth/authSlice";
 
-const user = localStorage.getItem("token") || "";
+const user = localStorage.getItem("access_token") || "";
 
 const getToken = () => {
-  return localStorage.getItem("token") || "";
+  return localStorage.getItem("access_token") || "";
 };
 
 const logout = async () => {
+  const dispatch = useDispatch()
+
   const tokens = {
     access: localStorage.getItem('access_token'),
     refresh_token: localStorage.getItem('refresh_token')
@@ -25,15 +29,13 @@ const logout = async () => {
         }
       }
     );
+    dispatch(setLogout())
   } catch (error) {
     toast.error(error.message)
     console.log('Logout error:', error.message);
+    dispatch(setLogout())
   } finally {
-    localStorage.removeItem('user');
-    localStorage.removeItem('oneIdCode');
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    window.location.href = "/login";
+    dispatch(setLogout())
   }
 };
 
