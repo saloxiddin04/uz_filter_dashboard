@@ -39,10 +39,13 @@ const logout = async () => {
   }
 };
 
+console.log(user)
+
 const instance = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${user}`
   }
 })
 
@@ -69,9 +72,9 @@ instance.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
+  async (error) => {
     if (error.response && error.response.status === 401) {
-      logout().then(r => r);
+      await logout()
     }
     return Promise.reject(error);
   }
