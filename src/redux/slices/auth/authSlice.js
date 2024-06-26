@@ -89,9 +89,9 @@ export const refreshToken = createAsyncThunk(
     try {
       const response = await axios.post(
         APIS.refreshToken,
-        data.data
+        {refresh: data.refresh}
       )
-      dispatch(setRefresh(response.data))
+      dispatch(setRefresh(response.data?.access))
       if (data.role === 'mijoz') {
         toast('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
         dispatch(logOut())
@@ -110,7 +110,7 @@ export const refreshToken = createAsyncThunk(
       state.loading = true
     },
     fulfilled: (state, {payload}) => {
-      state.refresh_token = payload
+      state.refresh_token = payload?.access
       state.loading = false
     }
   }
@@ -211,10 +211,16 @@ const authSlice = createSlice({
     ) => {
       state.refresh_token = action.payload
       localStorage.setItem('refresh_token', action.payload)
+    },
+    setUser: (
+      state, action
+    ) => {
+      state.user = action.payload?.payload?.data
+      localStorage.setItem('user', JSON.stringify(action.payload?.payload?.data))
     }
   }
 })
 
-export const {setCode, setAccess, setAccessToken, setRefresh} = authSlice.actions
+export const {setCode, setAccess, setAccessToken, setRefresh, setUser} = authSlice.actions
 
 export default authSlice.reducer
