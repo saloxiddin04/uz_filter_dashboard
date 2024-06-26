@@ -12,7 +12,6 @@ import {
   oneIdGetUserDetail,
   refreshToken,
   setAccessToken,
-  setRefresh,
   setUser
 } from "../../redux/slices/auth/authSlice";
 
@@ -70,7 +69,9 @@ const Login = () => {
         </div>
         <div className={'w-full flex justify-center'}>
           <Button
-            text={'Kirish'} color={'white'} className={'bg-blue-600 rounded mt-2 mx-auto text-center'}
+            text={'Kirish'}
+            color={'white'}
+            className={'bg-blue-600 rounded mt-2 mx-auto text-center'}
             width={'24'}
             onClick={login}
             disabled={password === '' || password.length <= 7 || pin_or_tin === ''}

@@ -7,6 +7,7 @@ import avatar from '../data/avatar.jpg';
 import {useStateContext} from '../contexts/ContextProvider';
 
 import {useSelector} from "react-redux";
+import UserProfile from "./UserProfile";
 
 
 const NavButton = ({title, customFunc, icon, color, dotColor}) => (
@@ -29,9 +30,7 @@ const NavButton = ({title, customFunc, icon, color, dotColor}) => (
 const Navbar = () => {
   const {user} = useSelector((state) => state.user)
 
-  console.log(user)
-
-  const {currentColor, activeMenu, setActiveMenu, handleClick, setScreenSize, screenSize} = useStateContext();
+  const {currentColor, activeMenu, setActiveMenu, handleClick, setScreenSize, screenSize, isClicked} = useStateContext();
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -55,7 +54,6 @@ const Navbar = () => {
 
   return (
     <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative">
-
       <NavButton title="Menu" customFunc={handleActiveMenu} color={currentColor} icon={<AiOutlineMenu/>}/>
       <div className="flex">
         <TooltipComponent content="Profile" position="BottomCenter">
@@ -84,6 +82,7 @@ const Navbar = () => {
           </div>
         </TooltipComponent>
 
+        {isClicked.userProfile && (<UserProfile />)}
       </div>
     </div>
   );

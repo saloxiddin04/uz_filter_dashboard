@@ -85,7 +85,7 @@ export const oneIdGetUser = createAsyncThunk(
 
 export const refreshToken = createAsyncThunk(
   'auth/getRefreshToken',
-  async (data, {dispatch }) => {
+  async (data, {dispatch}) => {
     try {
       const response = await axios.post(
         APIS.refreshToken,
@@ -145,20 +145,23 @@ export const oneIdGetUserDetail = createAsyncThunk(
 
 export const logOut = createAsyncThunk(
   "auth/oneIdLogOut",
-  async (tokens) => {
+  async (tokens, {dispatch}) => {
     try {
-      return await axios.post(
+      const response = await axios.post(
         APIS.logOut,
         {"refresh_token": tokens.refresh_token},
         {
           headers: {
-            'Authorization': `Bearer ${tokens.access}`,
-            'x-authentication': tokens.access_token
+            'Authorization': `Bearer ${tokens.access_token}`,
+            'x-authentication': tokens.access
           }
         }
       )
+      dispatch(setLogout())
     } catch (e) {
+      dispatch(setLogout())
       console.log(e.message)
+      localStorage.clear()
     }
   },
   {
@@ -166,14 +169,6 @@ export const logOut = createAsyncThunk(
       state.loading = true
     },
     fulfilled: (state, _) => {
-      localStorage.removeItem('user')
-      localStorage.removeItem('oneIdCode')
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-      state.user = null
-      state.loading = false
-    },
-    rejected: (state, _) => {
       localStorage.removeItem('user')
       localStorage.removeItem('oneIdCode')
       localStorage.removeItem('access_token')
@@ -217,10 +212,22 @@ const authSlice = createSlice({
     ) => {
       state.user = action.payload?.payload?.data
       localStorage.setItem('user', JSON.stringify(action.payload?.payload?.data))
+    },
+    setLogout: (state) => {
+      state.user = null
+      state.loading = false
+      localStorage.clear()
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(logOut.rejected, (state, _) => {
+      localStorage.clear()
+      state.user = null
+      state.loading = false
+    })
   }
 })
 
-export const {setCode, setAccess, setAccessToken, setRefresh, setUser} = authSlice.actions
+export const {setCode, setAccess, setAccessToken, setRefresh, setLogout, setUser} = authSlice.actions
 
 export default authSlice.reducer
