@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from "moment";
+import {EyeIcon} from "@heroicons/react/16/solid";
 
 const Table = ({ headers, data }) => {
 
@@ -42,7 +43,7 @@ const Table = ({ headers, data }) => {
                 </td>
               ))}
               <td className="px-6 py-4">
-                <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                <EyeIcon className={'size-10 text-blue-600 dark:text-blue-500 hover:underline cursor-pointer'} />
               </td>
             </tr>
           ))}
