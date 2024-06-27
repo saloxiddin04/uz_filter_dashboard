@@ -12,24 +12,6 @@ const instance = axios.create({
   }
 })
 
-instance.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${user ? user : ""}`
-  return config
-})
-
-instance.interceptors.request.use(
-  (config) => {
-    if (user) {
-      config.headers.Authorization = `Bearer ${user}`;
-    }
-    return config;
-  },
-  async (error) => {
-    toast.error(error.message)
-    return Promise.reject(error);
-  }
-);
-
 instance.interceptors.response.use(
   (response) => {
     return response;
@@ -41,6 +23,7 @@ instance.interceptors.response.use(
       window.location.href = '/login'
       window.location.reload()
     }
+    toast.error(error.message)
     return Promise.reject(error);
   }
 );

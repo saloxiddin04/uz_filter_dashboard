@@ -1,40 +1,46 @@
 import React, {useEffect} from 'react';
-import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, ContextMenu, Filter, Page, ExcelExport, PdfExport, Edit, Inject } from '@syncfusion/ej2-react-grids';
+
 
 import {useDispatch, useSelector} from "react-redux";
 
-import { ordersData, contextMenuItems, ordersGrid } from '../data/dummy';
-import { Header } from '../components';
+import {ordersData, contextMenuItems, ordersGrid} from '../data/dummy';
+import {Header} from '../components';
 import {getSections} from "../redux/slices/sections/sectionSlice";
+import Table from "../components/Table";
+import {getContracts} from "../redux/slices/contracts/contractsSlice";
+import Loader from "../components/Loader";
+
+const tableHead = [
+  'Mijoz',
+  'Stir/JSHSHIR',
+  'Shartnoma raqami',
+  'Shartnoma sanasi',
+  'Amal qilish sanasi',
+  'Shartnoma qiymati',
+  "To'langan qiymat",
+  'Qarzdorlik',
+  'Status',
+  'Boshqarish'
+]
 
 const Orders = () => {
-  const editing = { allowDeleting: true, allowEditing: true };
-
   const dispatch = useDispatch()
 
+  const {contracts, loading} = useSelector(state => state.contracts)
+
+  console.log(contracts?.result?.all)
+
   useEffect(() => {
+    dispatch(getContracts())
     dispatch(getSections())
-  }, []);
+  }, [dispatch]);
+
+  if (loading) return <Loader/>
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-      <Header category="Page" title="Orders" />
-      <GridComponent
-        id="gridcomp"
-        dataSource={ordersData}
-        allowPaging
-        allowSorting
-        allowExcelExport
-        allowPdfExport
-        contextMenuItems={contextMenuItems}
-        editSettings={editing}
-      >
-        <ColumnsDirective>
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-          {ordersGrid.map((item, index) => <ColumnDirective key={index} {...item} />)}
-        </ColumnsDirective>
-        <Inject services={[Resize, Sort, ContextMenu, Filter, Page, ExcelExport, Edit, PdfExport]} />
-      </GridComponent>
+      <Header category="Page" title="Orders"/>
+      <Table head={tableHead} data={contracts?.result?.all}/>
     </div>
   );
 };
