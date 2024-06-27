@@ -3,6 +3,8 @@ import moment from "moment";
 
 const Table = ({ headers, data }) => {
 
+  console.log(headers)
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -23,11 +25,11 @@ const Table = ({ headers, data }) => {
           {data.length !== 0 && data?.map((item, index) => (
             <tr
               key={item?.id}
-              className={`${index % 2 === 0 ? 'even:bg-gray-50 even:dark:bg-gray-800' : 'odd:bg-white odd:dark:bg-gray-900'} border-b dark:border-gray-700`}
+              className={'hover:bg-gray-100 hover:dark:bg-gray-800'}
             >
-              <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <td scope="row" className="px-6 py-4 font-medium whitespace-nowrap">
                 {index + 1}
-              </th>
+              </td>
               {headers.map((header, idx) => (
                 <td key={idx} className="px-6 py-4">
                   {header.key === 'contract_date' && (

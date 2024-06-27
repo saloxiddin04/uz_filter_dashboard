@@ -16,11 +16,11 @@ instance.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (error) => {
+  (error) => {
     if (error.response && error.response.status === 401) {
       console.log('unauth')
-      await localStorage.clear()
       window.location.href = '/login'
+      localStorage.clear()
       window.location.reload()
     }
     toast.error(error.message)

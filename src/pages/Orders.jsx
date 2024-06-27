@@ -5,9 +5,11 @@ import {getSections} from "../redux/slices/sections/sectionSlice";
 import Table from "../components/Table";
 import {getContracts} from "../redux/slices/contracts/contractsSlice";
 import Loader from "../components/Loader";
+import {useStateContext} from "../contexts/ContextProvider";
 
 const Orders = () => {
   const dispatch = useDispatch()
+  const { currentColor } = useStateContext();
 
   const {contracts, loading} = useSelector(state => state.contracts)
 
@@ -32,7 +34,7 @@ const Orders = () => {
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-      <Header category="Page" title="Orders"/>
+      <Header category="Sahifa" title="Shartnomalar"/>
       <Table headers={headers} data={contracts ? contracts?.result?.all : []}/>
     </div>
   );

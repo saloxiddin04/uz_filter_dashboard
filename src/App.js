@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import './App.css';
 import './index.css';
@@ -9,8 +9,9 @@ import Loader from './components/Loader';
 import MainLayout from './Layout/MainLayout';
 import AuthLayout from './Layout/AuthLayout';
 import ProtectedRoutes from './utils/ProtectedRoutes';
-import { Orders, Employees, Customers, Login } from './pages';
+import { Login } from './pages';
 import Code from './redux/slices/auth/Code';
+import {routes} from "./routes";
 
 const App = () => {
   const { setCurrentColor, setCurrentMode, currentMode } = useStateContext();
@@ -33,15 +34,21 @@ const App = () => {
         <Routes>
           <Route element={<ProtectedRoutes />}>
             <Route element={<MainLayout />}>
-              <Route path="/" element={<Orders />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/employees" element={<Employees />} />
-              <Route path="/customers" element={<Customers />} />
+              {routes && routes.map((item, index) => {
+                return (
+                  <Route
+                    key={index}
+                    path={item.path}
+                    element={<item.element />}
+                  />
+                )
+              })}
             </Route>
           </Route>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/code" element={<Code />} />
+            <Route path="/" element={<Navigate to="login" replace />} />
           </Route>
         </Routes>
       </BrowserRouter>
