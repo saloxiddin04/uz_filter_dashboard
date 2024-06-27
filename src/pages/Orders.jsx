@@ -1,34 +1,27 @@
 import React, {useEffect} from 'react';
-
-
 import {useDispatch, useSelector} from "react-redux";
-
-import {ordersData, contextMenuItems, ordersGrid} from '../data/dummy';
 import {Header} from '../components';
 import {getSections} from "../redux/slices/sections/sectionSlice";
 import Table from "../components/Table";
 import {getContracts} from "../redux/slices/contracts/contractsSlice";
 import Loader from "../components/Loader";
 
-const tableHead = [
-  'Mijoz',
-  'Stir/JSHSHIR',
-  'Shartnoma raqami',
-  'Shartnoma sanasi',
-  'Amal qilish sanasi',
-  'Shartnoma qiymati',
-  "To'langan qiymat",
-  'Qarzdorlik',
-  'Status',
-  'Boshqarish'
-]
-
 const Orders = () => {
   const dispatch = useDispatch()
 
   const {contracts, loading} = useSelector(state => state.contracts)
 
-  console.log(contracts?.result?.all)
+  const headers = [
+    { key: 'client?.full_name', label: 'Mijoz' },
+    { key: 'client?.pin', label: 'STIR/JSHSHIR' },
+    { key: 'contract_number', label: 'Shartnoma raqami' },
+    { key: 'contract_date', label: 'Shartnoma sanasi' },
+    { key: 'expiration_date', label: 'Amal qilish sanasi' },
+    { key: 'contract_cash', label: 'Shartnoma qiymati' },
+    { key: 'payed_cash', label: "To'langan qiymat" },
+    { key: 'arrearage', label: 'Qarzdorlik' },
+    { key: 'contract_status', label: 'Status' },
+  ];
 
   useEffect(() => {
     dispatch(getContracts())
@@ -40,7 +33,7 @@ const Orders = () => {
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
       <Header category="Page" title="Orders"/>
-      <Table head={tableHead} data={contracts?.result?.all}/>
+      <Table headers={headers} data={contracts ? contracts?.result?.all : []}/>
     </div>
   );
 };
