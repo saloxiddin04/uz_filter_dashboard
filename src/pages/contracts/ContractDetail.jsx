@@ -8,6 +8,8 @@ import moment from "moment/moment";
 import {AiOutlineCloudDownload} from "react-icons/ai";
 import instance from "../../API";
 import {API_URL} from "../../config";
+import YurUserContractDetail from "./YurUserContractDetail";
+import FizUserContractDetail from "./FizUserContractDetail";
 
 const tabs = [
   {
@@ -142,7 +144,13 @@ const renderDetail = (value, data) => {
       )
     case 1:
       return (
-        <></>
+        <>
+          {!data?.client?.bank_mfo ? (
+            <FizUserContractDetail />
+          ) : (
+            <YurUserContractDetail/>
+          )}
+        </>
       )
     case 2:
       return (
