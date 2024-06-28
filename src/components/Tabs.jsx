@@ -13,14 +13,12 @@ const Tabs = ({ color, tabs, openTab, setOpenTab }) => {
               <li key={idx} className="-mb-px mr-2 last:mr-0 text-center">
                 <a
                   className={
-                    "text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal " +
-                    (idx === openTab
-                      ? "text-white bg-" + color + "-600"
-                      : "text-" + color + "-600 bg-white")
+                    "text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                   }
                   style={{
-                    backgroundColor: idx === openTab ? color : '#fff',
-                    color: idx === openTab ? '#fff' : color,
+                    // backgroundColor: idx === openTab ? color : '#fff',
+                    color: idx === openTab ? color : '#ccc',
+                    borderBottom: idx === openTab ? `1px solid ${color}` : ''
                   }}
                   onClick={e => {
                     e.preventDefault();
