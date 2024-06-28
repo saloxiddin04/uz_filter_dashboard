@@ -16,7 +16,7 @@ const Button = ({ icon, color, bgHoverColor, size, text, width, className, onCli
     <button
       type="button"
       onClick={handleClick}
-      className={` text-${size} p-2 w-${width} hover:drop-shadow-xl hover:bg-${bgHoverColor} text-${color} ${className} ${disabled ? 'opacity-75' : 'opacity-100'} `}
+      className={`text-${size} p-2 w-${width} hover:drop-shadow-xl hover:bg-${bgHoverColor} text-${color} ${className} ${disabled ? 'opacity-75' : 'opacity-100'} `}
       disabled={disabled}
     >
       {icon} {text}
