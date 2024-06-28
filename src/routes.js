@@ -1,7 +1,8 @@
-import { Orders, Employees, Customers } from './pages';
+import {Employees, Customers, Contracts, ContractDetail} from './pages';
 
 export const routes = [
-  { path: '/orders', element: Orders },
   { path: '/employees', element: Employees },
-  { path: '/Customers', element: Customers }
+  { path: '/Customers', element: Customers },
+  { path: '/shartnomalar', element: Contracts },
+  { path: '/shartnomalar/:id', element: ContractDetail },
 ]

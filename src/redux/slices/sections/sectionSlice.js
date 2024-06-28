@@ -3,17 +3,20 @@ import {API_URL} from "../../../config";
 import {toast} from "react-toastify";
 import instance from "../../../API";
 
+const sectionsStorage = localStorage.getItem('sections') ? JSON.parse(localStorage.getItem('sections') || 'null') : null
+
 const initialState = {
-  sections: null,
+  sections: sectionsStorage,
   loading: false,
   error: null
 }
 
 export const getSections = createAsyncThunk(
   'sections/getSections',
-  async () => {
+  async (_, {dispatch}) => {
     try {
       const response = await instance.get(`${API_URL}/accounts/permission-list`)
+      dispatch(setSections(response.data))
       return response.data
     } catch (e) {
       toast.error(e.message)
@@ -24,6 +27,14 @@ export const getSections = createAsyncThunk(
 const sectionSlice = createSlice({
   name: 'sections',
   initialState,
+  reducers: {
+    setSections: (
+      state, {payload}
+    ) => {
+      state.sections = payload
+      localStorage.setItem('sections', JSON.stringify(payload))
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(getSections.pending, (state, _) => {
       state.loading = true
@@ -38,5 +49,7 @@ const sectionSlice = createSlice({
     })
   }
 })
+
+export const {setSections} = sectionSlice.actions
 
 export default sectionSlice.reducer
