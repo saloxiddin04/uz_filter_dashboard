@@ -15,7 +15,7 @@ export const getContracts = createAsyncThunk(
   'contracts/getContracts',
   async (data) => {
     try {
-      const response = await instance.get(`${API_URL}/vps/group-contracts?filter=all&page_size=1`)
+      const response = await instance.get(`${API_URL}/vps/group-contracts?filter=all&page_size=${data?.page === undefined ? 1 : data?.page}`)
       return response.data
     } catch (e) {
       toast.error(e.message)

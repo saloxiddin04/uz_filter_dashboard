@@ -12,6 +12,7 @@ import {
   refreshToken,
   setAccessToken, setUser,
 } from "../../redux/slices/auth/authSlice";
+import instance from "../../API";
 
 const Login = () => {
   const navigate = useNavigate()
@@ -22,7 +23,8 @@ const Login = () => {
 
   const login = async () => {
     try {
-      const response = await axios.post(APIS.customLogin, {pin_or_tin, password})
+      const response = await instance.post(APIS.customLogin, {pin_or_tin, password})
+      instance.defaults.headers.common = { Authorization: `Bearer ${response?.data?.access}` }
       if (response?.data?.success) {
         dispatch(setAccessToken(response?.data?.access))
         dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))

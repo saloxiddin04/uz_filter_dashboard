@@ -26,7 +26,7 @@ const tabs = [
     active: false
   },
   {
-    title: "Monitoring",
+    title: "Billing",
     active: false
   },
 ];
