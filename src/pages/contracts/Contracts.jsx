@@ -8,8 +8,10 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import moment from "moment/moment";
 import {EyeIcon} from "@heroicons/react/16/solid";
 import {useNavigate} from "react-router-dom";
+import {HooksCommission} from "../../components/eSign/eSignConfig";
 
 const Contracts = () => {
+  const {AppLoad} = HooksCommission()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {currentColor} = useStateContext();
@@ -33,6 +35,7 @@ const Contracts = () => {
   useEffect(() => {
     dispatch(getContracts({page: currentPage}))
     dispatch(getSections())
+    AppLoad()
   }, [dispatch]);
 
   const handlePageChange = (page) => {
@@ -122,6 +125,8 @@ const Contracts = () => {
         itemsPerPage={10}
         onPageChange={handlePageChange}
       />
+      
+      <select name="S@loxiddin" id="S@loxiddin" className='sign'></select>
     </div>
   );
 };
