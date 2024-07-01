@@ -331,25 +331,6 @@ export const EIMZOClient = {
       }
     }
   },
-  idCardIsPLuggedIn: function (success, fail) {
-    if (!EIMZOClient.NEW_API2) {
-      console.log("E-IMZO version should be 4.12 or newer");
-    } else {
-      CAPIWS.callFunction(
-        { plugin: "idcard", name: "list_readers" },
-        function (event, data) {
-          if (data.success) {
-            success(data.readers.length > 0);
-          } else {
-            fail(null, data.reason);
-          }
-        },
-        function (e) {
-          fail(e, null);
-        }
-      );
-    }
-  },
   loadKey: function (itemObject, success, fail, verifyPassword) {
     if (itemObject) {
       const vo = itemObject;
@@ -411,70 +392,6 @@ export const EIMZOClient = {
               } else {
                 success(id);
               }
-            } else {
-              fail(null, data.reason);
-            }
-          },
-          function (e) {
-            fail(e, null);
-          }
-        );
-      }
-    }
-  },
-  changeKeyPassword: function (itemObject, success, fail) {
-    if (itemObject) {
-      const vo = itemObject;
-      if (vo.type === "pfx") {
-        CAPIWS.callFunction(
-          {
-            plugin: "pfx",
-            name: "load_key",
-            arguments: [vo.disk, vo.path, vo.name, vo.alias],
-          },
-          function (event, data) {
-            if (data.success) {
-              const id = data.keyId;
-              CAPIWS.callFunction(
-                { name: "change_password", plugin: "pfx", arguments: [id] },
-                function (event, data) {
-                  if (data.success) {
-                    success();
-                  } else {
-                    fail(null, data.reason);
-                  }
-                },
-                function (e) {
-                  fail(e, null);
-                }
-              );
-            } else {
-              fail(null, data.reason);
-            }
-          },
-          function (e) {
-            fail(e, null);
-          }
-        );
-      } else if (vo.type === "ftjc") {
-        CAPIWS.callFunction(
-          { plugin: "ftjc", name: "load_key", arguments: [vo.cardUID] },
-          function (event, data) {
-            if (data.success) {
-              const id = data.keyId;
-              CAPIWS.callFunction(
-                { name: "change_pin", plugin: "ftjc", arguments: [id, "1"] },
-                function (event, data) {
-                  if (data.success) {
-                    success();
-                  } else {
-                    fail(null, data.reason);
-                  }
-                },
-                function (e) {
-                  fail(e, null);
-                }
-              );
             } else {
               fail(null, data.reason);
             }
@@ -552,6 +469,45 @@ export const EIMZOClient = {
         fail(e, null);
       }
     );
+  },
+  createPkcs7Auth: function (id, data, timestamper, success, fail) {
+    CAPIWS.callFunction(
+      {
+        plugin: "pkcs7",
+        name: "create_pkcs7",
+        arguments: [
+          Base64.encode(data), id, 'no'
+        ]
+      }, function (event, data) {
+        if (data.success) {
+          let pkcs7 = data.pkcs7_64;
+          if (timestamper) {
+            let sn = data.signer_serial_number;
+            timestamper(data.signature_hex, function (tst) {
+              CAPIWS.callFunction({
+                plugin: "pkcs7",
+                name: "attach_timestamp_token_pkcs7",
+                arguments: [pkcs7, sn, tst]
+              }, function (event, data) {
+                if (data.success) {
+                  let pkcs7tst = data.pkcs7_64;
+                  success(pkcs7tst);
+                } else {
+                  fail(null, data.reason);
+                }
+              }, function (e) {
+                fail(e, null);
+              });
+            }, fail);
+          } else {
+            success(pkcs7);
+          }
+        } else {
+          fail(null, data.reason);
+        }
+      }, function (e) {
+        fail(e, null);
+      });
   },
   _getX500Val: function (s, f) {
     const pattern = new RegExp("(?:^|,)" + f + "=([^,]*)");

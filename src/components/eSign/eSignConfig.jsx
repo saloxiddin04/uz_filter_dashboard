@@ -6,6 +6,9 @@ import {EIMZOClient, dates} from './eSignClient';
 // import {axios2} from "../axios";
 import instance from '../../API';
 import {toast} from "react-toastify";
+import {oneIdGetUserDetail, setAccessToken, setLogout, setRefresh, setUser} from "../../redux/slices/auth/authSlice";
+import {API_URL, APIS} from "../../config";
+import axios from "axios";
 
 export function HooksCommission() {
   const [pkcs, setPkcs] = useState('');
@@ -245,11 +248,104 @@ export function HooksCommission() {
     } else
       toast.error("E-IMZO kalit topilmadi")
   };
+
+  const signIn = () => {
+    let itm = document.getElementById("S@loxiddin").value
+    if (itm) {
+      let id = document.getElementById(itm)
+      let vo = JSON.parse(id.getAttribute("vo"))
+
+      const challenge = localStorage.getItem('challenge')
+
+      const postChallenge = async (pkcs7) => {
+        try {
+          const response = await instance.post(`${APIS.eriLogin}`, {pkcs7, is_client: 1})
+          instance.defaults.headers.common = { Authorization: `Bearer ${response?.data?.access}` };
+          if (!response?.data?.success) {
+            toast.error(response?.data?.err_msg)
+          } else {
+            await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
+              if (res?.payload?.userdata?.role?.name === 'mijoz') {
+                toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+                await dispatch(setLogout())
+              } else {
+                await dispatch(setUser(res))
+                await dispatch(setAccessToken(response?.data?.access))
+                await dispatch(setRefresh(response?.data?.refresh))
+                await navigate('/shartnomalar')
+                // window.location.reload()
+              }
+            })
+            // if (responseData?.auth_method === 'strong') {
+            //   navigate('/two-factor')
+            // } else {
+            //   await dispatch(oneIdGetUserDetail(responseData?.access)).then((res) => {
+            //     if (res?.userdata?.role?.name === 'mijoz') {
+            //       toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+            //     } else {
+            //       navigate('/shartnomalar')
+            //       // window.location.reload()
+            //     }
+            //   })
+            // }
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
+
+      EIMZOClient.loadKey(
+        vo,
+        function(id) {
+          EIMZOClient.createPkcs7Auth(
+            id,
+            challenge,
+            null,
+            function(pkcs7) {
+              localStorage.setItem('pkcs7', JSON.stringify(pkcs7))
+              if (pkcs7) {
+                postChallenge(pkcs7)
+                localStorage.removeItem('challenge')
+              }
+            },
+            function(e, r) {
+              if (r) {
+                if (r.indexOf("BadPaddingException") !== -1) {
+                  uiShowMessage(errorWrongPassword)
+                } else {
+                  uiShowMessage(r)
+                }
+              } else {
+                uiShowMessage(errorBrowserWS)
+              }
+              if (e) wsError(e)
+            },
+            "",
+            ""
+          )
+        },
+        function(e, r) {
+          if (r) {
+            if (r.indexOf("BadPaddingException") !== -1) {
+              uiShowMessage(errorWrongPassword)
+            } else {
+              uiShowMessage(r)
+            }
+          } else {
+            uiShowMessage(errorBrowserWS)
+          }
+          if (e) wsError(e)
+        },
+        ""
+      )
+    } else toast.error("E-IMZO kalit topilmadi")
+  }
   
   return {
     AppLoad,
     uiLoadKeys,
     sign,
+    signIn,
     pkcs,
     id,
     idx,

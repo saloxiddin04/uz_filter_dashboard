@@ -8,7 +8,8 @@ const APIS = {
   getUser: `${API_URL}/api/oauth/get-user`,
   getUserDetail: `${API_URL}/contracts/user-detail`,
   refreshToken: `${API_URL}/auth/token/refresh/`,
-  customLogin: `${API_URL}/api/oauth/custom-login`
+  customLogin: `${API_URL}/api/oauth/custom-login`,
+  eriLogin: `${API_URL}/api/oauth/login/eri`
 }
 
 export {APIS, API_URL}
