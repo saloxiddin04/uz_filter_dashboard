@@ -10,7 +10,7 @@ const Tabs = ({ color, tabs, openTab, setOpenTab }) => {
             role="tablist"
           >
             {tabs && tabs.map((item, idx) => (
-              <li key={idx} className="-mb-px mr-2 last:mr-0 text-center">
+              <li key={idx} className="-mb-px mr-2 last:mr-0 text-center hover:bg-gray-100 hover:rounded">
                 <a
                   className={
                     "text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
