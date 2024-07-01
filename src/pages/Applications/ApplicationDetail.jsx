@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {getApplicationDetail} from "../../redux/slices/applications/applicationsSlice";
 import {AiOutlineCloudDownload} from "react-icons/ai";
-import {TabsRender} from "../../components";
+import {Loader, TabsRender} from "../../components";
 import FizUserApplicationDetail from "./FizUserApplicationDetail";
 import YurUserApplicationDetail from "./YurUserApplicationDetail";
 
@@ -30,6 +30,7 @@ const ApplicationDetail = () => {
     dispatch(getApplicationDetail(id))
   }, [id]);
 
+  if (loading) return <Loader/>
 
   return (
     <>
