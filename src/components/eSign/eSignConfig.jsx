@@ -7,7 +7,7 @@ import {EIMZOClient, dates} from './eSignClient';
 import instance from '../../API';
 import {toast} from "react-toastify";
 import {oneIdGetUserDetail, setAccessToken, setLogout, setRefresh, setUser} from "../../redux/slices/auth/authSlice";
-import {API_URL, APIS} from "../../config";
+import {api_url, APIS} from "../../config";
 import axios from "axios";
 
 export function HooksCommission() {

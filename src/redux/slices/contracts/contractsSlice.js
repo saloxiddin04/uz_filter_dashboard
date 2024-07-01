@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {API_URL} from "../../../config";
+import {api_url} from "../../../config";
 import {toast} from "react-toastify";
 import instance from "../../../API";
 
@@ -15,7 +15,7 @@ export const getContracts = createAsyncThunk(
   'contracts/getContracts',
   async (data) => {
     try {
-      const response = await instance.get(`${API_URL}/vps/group-contracts?filter=all&page_size=${data?.page === undefined ? 1 : data?.page}`)
+      const response = await instance.get(`${api_url}/vps/group-contracts?filter=all&page_size=${data?.page === undefined ? 1 : data?.page}`)
       return response.data
     } catch (e) {
       toast.error(e.message)
@@ -27,7 +27,7 @@ export const getContractDetail = createAsyncThunk(
   'contracts/getContractDetail',
   async (params) => {
     try {
-      const response = await instance(`${API_URL}/vps/contract-detail/${params}`)
+      const response = await instance(`${api_url}/vps/contract-detail/${params}`)
       return response.data
     } catch (e) {
       toast.error(e.message)
@@ -39,7 +39,7 @@ export const getContractDetailBalance = createAsyncThunk(
   'contracts/getContractDetailBalance',
   async (data) => {
     try {
-      const response = await instance.post(`${API_URL}/billing/contract-balance-monitor`, data)
+      const response = await instance.post(`${api_url}/billing/contract-balance-monitor`, data)
       return response.data
     } catch (e) {
       toast.error(e.message)

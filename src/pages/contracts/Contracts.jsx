@@ -74,7 +74,7 @@ const Contracts = () => {
                   {index + 1}
                 </td>
                 <td className={'px-6 py-4 border-b-1'}>
-                  {item?.client?.full_name}
+                  {`${item?.client?.full_name?.substring(0, 30)}...`}
                 </td>
                 <td className={'px-6 py-4 border-b-1'}>
                   {item?.client?.pin}

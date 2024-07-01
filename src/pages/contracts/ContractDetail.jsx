@@ -7,7 +7,7 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import moment from "moment/moment";
 import {AiOutlineCloudDownload} from "react-icons/ai";
 import instance from "../../API";
-import {API_URL} from "../../config";
+import {api_url} from "../../config";
 import YurUserContractDetail from "./YurUserContractDetail";
 import FizUserContractDetail from "./FizUserContractDetail";
 import {BiSearch} from "react-icons/bi";
@@ -188,7 +188,7 @@ const renderDetail = (
                 <AiOutlineCloudDownload
                   className={'size-6 m-auto cursor-pointer'}
                   onClick={async () => {
-                    await instance.get(`${API_URL}/colocation/contract/${data?.contract?.hashcode}`, {
+                    await instance.get(`${api_url}/colocation/contract/${data?.contract?.hashcode}`, {
                       headers: {
                         "Content-type": 'blob'
                       },

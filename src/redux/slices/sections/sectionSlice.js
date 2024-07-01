@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {API_URL} from "../../../config";
+import {api_url} from "../../../config";
 import {toast} from "react-toastify";
 import instance from "../../../API";
 
@@ -15,7 +15,7 @@ export const getSections = createAsyncThunk(
   'sections/getSections',
   async (_, {dispatch}) => {
     try {
-      const response = await instance.get(`${API_URL}/accounts/permission-list`)
+      const response = await instance.get(`${api_url}/accounts/permission-list`)
       dispatch(setSections(response.data))
       return response.data
     } catch (e) {

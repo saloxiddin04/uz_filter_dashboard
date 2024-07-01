@@ -1,11 +1,11 @@
 import axios from 'axios';
-import {API_URL} from '../config';
+import {api_url} from '../config';
 import {toast} from "react-toastify";
 
 const access_token = localStorage.getItem("access_token") || "";
 
 const instance = axios.create({
-  baseURL: API_URL,
+  baseURL: api_url,
   headers: {
     "Content-Type": "application/json",
   }

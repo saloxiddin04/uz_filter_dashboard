@@ -50,7 +50,10 @@ const Sidebar = () => {
                 <NavLink
                   to={`/${item.slug}`}
                   key={item.slug}
-                  onClick={handleCloseSideBar}
+                  onClick={() => {
+                    localStorage.setItem("currentPage", '1');
+                    handleCloseSideBar();
+                  }}
                   style={({isActive}) => ({
                     backgroundColor: isActive ? currentColor : '',
                   })}

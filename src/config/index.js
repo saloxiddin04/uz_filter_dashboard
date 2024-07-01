@@ -1,15 +1,15 @@
-// const API_URL = 'https://api2.unicon.uz/uz'
-const API_URL = 'https://dcid.unicon.uz/uz'
+// const api_url = 'https://api2.unicon.uz/uz'
+const api_url = 'https://dcid.unicon.uz/uz'
 
 const APIS = {
-  getOneIdLogin: `${API_URL}/api/oauth/oneid-login?path=http://localhost:3000`,
-  logOut: `${API_URL}/api/oauth/logout`,
-  login: `${API_URL}/api/oauth/login`,
-  getUser: `${API_URL}/api/oauth/get-user`,
-  getUserDetail: `${API_URL}/contracts/user-detail`,
-  refreshToken: `${API_URL}/auth/token/refresh/`,
-  customLogin: `${API_URL}/api/oauth/custom-login`,
-  eriLogin: `${API_URL}/api/oauth/login/eri`
+  getOneIdLogin: `${api_url}/api/oauth/oneid-login?path=http://localhost:3000`,
+  logOut: `${api_url}/api/oauth/logout`,
+  login: `${api_url}/api/oauth/login`,
+  getUser: `${api_url}/api/oauth/get-user`,
+  getUserDetail: `${api_url}/contracts/user-detail`,
+  refreshToken: `${api_url}/auth/token/refresh/`,
+  customLogin: `${api_url}/api/oauth/custom-login`,
+  eriLogin: `${api_url}/api/oauth/login/eri`
 }
 
-export {APIS, API_URL}
+export {APIS, api_url}
