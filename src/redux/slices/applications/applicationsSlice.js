@@ -1,6 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {api_url} from "../../../config";
-import {toast} from "react-toastify";
 import instance from "../../../API";
 
 const initialState = {

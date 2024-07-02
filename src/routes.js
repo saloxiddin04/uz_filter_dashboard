@@ -1,15 +1,14 @@
 import {
-  Employees,
-  Customers,
   Contracts,
   ContractDetail,
   Applications,
-  ApplicationDetail
+  ApplicationDetail,
+  Dashboard
 } from './pages';
 
 export const routes = [
-  { path: '/employees', element: Employees },
-  { path: '/Customers', element: Customers },
+  { path: '/dashboard', element: Dashboard },
+
   { path: '/shartnomalar', element: Contracts },
   { path: '/shartnomalar/:id', element: ContractDetail },
 

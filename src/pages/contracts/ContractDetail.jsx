@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getContractDetail, getContractDetailBalance} from "../../redux/slices/contracts/contractsSlice";
-import {Button, Input, Loader, TabsRender} from "../../components";
+import {Button, Input, Loader, TabsRender, DetailNav} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import moment from "moment/moment";
 import {AiOutlineCloudDownload} from "react-icons/ai";
@@ -87,6 +87,13 @@ const ContractDetail = () => {
 
   return (
     <>
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+        <DetailNav
+          id={contractDetail?.contract?.id}
+          name={contractDetail?.contract?.contract_number}
+          status={contractDetail?.contract?.contract_status?.name ? contractDetail?.contract?.contract_status?.name : contractDetail?.contract?.contract_status}
+        />
+      </div>
       <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
         <TabsRender
           tabs={tabs}

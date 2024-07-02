@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {getApplicationDetail} from "../../redux/slices/applications/applicationsSlice";
 import {AiOutlineCloudDownload} from "react-icons/ai";
-import {Loader, TabsRender} from "../../components";
+import {DetailNav, Loader, TabsRender} from "../../components";
 import FizUserApplicationDetail from "./FizUserApplicationDetail";
 import YurUserApplicationDetail from "./YurUserApplicationDetail";
 
@@ -34,6 +34,13 @@ const ApplicationDetail = () => {
 
   return (
     <>
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+        <DetailNav
+          id={id}
+          status={applicationDetail?.is_contracted ? 'Shartnoma yuborildi' : 'Yangi'}
+          name={applicationDetail?.pk}
+        />
+      </div>
       <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
         <TabsRender
           tabs={tabs}
@@ -103,7 +110,7 @@ const renderDetail = (value, data) => {
       return (
         <>
           {!data?.user?.bank_mfo ? (
-            <FizUserApplicationDetail />
+            <FizUserApplicationDetail/>
           ) : (
             <YurUserApplicationDetail/>
           )}

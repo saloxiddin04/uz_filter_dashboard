@@ -1,5 +1,5 @@
-export {default as Employees} from './Employees';
-export {default as Customers} from './Customers';
+export {default as Dashboard} from './Dashboard/Dashboard'
+
 export {default as Login} from './Auth/Login';
 
 

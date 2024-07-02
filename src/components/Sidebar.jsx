@@ -45,6 +45,21 @@ const Sidebar = () => {
             </TooltipComponent>
           </div>
           <div className="mt-10 ">
+            <div>
+              <NavLink
+                to={`/dashboard`}
+                onClick={() => {
+                  localStorage.setItem("currentPage", '1');
+                  handleCloseSideBar();
+                }}
+                style={({isActive}) => ({
+                  backgroundColor: isActive ? currentColor : '',
+                })}
+                className={({isActive}) => (isActive ? activeLink : normalLink)}
+              >
+                <span className="capitalize">Statistika</span>
+              </NavLink>
+            </div>
             {sections && sections.map((item) => (
               <div key={item.slug}>
                 <NavLink
