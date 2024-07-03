@@ -195,7 +195,7 @@ const renderDetail = (
                 <AiOutlineCloudDownload
                   className={'size-6 m-auto cursor-pointer'}
                   onClick={async () => {
-                    await instance.get(`${api_url}/colocation/contract/${data?.contract?.hashcode}`, {
+                    await instance.get(`${api_url}/vps/contract/${data?.contract?.hashcode}`, {
                       headers: {
                         "Content-type": 'blob'
                       },
