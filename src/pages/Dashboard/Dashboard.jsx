@@ -1,17 +1,45 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { getDashboard } from "../../redux/slices/dashboard/dashboardSlice";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Header, Loader } from "../../components";
 import chroma from 'chroma-js'
+import {getSections} from "../../redux/slices/sections/sectionSlice";
+import {ChartsLegend, ChartsXAxis, ChartsYAxis, LineChart} from "@mui/x-charts";
+import {Tooltip} from "@mui/material";
+import moment from "moment/moment";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const divRef = useRef(null);
 
   const { dashboard, loading } = useSelector(state => state.dashboard);
 
+  const [divWidth, setDivWidth] = useState(null);
+  const [monthContract, setMonthContract] = useState([])
+  const [monthApplication, setMonthApplication] = useState([])
+
   useEffect(() => {
-    dispatch(getDashboard());
+    dispatch(getSections())
+    dispatch(getDashboard()).then((res) => {
+      const contracts = Object.values(res?.payload?.contracts_count_over_last_30_days || {})
+      const formatedContract = contracts.map((contract) => ({
+        value: contract.count
+      }))
+      setMonthContract(formatedContract)
+
+      const applications = Object.values(res?.payload?.applications_count_over_last_30_days || {});
+      const formattedData = applications.map((item) => ({
+        date: new Date(item.formatted_date),
+        value: item.count,
+      }));
+      setMonthApplication(formattedData);
+    })
+
+    if (divRef.current) {
+      const width = divRef.current.offsetWidth;
+      setDivWidth(width);
+    }
   }, [dispatch]);
 
   const keysCount = Object.keys(dashboard ? dashboard?.all_contract_short_info : []);
@@ -57,6 +85,26 @@ const Dashboard = () => {
     { label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_sum), color: colors[1] }
   ];
 
+  const dataUserContractsCount = [
+    { label: 'Fizik', value: parseFloat(dashboard?.user_info?.physic_contracts), color: colors[0] },
+    { label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_contracts), color: colors[1] }
+  ];
+
+  const dataApplicationsCount = [
+    { label: 'Yangi', value: parseFloat(dashboard?.application_short_info?.total - dashboard?.application_short_info?.contracted_application_count), color: colors[2] },
+    { label: 'Shartnoma yuborilgan', value: parseFloat(dashboard?.application_short_info?.contracted_application_count), color: colors[3] }
+  ];
+
+  const xAxisData = monthApplication.map(data => data.date);
+  const seriesData = [
+    monthApplication.map(data => data.value),
+    monthContract.map(data => data.value)
+  ]
+
+  console.log(monthContract)
+
+  // console.log(seriesData[1])
+
   if (loading) return <Loader />
 
   return (
@@ -64,7 +112,7 @@ const Dashboard = () => {
       <Header category="Sahifa" title="Statistika"/>
       <div className={'flex flex-wrap justify-between gap-7'}>
         <div className={'w-[49%] h-2/4'}>
-          <h1 className={'text-2xl p-4 font-bold'}>Foydalanuvchilar</h1>
+          <h1 className={'text-2xl p-4 font-bold'}>Foydalanuvchilar soni</h1>
           <div className={'w-full h-full relative overflow-hidden shadow-md sm:rounded flex'}>
             <div>
               <PieChart
@@ -92,7 +140,7 @@ const Dashboard = () => {
             <div className={'flex flex-col items-start justify-center'}>
               {dataUserCount.map((item, index) => (
                 <div key={index} className={'flex items-center'}>
-                  <div className={'w-4 h-4 mr-2'} style={{ backgroundColor: item.color }}></div>
+                  <div className={'w-4 h-4 mr-2'} style={{backgroundColor: item.color}}></div>
                   <span>{item.label}: {item.value}</span>
                 </div>
               ))}
@@ -127,6 +175,67 @@ const Dashboard = () => {
             </div>
             <div className={'flex flex-col items-start justify-center'}>
               {dataUserContractsSum.map((item, index) => (
+                <div key={index} className={'flex items-center'}>
+                  <div className={'w-4 h-4 mr-2'} style={{backgroundColor: item.color}}></div>
+                  <span>{item.label}: {item?.value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className={'w-[49%] h-2/4'}>
+          <h1 className={'text-2xl p-4 font-bold'}>Foydalanuvchilar (shartnoma soni)</h1>
+          <div className={'w-full h-full relative overflow-hidden shadow-md sm:rounded flex'}>
+            <div>
+              <PieChart
+                series={[
+                  {
+                    innerRadius: 0,
+                    outerRadius: 80,
+                    id: "series-5",
+                    data: dataUserContractsCount
+                  },
+                ]}
+                width={400}
+                height={300}
+                slotProps={{
+                  legend: {hidden: true},
+                }}
+              />
+            </div>
+            <div className={'flex flex-col items-start justify-center'}>
+              {dataUserContractsCount.map((item, index) => (
+                <div key={index} className={'flex items-center'}>
+                  <div className={'w-4 h-4 mr-2'} style={{backgroundColor: item.color}}></div>
+                  <span>{item.label}: {item?.value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className={'w-[49%] h-2/4'}>
+          <h1 className={'text-2xl p-4 font-bold'}>Arizalar</h1>
+          <div className={'w-full h-full relative overflow-hidden shadow-md sm:rounded flex'}>
+            <div>
+              <PieChart
+                series={[
+                  {
+                    innerRadius: 0,
+                    outerRadius: 80,
+                    id: "series-5",
+                    data: dataApplicationsCount
+                  },
+                ]}
+                width={400}
+                height={300}
+                slotProps={{
+                  legend: {hidden: true},
+                }}
+              />
+            </div>
+            <div className={'flex flex-col items-start justify-center'}>
+              {dataApplicationsCount.map((item, index) => (
                 <div key={index} className={'flex items-center'}>
                   <div className={'w-4 h-4 mr-2'} style={{backgroundColor: item.color}}></div>
                   <span>{item.label}: {item?.value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}</span>
@@ -205,6 +314,32 @@ const Dashboard = () => {
                   <span>{item.label}: {item?.item}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        <div ref={node => divRef.current = node} className={'w-full h-2/4'}>
+          <h1 className={'text-2xl p-4 font-bold'}>Ariza</h1>
+          <div className={'w-full h-full relative overflow-hidden shadow-md sm:rounded flex'}>
+            <div>
+              {(monthApplication?.length > 0 || monthContract?.length > 0) && (
+                <LineChart
+                  xAxis={[
+                    {
+                      data: xAxisData,
+                      tickInterval: xAxisData,
+                      scaleType: "time",
+                      valueFormatter: (date) => moment(date).format("MMM D")
+                    },
+                  ]}
+                  series={[
+                    { label: "Arizalar", data: seriesData[0] },
+                    { label: "Shartnomalar", data: seriesData[1] },
+                  ]}
+                  width={divWidth || 1000}
+                  height={400}
+                />
+              )}
             </div>
           </div>
         </div>

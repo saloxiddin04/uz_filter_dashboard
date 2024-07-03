@@ -99,7 +99,7 @@ export const refreshToken = createAsyncThunk(
         toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
         dispatch(logOut({refresh_token: data.refresh, access: data.access, access_token: data.access}))
       } else {
-        data.navigate('/shartnomalar')
+        data.navigate('/dashboard')
       }
       return response.data
     } catch (e) {

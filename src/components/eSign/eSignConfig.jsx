@@ -272,7 +272,7 @@ export function HooksCommission() {
                 await dispatch(setUser(res))
                 await dispatch(setAccessToken(response?.data?.access))
                 await dispatch(setRefresh(response?.data?.refresh))
-                await navigate('/shartnomalar')
+                await navigate('/dashboard')
                 // window.location.reload()
               }
             })

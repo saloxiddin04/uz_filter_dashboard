@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Header, Pagination} from '../../components';
-import {getSections} from "../../redux/slices/sections/sectionSlice";
 import {getContracts} from "../../redux/slices/contracts/contractsSlice";
 import Loader from "../../components/Loader";
 import {useStateContext} from "../../contexts/ContextProvider";
@@ -32,7 +31,6 @@ const Contracts = () => {
 
   useEffect(() => {
     dispatch(getContracts({page: currentPage}))
-    dispatch(getSections())
   }, [dispatch]);
 
   const handlePageChange = (page) => {

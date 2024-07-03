@@ -51,7 +51,7 @@ const Login = () => {
         if (response?.data?.role !== 'mijoz') {
           await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
             dispatch(setUser(res))
-            navigate('/shartnomalar')
+            navigate('/dashboard')
           })
         } else {
           setPinOrTin('')
