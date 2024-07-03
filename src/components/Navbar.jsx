@@ -3,7 +3,6 @@ import {AiOutlineMenu} from 'react-icons/ai';
 import {MdKeyboardArrowDown} from 'react-icons/md';
 import {TooltipComponent} from '@syncfusion/ej2-react-popups';
 
-import avatar from '../data/avatar.jpg';
 import {useStateContext} from '../contexts/ContextProvider';
 
 import {useSelector} from "react-redux";
