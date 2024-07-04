@@ -3,11 +3,16 @@ import {
   ContractDetail,
   Applications,
   ApplicationDetail,
-  Dashboard
+  Dashboard,
+  Profile,
+  NotFound
 } from './pages';
 
 export const routes = [
+  { path: '*', element: NotFound },
+
   { path: '/dashboard', element: Dashboard },
+  { path: '/profile', element: Profile },
 
   { path: '/shartnomalar', element: Contracts },
   { path: '/shartnomalar/:id', element: ContractDetail },

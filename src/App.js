@@ -9,7 +9,7 @@ import Loader from './components/Loader';
 import MainLayout from './Layout/MainLayout';
 import AuthLayout from './Layout/AuthLayout';
 import ProtectedRoutes from './utils/ProtectedRoutes';
-import { Login } from './pages';
+import {Login, NotFound} from './pages';
 import Code from './redux/slices/auth/Code';
 import {routes} from "./routes";
 
