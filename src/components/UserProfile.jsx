@@ -4,12 +4,14 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { Button } from '.';
 import { userProfileData } from '../data/dummy';
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {logOut} from "../redux/slices/auth/authSlice";
 
 const UserProfile = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const {pathname} = useLocation()
+  console.log(pathname)
 
   const {user, access, access_token, refresh_token} = useSelector((state) => state.user)
 
@@ -54,8 +56,12 @@ const UserProfile = () => {
       </div>
       <div>
         {userProfileData.map((item, index) => (
-          <div key={index}
-               className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  dark:hover:bg-[#42464D]">
+          <div
+            key={index}
+            className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  dark:hover:bg-[#42464D]"
+            onClick={() => navigate(item.to)}
+            style={{ backgroundColor: pathname === '/profile' ? 'rgb(247 247 247)' : '' }}
+          >
             <button
               type="button"
               style={{color: item.iconColor, backgroundColor: item.iconBg}}
