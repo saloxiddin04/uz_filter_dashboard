@@ -11,7 +11,6 @@ const UserProfile = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const {pathname} = useLocation()
-  console.log(pathname)
 
   const {user, access, access_token, refresh_token} = useSelector((state) => state.user)
 
