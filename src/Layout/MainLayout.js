@@ -44,7 +44,7 @@ const MainLayout = () => {
           </div>
           {themeSettings && <ThemeSettings />}
           <Outlet />
-          <Footer />
+          {/*<Footer />*/}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getContractDetail, getContractDetailBalance} from "../../redux/slices/contracts/contractsSlice";
@@ -11,6 +11,7 @@ import {api_url} from "../../config";
 import YurUserContractDetail from "./YurUserContractDetail";
 import FizUserContractDetail from "./FizUserContractDetail";
 import {BiSearch} from "react-icons/bi";
+import {HooksCommission} from "../../components/eSign/eSignConfig";
 
 const tabs = [
   {
@@ -27,6 +28,10 @@ const tabs = [
   },
   {
     title: "Billing",
+    active: false
+  },
+  {
+    title: "Xulosa berish",
     active: false
   },
 ];
@@ -122,6 +127,92 @@ const ContractDetail = () => {
   );
 };
 
+const SignatureContract = () => {
+  const {sign, AppLoad} = HooksCommission()
+  const btnRef = useRef(null)
+  const optionRef = useRef(null);
+
+  const {contractDetail, loading} = useSelector(state => state.contracts);
+  const {user} = useSelector(state => state.user)
+
+  const option = document.querySelector(`[name="${user?.pin}"]`)
+  const selectedOption = optionRef?.current?.querySelector(`[name="${user?.pin}"]`);
+
+  useEffect(() => {
+    AppLoad()
+  }, []);
+
+  const validationKey = () => {
+    option?.removeAttribute('disabled')
+    option?.setAttribute('selected', 'true')
+    selectedOption?.setAttribute('selected', 'true')
+    selectedOption?.removeAttribute('disabled')
+  }
+  validationKey()
+
+  const signContract = () => {
+    sign(
+      contractDetail?.contract?.base64file,
+      'vps',
+      contractDetail?.contract?.id
+    )
+  }
+
+  return (
+    <div className={'w-full'}>
+      <div>
+        <label
+          htmlFor="conclusion"
+          className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+        >
+          Xulosa
+        </label>
+        <select
+          name="conclusion"
+          id="conclusion"
+          className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+        >
+          <option value="2">Tanlang...</option>
+          <option value="1">Shartnoma imzolash maqsadga muvofiq</option>
+          <option value="0">Shartnoma imzolash maqsadga muvofiq emas</option>
+        </select>
+      </div>
+      <div className={'my-2'}>
+        <label
+          htmlFor="comment"
+          className={'block text-gray-700 text-sm font-bold mb-2 ml-3'}
+        >
+          Izoh
+        </label>
+        <textarea
+          name="comment"
+          id="comment"
+          cols="30"
+          rows="10"
+          className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border'}
+        />
+      </div>
+      <div className={'w-full flex items-center justify-between'}>
+        <select
+          name="S@loxiddin"
+          id="S@loxiddin"
+          className='w-11/12 px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border'
+        />
+        <div>
+          <Button
+            text={'Imzolash'}
+            color={'white'}
+            className={'bg-blue-600 rounded mx-auto text-center'}
+            width={'24'}
+            onClick={signContract}
+            disabled={loading}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const renderDetail = (
   value,
   data,
@@ -142,7 +233,7 @@ const renderDetail = (
             <tbody>
             <tr
               className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
-              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma raqami</th>
+            <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma raqami</th>
               <td className={'text-center px-2 py-2'}>{data?.contract?.contract_number}</td>
             </tr>
             <tr
@@ -189,7 +280,8 @@ const renderDetail = (
                 className={'text-center px-2 py-2'}>{data?.contract?.arrearage?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
               </td>
             </tr>
-            <tr className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Fayl yuklab olish</th>
               <td className={'text-center px-2 py-2'}>
                 <AiOutlineCloudDownload
@@ -222,7 +314,7 @@ const renderDetail = (
       return (
         <>
           {!data?.client?.bank_mfo ? (
-            <FizUserContractDetail />
+            <FizUserContractDetail/>
           ) : (
             <YurUserContractDetail/>
           )}
@@ -234,49 +326,55 @@ const renderDetail = (
           {data?.participants?.map((el, idx) => (
             <table key={idx} className={'w-full mb-8 border'}>
               <tbody>
-                <tr className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
-                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>
-                    {el.userdata?.userdata?.role?.name?.charAt(0).toUpperCase() + el.userdata?.userdata?.role?.name.slice(1)}
-                  </th>
-                  <td className={`${el?.agreement_status !== 'Kelishildi' ? 'text-dark' : 'bg-green-400 text-white'} text-center`}>
-                    {el?.agreement_status}
-                  </td>
-                </tr>
-                <tr className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
-                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Izoh</th>
-                  <td className={`text-center px-2 py-2`}>
-                    {el.expert_summary?.comment ? el.expert_summary?.comment : '-'}
-                  </td>
-                </tr>
-                <tr className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
-                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Muddat</th>
-                  <td className={`text-center px-2 py-2`}>
-                    {moment(data?.contract?.contract_date).format(
-                      'DD.MM.YYYY',
-                    )}
-                    {' '}
-                    -
-                    {' '}
-                    {moment(data.contract.contract_date)
-                      .add(1, 'days')
-                      .format('DD.MM.YYYY')}
-                    <br/>1 ish kuni
-                  </td>
-                </tr>
-                <tr className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
-                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Xulosa berdi</th>
-                  <td className={`text-center px-2 py-2`}>
-                    {el?.expert_summary ? el?.userdata?.full_name : '-'}
-                    <br/>
-                    {el?.date ? moment(el?.date).format('DD.MM.YYYY HH:mm:ss') : ''}
-                  </td>
-                </tr>
-                <tr className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
-                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Telefon</th>
-                  <td className={`text-center px-2 py-2`}>
-                    {el.userdata?.mob_phone_no}
-                  </td>
-                </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>
+                  {el.userdata?.userdata?.role?.name?.charAt(0).toUpperCase() + el.userdata?.userdata?.role?.name.slice(1)}
+                </th>
+                <td
+                  className={`${el?.agreement_status !== 'Kelishildi' ? 'text-dark' : 'bg-green-400 text-white'} text-center`}>
+                  {el?.agreement_status}
+                </td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Izoh</th>
+                <td className={`text-center px-2 py-2`}>
+                  {el.expert_summary?.comment ? el.expert_summary?.comment : '-'}
+                </td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Muddat</th>
+                <td className={`text-center px-2 py-2`}>
+                  {moment(data?.contract?.contract_date).format(
+                    'DD.MM.YYYY',
+                  )}
+                  {' '}
+                  -
+                  {' '}
+                  {moment(data.contract.contract_date)
+                    .add(1, 'days')
+                    .format('DD.MM.YYYY')}
+                  <br/>1 ish kuni
+                </td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Xulosa berdi</th>
+                <td className={`text-center px-2 py-2`}>
+                  {el?.expert_summary ? el?.userdata?.full_name : '-'}
+                  <br/>
+                  {el?.date ? moment(el?.date).format('DD.MM.YYYY HH:mm:ss') : ''}
+                </td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Telefon</th>
+                <td className={`text-center px-2 py-2`}>
+                  {el.userdata?.mob_phone_no}
+                </td>
+              </tr>
               </tbody>
             </table>
           ))}
@@ -285,7 +383,8 @@ const renderDetail = (
     case 3:
       return (
         <>
-          <div className="m-1 md:mx-8 md:my-4 mt-24 p-2 md:px-2 md:py-2 bg-white rounded flex items-center justify-between">
+          <div
+            className="m-1 md:mx-8 md:my-4 mt-24 p-2 md:px-2 md:py-2 bg-white rounded flex items-center justify-between">
             <div className={'w-2/4'}>
               <Input
                 label={'Sanadan'}
@@ -305,7 +404,8 @@ const renderDetail = (
               </div>
               <Button
                 className={'cursor-pointer'}
-                icon={<BiSearch className={`size-7`} style={{color: currentColor, opacity: !beginDateVps || !endDateVps ? 0.5 : 1}}/>}
+                icon={<BiSearch className={`size-7`}
+                                style={{color: currentColor, opacity: !beginDateVps || !endDateVps ? 0.5 : 1}}/>}
                 onClick={getBalance}
                 disabled={!beginDateVps || !endDateVps}
               />
@@ -313,31 +413,35 @@ const renderDetail = (
           </div>
           <table className={'mt-8 w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'}>
             <thead className={'text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded'}>
-              <tr>
-                <th className="px-3 py-3">Oy</th>
-                <th className="px-3 py-3">To’langan qiymat</th>
-                <th className="px-3 py-3">To’lov</th>
-                <th className="px-3 py-3">To’lov (%)</th>
-                <th className="px-3 py-3">Sana (yil.oy.sana)</th>
-                <th className="px-3 py-3">Invoys</th>
-                <th className="px-3 py-3">Balans</th>
-              </tr>
+            <tr>
+              <th className="px-3 py-3">Oy</th>
+              <th className="px-3 py-3">To’langan qiymat</th>
+              <th className="px-3 py-3">To’lov</th>
+              <th className="px-3 py-3">To’lov (%)</th>
+              <th className="px-3 py-3">Sana (yil.oy.sana)</th>
+              <th className="px-3 py-3">Invoys</th>
+              <th className="px-3 py-3">Balans</th>
+            </tr>
             </thead>
             <tbody>
-              {contractDetailBalance?.detail && contractDetailBalance?.detail.map((item) => (
-                <tr className={'hover:bg-gray-100 hover:dark:bg-gray-800'} key={item.id}>
-                  <td className={'px-3 py-4 border-b-1'}>{item?.month}</td>
-                  <td className={'px-3 py-4 border-b-1'}>{item?.amount} so’m</td>
-                  <td className={'px-3 py-4 border-b-1'}>{item?.pay_amount} so’m</td>
-                  <td className={'px-3 py-4 border-b-1'}>{item?.amount_precent}%</td>
-                  <td className={'px-3 py-4 border-b-1'}>{formatDate(item?.amount_date)}</td>
-                  <td className={'px-3 py-4 border-b-1'}>{item?.send_invoice === '0' ? 'Yuborilmagan' : 'Yuborilgan'}</td>
-                  <td className={'px-3 py-4 border-b-1'}>{contractDetailBalance?.balance} so’m</td>
-                </tr>
-              ))}
+            {contractDetailBalance?.detail && contractDetailBalance?.detail.map((item) => (
+              <tr className={'hover:bg-gray-100 hover:dark:bg-gray-800'} key={item.id}>
+                <td className={'px-3 py-4 border-b-1'}>{item?.month}</td>
+                <td className={'px-3 py-4 border-b-1'}>{item?.amount} so’m</td>
+                <td className={'px-3 py-4 border-b-1'}>{item?.pay_amount} so’m</td>
+                <td className={'px-3 py-4 border-b-1'}>{item?.amount_precent}%</td>
+                <td className={'px-3 py-4 border-b-1'}>{formatDate(item?.amount_date)}</td>
+                <td className={'px-3 py-4 border-b-1'}>{item?.send_invoice === '0' ? 'Yuborilmagan' : 'Yuborilgan'}</td>
+                <td className={'px-3 py-4 border-b-1'}>{contractDetailBalance?.balance} so’m</td>
+              </tr>
+            ))}
             </tbody>
           </table>
         </>
+      )
+    case 4:
+      return (
+        <SignatureContract />
       )
     default:
       return null

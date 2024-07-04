@@ -9,6 +9,7 @@ import {toast} from "react-toastify";
 import {oneIdGetUserDetail, setAccessToken, setLogout, setRefresh, setUser} from "../../redux/slices/auth/authSlice";
 import {api_url, APIS} from "../../config";
 import axios from "axios";
+import {getContractDetail, savePkcs} from "../../redux/slices/contracts/contractsSlice";
 
 export function HooksCommission() {
   const [pkcs, setPkcs] = useState('');
@@ -16,15 +17,15 @@ export function HooksCommission() {
   const [idx, setIdx] = useState([]);
   const [err_msg, setErrMsg] = useState('');
   const [error, setError] = useState(false);
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const {access_token, user} = useSelector((state) => state.user);
-  
+
   let EIMZO_MAJOR = 3;
   let EIMZO_MINOR = 37;
-  
+
   let errorCAPIWS =
     "Ошибка соединения с E-IMZO. Возможно у вас не установлен модуль E-IMZO или Браузер E-IMZO.";
   let errorBrowserWS =
@@ -32,7 +33,7 @@ export function HooksCommission() {
   //   let errorUpdateApp =
   //     "ВНИМАНИЕ !!! Установите новую версию приложения E-IMZO или Браузера E-IMZO.<br /><a href="https://e-imzo.uz/main/downloads/" role="button">Скачать ПО E-IMZO</a>";
   let errorWrongPassword = "Пароль неверный.";
-  
+
   let AppLoad = function () {
     EIMZOClient.API_KEYS = [
       'localhost',
@@ -71,11 +72,11 @@ export function HooksCommission() {
       }
     );
   };
-  
+
   let uiShowMessage = function (message) {
     toast.success(message);
   };
-  
+
   let uiNotLoaded = function (e) {
     if (e) {
       wsError(e);
@@ -83,7 +84,7 @@ export function HooksCommission() {
       uiShowMessage(errorBrowserWS);
     }
   };
-  
+
   let uiLoadKeys = function () {
     uiClearCombo();
     EIMZOClient.listAllUserKeys(
@@ -110,7 +111,7 @@ export function HooksCommission() {
       }
     );
   };
-  
+
   let uiComboSelect = function (itm) {
     if (itm) {
       let el = document.getElementById(itm);
@@ -118,12 +119,12 @@ export function HooksCommission() {
       // el.removeAttribute("disabled");
     }
   };
-  
+
   let uiClearCombo = function () {
     let combo = document.getElementById("S@loxiddin");
     combo.length = 0;
   };
-  
+
   let uiFillCombo = function (items) {
     document.getElementById("S@loxiddin").innerHTML = "";
     let combo = document.getElementById("S@loxiddin");
@@ -131,7 +132,7 @@ export function HooksCommission() {
       combo.append(items[itm]);
     }
   };
-  
+
   let uiCreateItem = function (itmkey, vo) {
     let now = new Date();
     vo.expired = dates.compare(now, vo.validTo) > 0;
@@ -151,10 +152,10 @@ export function HooksCommission() {
     itm.setAttribute("vo", JSON.stringify(vo));
     itm.setAttribute("id", itmkey);
     itm.setAttribute('name', vo.PINFL)
-    // itm.setAttribute("disabled", '');
+    itm.setAttribute("disabled", '');
     return itm;
   };
-  
+
   let wsError = function (e) {
     if (e) {
       uiShowMessage(errorCAPIWS + " : " + e);
@@ -162,7 +163,7 @@ export function HooksCommission() {
       uiShowMessage(errorBrowserWS);
     }
   };
-  
+
   const sign = (data_b4, service, contract_id) => {
     const itm = document.getElementById("S@loxiddin").value;
     if (itm) {
@@ -182,44 +183,32 @@ export function HooksCommission() {
             function (pkcs7) {
               setPkcs(pkcs7)
               localStorage.setItem('pkcs7', JSON.stringify(pkcs7))
-              // dispatch(
-              //   savePkcs(
-              //     access,
-              //     {
-              //       pkcs7: pkcs7,
-              //       contract_id: contract_id,
-              //     },
-              //     service,
-              //   )
-              // ).then((res) => {
-              //     if (!res?.success) {
-              //       const service_id = localStorage.getItem('service_id')
-              //       setErrMsg(res?.err_msg)
-              //       setError(true)
-              //     } else {
-              //       dispatch(clearSavedContractDetails(savedContractDetails));
-              //       navigate(`/show-request/${contract_id}`, {
-              //         state: {service_id: contract_id, name: service}
-              //       });
-              //       localStorage.removeItem('server')
-              //       localStorage.removeItem('service_id')
-              //       localStorage.removeItem('pkcs7')
-              //       localStorage.removeItem('account_id_localStorage')
-              //       localStorage.removeItem('payChoose')
-              //       localStorage.removeItem('count')
-              //       localStorage.removeItem('dataEmail')
-              //       localStorage.removeItem('coLocation_data')
-              //     }
-              //   }
-              // );
+              dispatch(
+                savePkcs(
+                  {
+                    pkcs7: pkcs7,
+                    contract_id: contract_id,
+                  },
+                  service,
+                )
+              ).then((res) => {
+                  if (!res?.success) {
+                    toast.error(res?.err_msg)
+                    setErrMsg(res?.err_msg)
+                    setError(true)
+                  } else {
+                    dispatch(getContractDetail(contract_id))
+                  }
+                }
+              );
             },
             function (e, r) {
               if (r) {
                 if (r.indexOf("BadPaddingException") !== -1) {
-                  instance.delete(`${service}/reject/${contract_id}`, {headers}).then(() => navigate(-1))
+                  instance.delete(`${api_url}/${service}/reject/${contract_id}`, {headers}).then(() => navigate(-1))
                   uiShowMessage(errorWrongPassword);
                 } else {
-                  instance.delete(`${service}/reject/${contract_id}`, {headers}).then(() => navigate(-1))
+                  instance.delete(`${api_url}/${service}/reject/${contract_id}`, {headers}).then(() => navigate(-1))
                   uiShowMessage(r);
                 }
               } else {
@@ -260,7 +249,7 @@ export function HooksCommission() {
       const postChallenge = async (pkcs7) => {
         try {
           const response = await instance.post(`${APIS.eriLogin}`, {pkcs7, is_client: 1})
-          instance.defaults.headers.common = { Authorization: `Bearer ${response?.data?.access}` };
+          instance.defaults.headers.common = {Authorization: `Bearer ${response?.data?.access}`};
           if (!response?.data?.success) {
             toast.error(response?.data?.err_msg)
           } else {
@@ -296,19 +285,19 @@ export function HooksCommission() {
 
       EIMZOClient.loadKey(
         vo,
-        function(id) {
+        function (id) {
           EIMZOClient.createPkcs7Auth(
             id,
             challenge,
             null,
-            function(pkcs7) {
+            function (pkcs7) {
               localStorage.setItem('pkcs7', JSON.stringify(pkcs7))
               if (pkcs7) {
                 postChallenge(pkcs7)
                 localStorage.removeItem('challenge')
               }
             },
-            function(e, r) {
+            function (e, r) {
               if (r) {
                 if (r.indexOf("BadPaddingException") !== -1) {
                   uiShowMessage(errorWrongPassword)
@@ -324,7 +313,7 @@ export function HooksCommission() {
             ""
           )
         },
-        function(e, r) {
+        function (e, r) {
           if (r) {
             if (r.indexOf("BadPaddingException") !== -1) {
               uiShowMessage(errorWrongPassword)
@@ -340,7 +329,7 @@ export function HooksCommission() {
       )
     } else toast.error("E-IMZO kalit topilmadi")
   }
-  
+
   return {
     AppLoad,
     uiLoadKeys,

@@ -47,6 +47,18 @@ export const getContractDetailBalance = createAsyncThunk(
   }
 )
 
+export const savePkcs = createAsyncThunk(
+  'contracts/savePkcs',
+  async (data) => {
+    try {
+      const response = await instance.post(`${api_url}/${data.service}/save-pkcs`, data)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const contractSlice = createSlice({
   name: 'contracts',
   initialState,
@@ -84,6 +96,18 @@ const contractSlice = createSlice({
       state.loading = false
     })
     builder.addCase(getContractDetailBalance.rejected, (state) => {
+      state.loading = false
+    })
+
+    // save pkcs
+    builder.addCase(savePkcs.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(savePkcs.fulfilled, (state) => {
+      state.loading = false
+    })
+    builder.addCase(savePkcs.rejected, (state, {payload}) => {
+      state.error = payload
       state.loading = false
     })
   }
