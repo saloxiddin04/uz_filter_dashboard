@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 // import {clearSavedContractDetails, savePkcs} from "../store/actions/contractActions";
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {EIMZOClient, dates} from './eSignClient';
 // import {axios2} from "../axios";
 import instance from '../../API';
@@ -20,8 +20,9 @@ export function HooksCommission() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {pathname} = useLocation();
 
-  const {access_token, user} = useSelector((state) => state.user);
+  const {access_token} = useSelector((state) => state.user);
 
   let EIMZO_MAJOR = 3;
   let EIMZO_MINOR = 37;
@@ -152,7 +153,9 @@ export function HooksCommission() {
     itm.setAttribute("vo", JSON.stringify(vo));
     itm.setAttribute("id", itmkey);
     itm.setAttribute('name', vo.PINFL)
-    itm.setAttribute("disabled", '');
+    if (pathname !== '/login') {
+      itm.setAttribute("disabled", '');
+    }
     return itm;
   };
 

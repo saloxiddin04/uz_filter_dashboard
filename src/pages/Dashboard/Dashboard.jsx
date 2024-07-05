@@ -5,8 +5,7 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import { Header, Loader } from "../../components";
 import chroma from 'chroma-js'
 import {getSections} from "../../redux/slices/sections/sectionSlice";
-import {ChartsLegend, ChartsXAxis, ChartsYAxis, LineChart} from "@mui/x-charts";
-import {Tooltip} from "@mui/material";
+import {LineChart} from "@mui/x-charts";
 import moment from "moment/moment";
 
 const Dashboard = () => {
@@ -69,7 +68,6 @@ const Dashboard = () => {
 
 
   // --------------------------------------- //
-  const userColors = chroma.scale('Spectral').mode('lch').colors(2);
   const dataUserCount = [
     { label: 'Fizik', value: parseFloat(dashboard?.user_info?.physic_users), color: colors[0] },
     { label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_users), color: colors[3] }
@@ -100,10 +98,6 @@ const Dashboard = () => {
     monthApplication.map(data => data.value),
     monthContract.map(data => data.value)
   ]
-
-  console.log(monthContract)
-
-  // console.log(seriesData[1])
 
   if (loading) return <Loader />
 
