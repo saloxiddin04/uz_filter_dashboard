@@ -42,7 +42,6 @@ const ContractDetail = () => {
   const {currentColor} = useStateContext();
   const {contractDetail, loading, contractDetailBalance} = useSelector(state => state.contracts);
   
-  console.log(slug)
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
   const safeDate = (dateString) => {
