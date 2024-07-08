@@ -12,7 +12,6 @@ const Contracts = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {slug} = useParams();
-  const {pathname} = useLocation();
   const {currentColor} = useStateContext();
 
   const {contracts, loading} = useSelector(state => state.contracts)
