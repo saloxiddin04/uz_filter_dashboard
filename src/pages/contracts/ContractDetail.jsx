@@ -120,7 +120,8 @@ const ContractDetail = () => {
             endDateVps,
             currentColor,
             contractDetailBalance,
-            formatDate
+            formatDate,
+            slug
           )
         }
       </div>
@@ -224,7 +225,8 @@ const renderDetail = (
   endDateVps,
   currentColor,
   contractDetailBalance,
-  formatDate
+  formatDate,
+  slug
 ) => {
   switch (value) {
     case 0:
@@ -288,7 +290,7 @@ const renderDetail = (
                 <AiOutlineCloudDownload
                   className={'size-6 m-auto cursor-pointer'}
                   onClick={async () => {
-                    await instance.get(`${api_url}/vps/contract/${data?.contract?.hashcode}`, {
+                    await instance.get(`${api_url}/${slug}/contract/${data?.contract?.hashcode}`, {
                       headers: {
                         "Content-type": 'blob'
                       },
