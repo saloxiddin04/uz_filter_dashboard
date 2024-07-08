@@ -15,7 +15,7 @@ export const getContracts = createAsyncThunk(
   'contracts/getContracts',
   async (data) => {
     try {
-      const response = await instance.get(`${api_url}/vps/group-contracts?filter=all&page_size=${data?.page === undefined ? 1 : data?.page}`)
+      const response = await instance.get(`${api_url}/${data?.slug}/group-contracts?filter=all&page_size=${data?.page === undefined ? 1 : data?.page}`)
       return response.data
     } catch (e) {
       toast.error(e.message)
@@ -27,7 +27,7 @@ export const getContractDetail = createAsyncThunk(
   'contracts/getContractDetail',
   async (params) => {
     try {
-      const response = await instance(`${api_url}/vps/contract-detail/${params}`)
+      const response = await instance(`${api_url}/${params?.slug}/contract-detail/${params?.id}`)
       return response.data
     } catch (e) {
       toast.error(e.message)

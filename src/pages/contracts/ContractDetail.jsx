@@ -38,10 +38,11 @@ const tabs = [
 
 const ContractDetail = () => {
   const dispatch = useDispatch();
-  const {id} = useParams();
+  const {id, slug} = useParams();
   const {currentColor} = useStateContext();
   const {contractDetail, loading, contractDetailBalance} = useSelector(state => state.contracts);
-
+  
+  console.log(slug)
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
   const safeDate = (dateString) => {
@@ -58,8 +59,8 @@ const ContractDetail = () => {
   );
 
   useEffect(() => {
-    dispatch(getContractDetail(id));
-  }, [id]);
+    dispatch(getContractDetail({id, slug}));
+  }, [id, slug]);
 
   const getBalance = () => {
     const dateEndVps = new Date(endDateVps);

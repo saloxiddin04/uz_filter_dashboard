@@ -6,11 +6,13 @@ import Loader from "../../components/Loader";
 import {useStateContext} from "../../contexts/ContextProvider";
 import moment from "moment/moment";
 import {EyeIcon} from "@heroicons/react/16/solid";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 const Contracts = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const {slug} = useParams();
+  const {pathname} = useLocation();
   const {currentColor} = useStateContext();
 
   const {contracts, loading} = useSelector(state => state.contracts)
@@ -30,13 +32,13 @@ const Contracts = () => {
   ];
 
   useEffect(() => {
-    dispatch(getContracts({page: currentPage}))
-  }, [dispatch]);
+    dispatch(getContracts({page: currentPage, slug}))
+  }, [dispatch, slug]);
 
   const handlePageChange = (page) => {
-    dispatch(getContracts({page}))
+    dispatch(getContracts({page, slug}))
   }
-
+  
   return (
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
       <Header category="Sahifa" title="Shartnomalar"/>
@@ -106,7 +108,7 @@ const Contracts = () => {
                   <EyeIcon
                     style={{color: currentColor}}
                     className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto`}
-                    onClick={() => navigate(`/shartnomalar/${item.id}`)}
+                    onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
                   />
                 </td>
               </tr>

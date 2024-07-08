@@ -9,13 +9,14 @@ import {
 } from './pages';
 
 export const routes = [
-  { path: '*', element: NotFound },
+  { path: '*', element: Dashboard },
 
   { path: '/dashboard', element: Dashboard },
   { path: '/profile', element: Profile },
 
-  { path: '/shartnomalar', element: Contracts },
-  { path: '/shartnomalar/:id', element: ContractDetail },
+  // { path: '/shartnomalar', element: Contracts },
+  { path: '/shartnomalar/:slug', element: Contracts },
+  { path: '/shartnomalar/:slug/:id', element: ContractDetail },
 
 
   { path: '/application', element: Applications },

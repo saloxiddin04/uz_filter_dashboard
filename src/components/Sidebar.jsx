@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, NavLink} from 'react-router-dom';
+import {Link, NavLink, useLocation} from 'react-router-dom';
 import {MdOutlineCancel} from 'react-icons/md';
 import {TooltipComponent} from '@syncfusion/ej2-react-popups';
 
@@ -8,20 +8,28 @@ import {useSelector} from "react-redux";
 import Loader from "./Loader";
 
 const Sidebar = () => {
-  const {sections, loading} = useSelector(state => state.sections)
+  const {loading, sidebar} = useSelector(state => state.sections)
   const {currentColor, activeMenu, setActiveMenu, screenSize} = useStateContext();
-
+  const {pathname} = useLocation();
+  
   const handleCloseSideBar = () => {
     if (activeMenu !== undefined && screenSize <= 900) {
       setActiveMenu(false);
     }
   };
-
+  
   const activeLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded  text-white  text-md m-2';
   const normalLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
-
+  
+  function filterBySlug() {
+    const matchedPermission = sidebar?.permissions.find(permission => `${permission.slug}` === pathname.split('/')[1]);
+    return matchedPermission ? matchedPermission.children : [];
+  }
+  
+  const children = filterBySlug();
+  
   if (loading) return <Loader/>
-
+  
   return (
     <div className="ml-3 h-screen md:overflow-hidden overflow-auto md:hover:overflow-auto pb-10">
       {activeMenu && (
@@ -58,24 +66,29 @@ const Sidebar = () => {
                 <span className="capitalize">Statistika</span>
               </NavLink>
             </div>
-            {sections && sections.map((item) => (
-              <div key={item.slug}>
-                <NavLink
-                  to={`/${item.slug}`}
-                  key={item.slug}
-                  onClick={() => {
-                    localStorage.setItem("currentPage", '1');
-                    handleCloseSideBar();
-                  }}
-                  style={({isActive}) => ({
-                    backgroundColor: isActive ? currentColor : '',
-                  })}
-                  className={({isActive}) => (isActive ? activeLink : normalLink)}
-                >
-                  <span className="capitalize">{item.name}</span>
-                </NavLink>
-              </div>
-            ))}
+            {children && children?.map((item) => {
+              const newPath = `${pathname.split('/')[1]}/${item.slug}`;
+              if (item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat') {
+                return (
+                  <div key={item.slug}>
+                    <NavLink
+                      to={newPath}
+                      key={item.slug}
+                      onClick={() => {
+                        localStorage.setItem("currentPage", '1');
+                        handleCloseSideBar();
+                      }}
+                      style={({isActive}) => ({
+                        backgroundColor: isActive ? currentColor : '',
+                      })}
+                      className={({isActive}) => (isActive ? activeLink : normalLink)}
+                    >
+                      <span className="capitalize">{item.name}</span>
+                    </NavLink>
+                  </div>
+                )
+              }
+            })}
           </div>
         </>
       )}

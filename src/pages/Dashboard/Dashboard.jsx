@@ -4,7 +4,7 @@ import { getDashboard } from "../../redux/slices/dashboard/dashboardSlice";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Header, Loader } from "../../components";
 import chroma from 'chroma-js'
-import {getSections} from "../../redux/slices/sections/sectionSlice";
+import {getSidebar} from "../../redux/slices/sections/sectionSlice";
 import {LineChart} from "@mui/x-charts";
 import moment from "moment/moment";
 
@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [monthApplication, setMonthApplication] = useState([])
 
   useEffect(() => {
-    dispatch(getSections())
+    dispatch(getSidebar())
     dispatch(getDashboard()).then((res) => {
       const contracts = Object.values(res?.payload?.contracts_count_over_last_30_days || {})
       const formatedContract = contracts.map((contract) => ({
