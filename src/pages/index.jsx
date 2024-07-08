@@ -12,3 +12,5 @@ export {default as ContractDetail} from './contracts/ContractDetail'
 
 export {default as Applications} from './Applications/Applications'
 export {default as ApplicationDetail} from './Applications/ApplicationDetail'
+
+export {default as CreateColocation} from './CreateContracts/Colocation/CreateColocation'

@@ -5,7 +5,8 @@ import {
   ApplicationDetail,
   Dashboard,
   Profile,
-  NotFound
+  NotFound,
+  CreateColocation
 } from './pages';
 
 export const routes = [
@@ -21,4 +22,6 @@ export const routes = [
 
   { path: '/application', element: Applications },
   { path: '/application/:id', element: ApplicationDetail },
+  
+  {path: '/shartnomalar/colocation/create', element: CreateColocation },
 ]
