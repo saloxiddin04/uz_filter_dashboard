@@ -34,6 +34,18 @@ export const getDataCenterTariff = createAsyncThunk(
   }
 )
 
+export const calculateColocation = createAsyncThunk(
+  "colocationCreateContract/calculateColocation",
+  async (data) => {
+    try {
+      const response = await instance.post(`billing/calculate-colocation`, data.data)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const createContractColocationSlice = createSlice({
   name: 'colocationCreateContract',
   initialState,
@@ -63,6 +75,17 @@ const createContractColocationSlice = createSlice({
       state.error = payload
       state.loading = false
       state.dataCenterTariff = null
+    })
+
+    // calculate
+    builder.addCase(calculateColocation.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.calculate = payload
+    })
+    builder.addCase(calculateColocation.rejected, (state, {payload}) => {
+      state.loading = false
+      state.calculate = null
+      state.error = payload
     })
   }
 })

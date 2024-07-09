@@ -1,15 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import FirstStep from "../FirstStep/FirstStep";
 import {Button, Header, Input, Loader} from "../../../components";
 import {useDispatch, useSelector} from "react-redux";
-import {getDataCenterList, getDataCenterTariff} from "../../../redux/slices/contractCreate/Colocation/ColocationSlices";
+import {
+  calculateColocation,
+  getDataCenterList,
+  getDataCenterTariff
+} from "../../../redux/slices/contractCreate/Colocation/ColocationSlices";
 import instance from "../../../API";
 import {toast} from "react-toastify";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {useStateContext} from "../../../contexts/ContextProvider";
+import {useNavigate} from "react-router-dom";
 
 const CreateColocation = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const {currentColor} = useStateContext();
 
@@ -33,6 +39,12 @@ const CreateColocation = () => {
       dispatch(getDataCenterTariff())
     }
   }, [currentStep]);
+
+  useEffect(() => {
+    if (!handleValidateForCalculate()) {
+      dispatch(calculateColocation({data, check: handleValidateForCalculate()}))
+    }
+  }, [data]);
 
   const handleChangeDataColocation = (e, index) => {
     const {name, value} = e.target;
@@ -60,7 +72,7 @@ const CreateColocation = () => {
     const deletedData = [...data]
       deletedData.splice(i, 1)
       setData(deletedData)
-      // getCalculateColocation(deletedData)
+      getCalculateColocation(deletedData)
   }
 
   const handleDataAddColocation = () => {
@@ -117,6 +129,14 @@ const CreateColocation = () => {
     return false
   }
 
+  const timeoutIdColocation = useRef(null)
+  const getCalculateColocation = (data) => {
+    clearTimeout(timeoutIdColocation.current)
+    timeoutIdColocation.current = setTimeout(() => {
+      dispatch(calculateColocation({data, check: handleValidateForCalculate()}))
+    }, 200)
+  }
+
   // const fetchContractNum = async () => {
   //   await instance.get(`colocation/booked-contract?pin_or_tin=${userByTin === 'yur' ? stir : pinfl}`, {headers: {Authorization: `Bearer ${access}`}}).then((res) => {
   //     if (res?.data?.success) {
@@ -141,8 +161,6 @@ const CreateColocation = () => {
   //     }
   //   })
   // }
-
-  console.log("data", data)
 
   const displayStep = (step) => {
     switch (step) {
@@ -246,6 +264,29 @@ const CreateColocation = () => {
                   </div>
                 </div>
               ))}
+              <div className="w-full">
+                <div className={'flex flex-col items-end'}>
+                  <div className="ml-auto w-1/5">
+                    <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="price">
+                      Jami (so'm)
+                    </label>
+                  </div>
+                  <input
+                    value={calculate?.price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') || ""}
+                    disabled={true}
+                    type="text"
+                    id="price"
+                    className="rounded w-1/5 py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                </div>
+              </div>
+              <div className="w-full">
+                {checkForDuplicateSelections() && (
+                  <div style={{marginTop: 10, color: 'red'}}>
+                    1ta &quot;Data Markaz&quot; dan bir xil RACK yoki UNIT tanlay olmaysiz!
+                  </div>
+                )}
+              </div>
               <button
                 className={`px-3 py-2 rounded text-white mx-auto ${handleValidateColocation() ? 'opacity-25' : ''}`}
                 style={{backgroundColor: currentColor}}
@@ -253,6 +294,38 @@ const CreateColocation = () => {
               >
                 Qo'shish
               </button>
+
+              <div className="w-full flex items-center justify-between">
+                <div>
+                  <button
+                    className={'px-4 py-2 rounded'}
+                    style={{
+                      color: currentColor,
+                      border: `1px solid ${currentColor}`
+                    }}
+                    onClick={() => navigate(-1)}
+                  >
+                    Bekor qilish
+                  </button>
+                </div>
+                <div className="flex gap-4">
+                  <button
+                    className={`px-4 py-2 rounded text-white border border-[${currentColor}]`}
+                    style={{color: currentColor}}
+                    onClick={() => setCurrentStep(2)}
+                  >
+                    Orqaga
+                  </button>
+                  <button
+                    className={`px-4 py-2 rounded text-white ${handleValidateColocation() ? 'opacity-50' : ''}`}
+                    style={{backgroundColor: currentColor}}
+                    onClick={() => setCurrentStep(2)}
+                    disabled={handleValidateColocation()}
+                  >
+                    Keyingi
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         )
