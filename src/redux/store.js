@@ -5,6 +5,7 @@ import contractsSlice from "./slices/contracts/contractsSlice";
 import applicationsSlice from "./slices/applications/applicationsSlice";
 import dashboardSlice from "./slices/dashboard/dashboardSlice";
 import firstStepSlices from "./slices/contractCreate/FirstStepSlices";
+import createColocationSlices from "./slices/contractCreate/Colocation/ColocationSlices";
 
 const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
     sections: sectionSlice,
     contracts: contractsSlice,
     applications: applicationsSlice,
-    userByTin: firstStepSlices
+    userByTin: firstStepSlices,
+    createColocation: createColocationSlices,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false})
 })

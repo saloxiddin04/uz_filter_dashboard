@@ -3,9 +3,11 @@ import {Button, Header, Input, Loader} from "../../../components";
 import {useStateContext} from "../../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {getUserByTin, getMfo} from "../../../redux/slices/contractCreate/FirstStepSlices";
+import {useNavigate} from "react-router-dom";
 
-const FirstStep = () => {
+const FirstStep = ({setCurrentStep}) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {userByTin, loading} = useSelector((state) => state.userByTin);
 
@@ -37,6 +39,14 @@ const FirstStep = () => {
   const [email, setEmail] = useState('')
   const [pport_no, setPportNo] = useState('')
   const [pinfl, setPinfl] = useState('')
+
+  const validationJuridic = () => {
+    return stir === '' || name === '' || bank_mfo === '' || bank_name === '' || per_adr === '' || paymentAccount === '';
+  }
+
+  const validationPhysics = () => {
+    return first_name === '' || mid_name === '' || sur_name === '' || mob_phone_no === '' || email === '' || pport_no === '' || pinfl === ''
+  }
 
   const searchUserJuridic = () => {
     dispatch(getUserByTin({stir, client})).then((res) => {
@@ -77,8 +87,7 @@ const FirstStep = () => {
   if (loading) return <Loader/>
 
   return (
-    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
-      <Header category="Sahifa" title="Shartnomalar yaratish"/>
+    <>
       <div className={'w-[49%]'}>
         <label
           htmlFor="client"
@@ -248,6 +257,28 @@ const FirstStep = () => {
               type="email"
             />
           </div>
+          <div className="w-full flex items-center justify-between">
+            <div>
+              <button
+                className={'px-4 py-2 rounded'}
+                style={{
+                  color: currentColor,
+                  border: `1px solid ${currentColor}`
+                }}
+                onClick={() => navigate(-1)}
+              >
+                Bekor qilish
+              </button>
+            </div>
+            <button
+              className={`px-4 py-2 rounded text-white ${validationJuridic() ? 'opacity-50' : ''}`}
+              style={{backgroundColor: currentColor}}
+              onClick={() => setCurrentStep(2)}
+              disabled={validationJuridic()}
+            >
+              Keyingi
+            </button>
+          </div>
         </div>
       )}
       {client === 'fiz' && (
@@ -342,9 +373,31 @@ const FirstStep = () => {
               type={'email'}
             />
           </div>
+          <div className="w-full flex items-center justify-between">
+            <div>
+              <button
+                className={'px-4 py-2 rounded'}
+                style={{
+                  color: currentColor,
+                  border: `1px solid ${currentColor}`
+                }}
+                onClick={() => navigate(-1)}
+              >
+                Bekor qilish
+              </button>
+            </div>
+            <button
+              className={`px-4 py-2 rounded text-white ${validationPhysics() ? 'opacity-50' : ''}`}
+              style={{backgroundColor: currentColor}}
+              onClick={() => setCurrentStep(2)}
+              disabled={validationPhysics()}
+            >
+              Keyingi
+            </button>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
