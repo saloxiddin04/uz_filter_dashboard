@@ -126,7 +126,7 @@ const Login = () => {
         return null
     }
   }
-
+  
   return (
     <>
       <div className={'flex justify-center items-center h-screen bg-login-bg'}>
@@ -138,7 +138,7 @@ const Login = () => {
               openTab={openTab}
               setOpenTab={setOpenTab}
             />
-                <Logo/>
+            <Logo/>
           </div>
           {renderTypeLogin(openTab)}
           <div className={'flex justify-center mt-5 border-t-white border-t pt-2'}>
