@@ -15,7 +15,6 @@ export const routes = [
   { path: '/dashboard', element: Dashboard },
   { path: '/profile', element: Profile },
 
-  // { path: '/shartnomalar', element: Contracts },
   { path: '/shartnomalar/:slug', element: Contracts },
   { path: '/shartnomalar/:slug/:id', element: ContractDetail },
 
