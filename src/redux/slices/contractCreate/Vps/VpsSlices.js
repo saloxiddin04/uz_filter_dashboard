@@ -76,6 +76,25 @@ export const postVpsCalculate = createAsyncThunk(
   }
 )
 
+export const postSignedVpsContract = createAsyncThunk(
+  "vps/postSignedVpsContract",
+  async (data) => {
+    try {
+      const response = await instance.post(`/vps/premade-contract-create`, data, {
+        headers: {
+          "Content-type": 'multipart/form-data'
+        }
+      })
+      if (response.status === 201) {
+        toast.success('Shartnoma saqlandi')
+      }
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const createVpsSlice = createSlice({
   name: 'vps',
   initialState,
@@ -150,6 +169,18 @@ const createVpsSlice = createSlice({
       state.loading = false
       state.error = payload
       state.vpsDocument = null
+    })
+
+    // postSignedVpsContract
+    builder.addCase(postSignedVpsContract.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(postSignedVpsContract.fulfilled, (state, {payload}) => {
+      state.loading = false
+    })
+    builder.addCase(postSignedVpsContract.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
     })
   }
 })

@@ -8,12 +8,13 @@ import {
   clearStatesVps, createVps,
   getOperationSystems,
   getOperationSystemsDetail,
-  getVpsTariff,
+  getVpsTariff, postSignedVpsContract,
   postVpsCalculate
 } from "../../../redux/slices/contractCreate/Vps/VpsSlices";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {toast} from "react-toastify";
 import moment from "moment/moment";
+import instance from "../../../API";
 
 const CreateVps = () => {
   const dispatch = useDispatch();
@@ -119,7 +120,7 @@ const CreateVps = () => {
   const [file, setFile] = useState(null)
   const [fileName, setFileName] = useState('')
 
-  const [contract_date, setContractDate] = useState(null)
+  const [contract_date, setContractDate] = useState('')
 
   const [server, setServer] = useState([
     {
@@ -157,7 +158,13 @@ const CreateVps = () => {
     if (!handleSecondValidateForCalculate()) {
       postBilling(server)
     }
-  }, [server, tp_id]);
+  }, [server, tp_id, typeContract, vpsContractNum, fileName]);
+
+  useEffect(() => {
+    if (typeContract === '2') {
+      getVpsContractNumber().then()
+    }
+  }, [typeContract]);
 
   const handleServerAdd = () => {
     const abc = [...server, {
@@ -469,6 +476,64 @@ const CreateVps = () => {
     }
 
     return false;
+  }
+
+  const postSignedContract = () => {
+    const formDataFiz = new FormData()
+    const client_user_fiz = {
+      user_type: 1,
+      pin_or_tin: pinfl,
+      tp_id: Number(tp_id),
+      first_name,
+      mid_name,
+      sur_name,
+      per_adr,
+      mob_phone_no,
+      email,
+      pport_no,
+      pin: pinfl,
+    }
+    const client_user_yur = {
+      user_type: 2,
+      pin_or_tin: stir,
+      tp_id: Number(tp_id),
+      name,
+      per_adr,
+      director_middlename,
+      director_firstname,
+      director_lastname,
+      bank_mfo,
+      paymentAccount,
+      xxtut,
+      ktut,
+      oked,
+      position,
+      tin: stir,
+    }
+
+    formDataFiz.append(
+      'client_user',
+      userByTin?.bank_mfo ? JSON.stringify(client_user_yur) : JSON.stringify(client_user_fiz),
+    )
+    formDataFiz.append('service', 18)
+    formDataFiz.append('tp_id', Number(tp_id))
+    formDataFiz.append('configuration', JSON.stringify(server))
+    formDataFiz.append(
+      'contract_date',
+      moment(contract_date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ'),
+    )
+    formDataFiz.append('file_pdf', null)
+    formDataFiz.append('with_word', false)
+    formDataFiz.append('file', file)
+    formDataFiz.append('contract_number', vpsContractNum)
+    formDataFiz.append('hash_code', null)
+
+    dispatch(postSignedVpsContract(formDataFiz)).then(() => dispatch(clearStatesVps()))
+  }
+
+  const getVpsContractNumber = async () => {
+    const response = await instance.get(`/vps/get-valid-contract-num/${18}?pin_or_tin=${userByTin?.bank_mfo ? stir : pinfl}`)
+    setVpsContractNumber(response?.data?.contract_number)
   }
 
   const reducedObject = vpsCalculate?.configurations_prices?.reduce((accumulator, item) => {
@@ -853,249 +918,257 @@ const CreateVps = () => {
                     <option value="999">AUTO</option>
                   </select>
                 </div>
-                <div className={'w-full flex items-center justify-between flex-wrap gap-4 mt-4'}>
-                  <div className="ml-2 font-bold w-full">Shartnoma malumotlari</div>
-                  {server && server?.map((data, index) => (
-                    <div key={index} className="border rounded p-3 w-full flex flex-col gap-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-bold text-2xl">Konfiguratsiya {index + 1}</h3>
-                        {data.billing_status !== 3 && (
-                          <div>
-                            <button
-                              onClick={() => handleServerDelete(index)}
-                              disabled={data.length === 1}
-                            >
-                              <TrashIcon
-                                color={currentColor}
-                                className="size-6 cursor-pointer"
-                              />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        {data.account_id === null && (
-                          <div className={'w-full mb-2'}>
-                            <label
-                              htmlFor="tariff"
-                              className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
-                            >
-                              Tarif
-                            </label>
-                            <select
-                              id="tariff"
-                              className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
-                              name='tariff'
-                              value={data.tariff || ''}
-                              onChange={(e) => changeServer(e, index)}
-                            >
-                              <option value={''}>Tanlash</option>
-                              {vpsTariffs && vpsTariffs.map((item) => (
-                                <option key={item.id} value={item.id}>{item.tariff_name}</option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-                        {
-                          data.billing_status !== 3 && (
-                            <div className="flex flex-wrap items-center justify-between gap-2">
-                              {data && (
-                                server[index].vm_systems?.map((element, i) => (
-                                  <div key={i} className="flex justify-between items-start gap-4 w-full">
-                                    <div className="w-[49%] flex flex-col">
-                                      <label
-                                        className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                                        htmlFor="vm_name"
-                                      >
-                                        VM: Nomini kiriting {i + 1}
-                                      </label>
-                                      <input
-                                        disabled={data.account_id !== null}
-                                        type="text"
-                                        id={'vm_name'}
-                                        name={'vm_name'}
-                                        value={element.vm_name}
-                                        onChange={(e) => changeServerNum(e, i, index)}
-                                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                                      />
-                                      <div>
+                <div className="w-full flex items-center justify-between">
+                  <div className={'w-[79%] flex items-center justify-between flex-wrap gap-4 mt-4'}>
+                    <div className="ml-2 font-bold w-full">Shartnoma malumotlari</div>
+                    {server && server?.map((data, index) => (
+                      <div key={index} className="border rounded p-3 w-full flex flex-col gap-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-bold text-2xl">Konfiguratsiya {index + 1}</h3>
+                          {data.billing_status !== 3 && (
+                            <div>
+                              <button
+                                onClick={() => handleServerDelete(index)}
+                                disabled={data.length === 1}
+                              >
+                                <TrashIcon
+                                  color={currentColor}
+                                  className="size-6 cursor-pointer"
+                                />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          {data.account_id === null && (
+                            <div className={'w-full mb-2'}>
+                              <label
+                                htmlFor="tariff"
+                                className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                              >
+                                Tarif
+                              </label>
+                              <select
+                                id="tariff"
+                                className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                                name='tariff'
+                                value={data.tariff || ''}
+                                onChange={(e) => changeServer(e, index)}
+                              >
+                                <option value={''}>Tanlash</option>
+                                {vpsTariffs && vpsTariffs.map((item) => (
+                                  <option key={item.id} value={item.id}>{item.tariff_name}</option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                          {
+                            data.billing_status !== 3 && (
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                {data && (
+                                  server[index].vm_systems?.map((element, i) => (
+                                    <div key={i} className="flex justify-between items-start gap-4 w-full">
+                                      <div className="w-[49%] flex flex-col">
+                                        <label
+                                          className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                          htmlFor="vm_name"
+                                        >
+                                          VM: Nomini kiriting {i + 1}
+                                        </label>
                                         <input
-                                          type="checkbox"
+                                          disabled={data.account_id !== null}
+                                          type="text"
+                                          id={'vm_name'}
+                                          name={'vm_name'}
+                                          value={element.vm_name}
                                           onChange={(e) => changeServerNum(e, i, index)}
-                                          checked={element.ipv_address}
-                                          disabled={(data?.tariff !== null || data?.tariff === '')}
-                                          name="ipv_address"
-                                          className="w-[5%] mr-2"
+                                          className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
                                         />
-                                        <label className="w-2/4">Static ip address</label>
+                                        <div>
+                                          <input
+                                            type="checkbox"
+                                            onChange={(e) => changeServerNum(e, i, index)}
+                                            checked={element.ipv_address}
+                                            disabled={(data?.tariff !== null || data?.tariff === '')}
+                                            name="ipv_address"
+                                            className="w-[5%] mr-2"
+                                          />
+                                          <label className="w-2/4">Static ip address</label>
+                                        </div>
+                                      </div>
+                                      <div className="w-[49%] flex items-center justify-between">
+                                        <div className="flex flex-col w-[49%]">
+                                          <label htmlFor="version">VM: Operatsion tizim</label>
+                                          <select
+                                            className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                                            id="version"
+                                            name='os_type'
+                                            disabled={data?.account_id}
+                                            value={data?.os_type_id || ""}
+                                            onChange={(e) => changeServer(e, index)}
+                                          >
+                                            <option value="" disabled={data?.os_type_id !== ''}>Tanlash...</option>
+                                            {operationSystems && operationSystems.map((el) => (
+                                              <option key={el?.os_type_id} value={el.os_type_id}>{el.name}</option>
+                                            ))}
+                                          </select>
+                                        </div>
+                                        <div className="flex flex-col w-[49%]">
+                                          <label htmlFor="version">Operatsion tizim versiyasi</label>
+                                          <select
+                                            className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                                            id="version"
+                                            name='image_id'
+                                            disabled={operationSystemsDetail?.length === 0 || data?.account_id}
+                                            value={data?.image_id || ''}
+                                            onChange={(e) => {
+                                              changeServer(e, index)
+                                              // dispatch(getOperationSystemsDetail(access, data.image_id))
+                                            }}
+                                          >
+                                            <option value="" disabled={data?.image_id !== ''}>Tanlash...</option>
+                                            {operationSystemsDetail && operationSystemsDetail.map((el) => (
+                                              el.os_type_id === data?.os_type_id &&
+                                              <option key={el?.image_id} value={el.image_id}>{el.name}</option>
+                                            ))}
+                                          </select>
+                                        </div>
                                       </div>
                                     </div>
-                                    <div className="w-[49%] flex items-center justify-between">
-                                      <div className="flex flex-col w-[49%]">
-                                        <label htmlFor="version">VM: Operatsion tizim</label>
-                                        <select
-                                          className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
-                                          id="version"
-                                          name='os_type'
-                                          disabled={data?.account_id}
-                                          value={data?.os_type_id || ""}
-                                          onChange={(e) => changeServer(e, index)}
-                                        >
-                                          <option value="" disabled={data?.os_type_id !== ''}>Tanlash...</option>
-                                          {operationSystems && operationSystems.map((el) => (
-                                            <option key={el?.os_type_id} value={el.os_type_id}>{el.name}</option>
-                                          ))}
-                                        </select>
-                                      </div>
-                                      <div className="flex flex-col w-[49%]">
-                                        <label htmlFor="version">Operatsion tizim versiyasi</label>
-                                        <select
-                                          className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
-                                          id="version"
-                                          name='image_id'
-                                          disabled={operationSystemsDetail?.length === 0 || data?.account_id}
-                                          value={data?.image_id || ''}
-                                          onChange={(e) => {
-                                            changeServer(e, index)
-                                            // dispatch(getOperationSystemsDetail(access, data.image_id))
-                                          }}
-                                        >
-                                          <option value="" disabled={data?.image_id !== ''}>Tanlash...</option>
-                                          {operationSystemsDetail && operationSystemsDetail.map((el) => (
-                                            el.os_type_id === data?.os_type_id &&
-                                            <option key={el?.image_id} value={el.image_id}>{el.name}</option>
-                                          ))}
-                                        </select>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-                              )}
-                              <div className="flex flex-col mt-2 w-[49%]">
-                                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="cpu">CPU
-                                  (CORE)</label>
-                                <input
-                                  disabled={data.tariff !== null}
-                                  name="cpu"
-                                  id="cpu"
-                                  type={'text'}
-                                  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                                  placeholder={'CPU'}
-                                  value={data.cpu || ''}
-                                  onChange={(e) => changeServer(e, index)}
-                                />
-                                {operationSystemsDetail && Number(data.cpu) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu) && Number(data.cpu) < Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu) && (
-                                  <label className="text-red-500" htmlFor="cpu">
-                                    *
-                                    Minimum {Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu)} (CORE)
-                                  </label>
+                                  ))
                                 )}
-                              </div>
-                              <div className="flex flex-col mt-2 w-[49%]">
-                                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="ram">RAM (GB)</label>
-                                <input
-                                  disabled={data.tariff !== null}
-                                  name="ram"
-                                  id="ram"
-                                  type={'text'}
-                                  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                                  placeholder={'RAM'}
-                                  value={data.ram || ''}
-                                  onChange={(e) => changeServer(e, index)}
-                                />
-                                {operationSystemsDetail && Number(data.ram) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram) && Number(data.ram) < (Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram)) && (
-                                  <label className="text-red-500" htmlFor="ram">
-                                    *
-                                    Minimum {(Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram))} (GB)
-                                  </label>
-                                )}
-                              </div>
-                              <div className="w-[49%] flex justify-between flex-col mt-2" id={'dataSaved'}>
-                                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="dataSaved">Operatsion
-                                  sistema (GB)</label>
-                                <div>
-                                  <select
+                                <div className="flex flex-col mt-2 w-[49%]">
+                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="cpu">CPU
+                                    (CORE)</label>
+                                  <input
                                     disabled={data.tariff !== null}
-                                    name="system_storage"
-                                    value={data.system_storage || ''}
+                                    name="cpu"
+                                    id="cpu"
+                                    type={'text'}
+                                    className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                    placeholder={'CPU'}
+                                    value={data.cpu || ''}
                                     onChange={(e) => changeServer(e, index)}
-                                    className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
-                                  >
-                                    <option value="">Tanlang...</option>
-                                    <option value="hdd">HDD</option>
-                                    <option value="ssd">SSD</option>
-                                  </select>
-                                  <div className="flex justify-between w-full">
-                                    {data.system_storage && (
-                                      <input
-                                        placeholder={data.system_storage.toUpperCase()}
-                                        name="system_storage_disk"
-                                        value={data.system_storage_disk || ''}
-                                        disabled={data.tariff !== null}
-                                        onChange={(e) => changeServer(e, index)}
-                                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                                        id="type"
-                                        type={'text'}
-                                      />
-                                    )}
-                                  </div>
+                                  />
+                                  {operationSystemsDetail && Number(data.cpu) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu) && Number(data.cpu) < Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu) && (
+                                    <label className="text-red-500" htmlFor="cpu">
+                                      *
+                                      Minimum {Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu)} (CORE)
+                                    </label>
+                                  )}
                                 </div>
-                                {operationSystemsDetail && Number(data.system_storage_disk) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk) && (Number(data.system_storage_disk)) < (Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk)) && (
-                                  <label className="text-red-500" htmlFor="cpu">
-                                    *
-                                    Minimum {(Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk))} (GB)
-                                  </label>
-                                )}
-                                {Number(data?.system_storage_disk) > 4096 && (
-                                  <label className="text-red-500" htmlFor="cpu">
-                                    * Maksimal qiymat 4096 GB. Ko&apos;proq qo&apos;shish uchun yangi disk yarating
-                                  </label>
-                                )}
-                              </div>
-                              <div className="w-[49%] flex justify-between flex-col mt-2">
-                                {data.vm_systems[0].ipv_address && (
-                                  <>
-                                    <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="internet">Internet(МИР)
-                                      (mbit/s)</label>
-                                    <input
+                                <div className="flex flex-col mt-2 w-[49%]">
+                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="ram">RAM
+                                    (GB)</label>
+                                  <input
+                                    disabled={data.tariff !== null}
+                                    name="ram"
+                                    id="ram"
+                                    type={'text'}
+                                    className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                    placeholder={'RAM'}
+                                    value={data.ram || ''}
+                                    onChange={(e) => changeServer(e, index)}
+                                  />
+                                  {operationSystemsDetail && Number(data.ram) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram) && Number(data.ram) < (Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram)) && (
+                                    <label className="text-red-500" htmlFor="ram">
+                                      *
+                                      Minimum {(Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram))} (GB)
+                                    </label>
+                                  )}
+                                </div>
+                                <div className="w-[49%] flex justify-between flex-col mt-2" id={'dataSaved'}>
+                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="dataSaved">Operatsion
+                                    sistema (GB)</label>
+                                  <div>
+                                    <select
                                       disabled={data.tariff !== null}
-                                      name="internet"
-                                      value={data.internet || ''}
+                                      name="system_storage"
+                                      value={data.system_storage || ''}
                                       onChange={(e) => changeServer(e, index)}
-                                      className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                                      type={'text'}
-                                      id="internet"
-                                    />
-                                    {Number(data.internet) > 10 && (
-                                      <label htmlFor="tasIx" className="text-green-500">
-                                        *10 (mbit/s) gacha bepul
-                                      </label>
-                                    )}
-
-                                    <div className="w-full flex flex-col mt-2">
-                                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="tasIx">TAS-IX/UZ-IX
+                                      className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                                    >
+                                      <option value="">Tanlang...</option>
+                                      <option value="hdd">HDD</option>
+                                      <option value="ssd">SSD</option>
+                                    </select>
+                                    <div className="flex justify-between w-full">
+                                      {data.system_storage && (
+                                        <input
+                                          placeholder={data.system_storage.toUpperCase()}
+                                          name="system_storage_disk"
+                                          value={data.system_storage_disk || ''}
+                                          disabled={data.tariff !== null}
+                                          onChange={(e) => changeServer(e, index)}
+                                          className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                          id="type"
+                                          type={'text'}
+                                        />
+                                      )}
+                                    </div>
+                                  </div>
+                                  {operationSystemsDetail && Number(data.system_storage_disk) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk) && (Number(data.system_storage_disk)) < (Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk)) && (
+                                    <label className="text-red-500" htmlFor="cpu">
+                                      *
+                                      Minimum {(Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk))} (GB)
+                                    </label>
+                                  )}
+                                  {Number(data?.system_storage_disk) > 4096 && (
+                                    <label className="text-red-500" htmlFor="cpu">
+                                      * Maksimal qiymat 4096 GB. Ko&apos;proq qo&apos;shish uchun yangi disk yarating
+                                    </label>
+                                  )}
+                                </div>
+                                <div className="w-[49%] flex justify-between flex-col mt-2">
+                                  {data.vm_systems[0].ipv_address && (
+                                    <>
+                                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                             htmlFor="internet"
+                                      >Internet(МИР)
                                         (mbit/s)</label>
                                       <input
                                         disabled={data.tariff !== null}
-                                        name="tasix"
-                                        value={data.tasix || ''}
+                                        name="internet"
+                                        value={data.internet || ''}
                                         onChange={(e) => changeServer(e, index)}
                                         className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                                        id="tasIx"
                                         type={'text'}
+                                        id="internet"
                                       />
-                                      {Number(data.tasix) > 100 && (
+                                      {Number(data.internet) > 10 && (
                                         <label htmlFor="tasIx" className="text-green-500">
-                                          *100 (mbit/s) gacha bepul
+                                          *10 (mbit/s) gacha bepul
                                         </label>
                                       )}
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                              <div className="w-[49%] flex justify-between flex-col mt-2">
+
+                                      <div className="w-full flex flex-col mt-2">
+                                        <label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                               htmlFor="tasIx"
+                                        >TAS-IX/UZ-IX
+                                          (mbit/s)</label>
+                                        <input
+                                          disabled={data.tariff !== null}
+                                          name="tasix"
+                                          value={data.tasix || ''}
+                                          onChange={(e) => changeServer(e, index)}
+                                          className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                          id="tasIx"
+                                          type={'text'}
+                                        />
+                                        {Number(data.tasix) > 100 && (
+                                          <label htmlFor="tasIx" className="text-green-500">
+                                            *100 (mbit/s) gacha bepul
+                                          </label>
+                                        )}
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                                <div className="w-[49%] flex justify-between flex-col mt-2">
                                 <span className="flex items-center gap-4 mb-2">
-                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="dataSaved">Malumotlarni saqlash (GB)</label>
+                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                         htmlFor="dataSaved"
+                                  >Malumotlarni saqlash (GB)</label>
                                   <button
                                     className={`rounded-full py-1.5 px-3 bg-inherit border ${(data.tariff !== null ? true : handleSecondValidate()) ? 'opacity-25' : ''}`}
                                     disabled={data.tariff !== null ? true : handleSecondValidate()}
@@ -1104,72 +1177,157 @@ const CreateVps = () => {
                                     +
                                   </button>
                                 </span>
-                                {server[index]?.data_disks?.map((disk, diskIndex) => (
-                                  disk.status !== 3 && (
-                                    <div key={diskIndex}>
-                                      <div className="flex items-center gap-4">
-                                        <select
-                                          disabled={data.tariff !== null}
-                                          className="w-4/5 px-3 py-2 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                                          name="storage"
-                                          value={disk.storage || ''}
-                                          onChange={(e) => changeDisks(e, index, diskIndex)}
-                                        >
-                                          <option value="">Tanlang...</option>
-                                          <option value="ssd">SSD</option>
-                                          <option value="hdd">HDD</option>
-                                        </select>
-                                        <div>
-                                          <button
-                                            className={`rounded-full py-1.5 px-3 bg-inherit border ${(data.tariff !== null ? true : handleValidateStorages()) ? "opacity-25" : ''}`}
-                                            onClick={() => disksDelete(index, diskIndex)}
-                                            disabled={data.tariff !== null ? true : handleValidateStorages()}
+                                  {server[index]?.data_disks?.map((disk, diskIndex) => (
+                                    disk.status !== 3 && (
+                                      <div key={diskIndex}>
+                                        <div className="flex items-center gap-4">
+                                          <select
+                                            disabled={data.tariff !== null}
+                                            className="w-4/5 px-3 py-2 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                            name="storage"
+                                            value={disk.storage || ''}
+                                            onChange={(e) => changeDisks(e, index, diskIndex)}
                                           >
-                                            -
-                                          </button>
+                                            <option value="">Tanlang...</option>
+                                            <option value="ssd">SSD</option>
+                                            <option value="hdd">HDD</option>
+                                          </select>
+                                          <div>
+                                            <button
+                                              className={`rounded-full py-1.5 px-3 bg-inherit border ${(data.tariff !== null ? true : handleValidateStorages()) ? "opacity-25" : ''}`}
+                                              onClick={() => disksDelete(index, diskIndex)}
+                                              disabled={data.tariff !== null ? true : handleValidateStorages()}
+                                            >
+                                              -
+                                            </button>
+                                          </div>
                                         </div>
+                                        {disk.storage && (
+                                          <input
+                                            disabled={data.tariff !== null}
+                                            placeholder={disk.storage.toUpperCase() || ''}
+                                            name='storage_disk'
+                                            value={disk.storage_disk || ""}
+                                            onChange={(e) => changeDisks(e, index, diskIndex)}
+                                            className="rounded w-4/5 py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                            id='type'
+                                            type={"text"}
+                                          />
+                                        )}
+                                        {Number(disk?.storage_disk) > 4096 && (
+                                          <label style={{color: 'red'}} htmlFor="cpu">
+                                            * Maksimal qiymat 4096 GB. Ko&apos;proq qo&apos;shish uchun yangi disk
+                                            yarating
+                                          </label>
+                                        )}
                                       </div>
-                                      {disk.storage && (
-                                        <input
-                                          disabled={data.tariff !== null}
-                                          placeholder={disk.storage.toUpperCase() || ''}
-                                          name='storage_disk'
-                                          value={disk.storage_disk || ""}
-                                          onChange={(e) => changeDisks(e, index, diskIndex)}
-                                          className="rounded w-4/5 py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                                          id='type'
-                                          type={"text"}
-                                        />
-                                      )}
-                                      {Number(disk?.storage_disk) > 4096 && (
-                                        <label style={{color: 'red'}} htmlFor="cpu">
-                                          * Maksimal qiymat 4096 GB. Ko&apos;proq qo&apos;shish uchun yangi disk
-                                          yarating
-                                        </label>
-                                      )}
-                                    </div>
-                                  )
-                                ))}
+                                    )
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          )
-                        }
+                            )
+                          }
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="w-[20%] border rounded p-3">
+                    <h3 className="font-bold">Serverlar</h3>
+                    <div className="text-red-500 mb-2">
+                      {vpsCalculate?.success === false && vpsCalculate?.err_msg}
+                    </div>
+                    <div className="mb-8">
+                      {vpsCalculate?.device_price_type === 'Standard' &&
+                        <h4 className={'text-red-500'}>
+                          Jami 10dan kop yadro uchun, 15% chegirma bilan:
+                        </h4>
+                      }
+                      {vpsCalculate?.device_price_type === 'Pro' &&
+                        <h4 className={'text-red-500'}>
+                          Jami 100dan kop yadro uchun, 25% chegirma bilan:
+                        </h4>
+                      }
+                    </div>
+
+                    {
+                      server.map((data, index) => (
+                        data.billing_status !== 3 && (
+                          <div className="server_conf" key={index}>
+
+                            {Number(data?.cpu) !== 1 && Number(data?.cpu) % 2 !== 0 &&
+                              <h4
+                                className={'text-red-500 mb-4'}
+                              >
+                                Xar bir virtual serverda yadrolar soni juft bo‘lishi lozim
+                              </h4>
+                            }
+                          </div>
+                        )
+                      ))
+                    }
+
+                    <div className="server_conf">
+                      <>
+                        <div className="flex justify-between">
+                          <h4 className="text-2xl mb-2">Konfiguratsiya</h4>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>CPU</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.cpu} so&apos;m</p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>RAM</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.ram} so&apos;m</p>
+                        </div>
+                        {reducedObject?.ssd_price ? (
+                          <div className="flex justify-between">
+                            <p>SSD</p>
+                            <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.ssd_price} so&apos;m</p>
+                          </div>
+                        ) : (
+                          <div className="flex justify-between">
+                            <p>HDD</p>
+                            <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.hdd_price} so&apos;m</p>
+                          </div>
+                        )}
+
+                        <div className="flex justify-between">
+                          <p>{'DISK'}</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.additional_disks} so&apos;m</p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>IP</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.ipv_address_price} so&apos;m</p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>INTERNET</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.internet} so&apos;m</p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>TASIX</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.tasix} so&apos;m</p>
+                        </div>
+                      </>
+                      <div className="flex justify-between">
+                        <p>JAMI:</p>
+                        <p>{vpsCalculate?.success && vpsCalculate?.configurations_total_price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so&apos;m/oy</p>
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
                 <div className="w-full text-center mt-2">
                   <button
                     className={`px-3 py-2 rounded text-white ${handleSecondValidate() ? 'opacity-25' : ''}`}
                     style={{backgroundColor: currentColor}}
                     onClick={handleServerAdd}
+                    disabled={handleSecondValidate()}
                   >
                     Qo'shish
                   </button>
                 </div>
                 <div className="w-full flex items-center justify-between mt-2">
                   <button
-                    className={`px-3 py-2 rounded text-white ${handleSecondValidate() ? 'opacity-25' : ''}`}
+                    className={`px-3 py-2 rounded text-white`}
                     style={{color: currentColor, border: `1px solid ${currentColor}`}}
                     onClick={() => setCurrentStep(1)}
                   >
@@ -1178,6 +1336,7 @@ const CreateVps = () => {
                   <button
                     className={`px-3 py-2 rounded text-white ${handleSecondValidate() ? 'opacity-25' : ''}`}
                     style={{backgroundColor: currentColor}}
+                    disabled={handleSecondValidate()}
                     onClick={async () => {
                       try {
                         await dispatch(createVps({
@@ -1196,6 +1355,511 @@ const CreateVps = () => {
                     }}
                   >
                     Keyingi
+                  </button>
+                </div>
+              </>
+            )}
+            {typeContract === '2' && (
+              <>
+                <div className="w-2/4 my-2">
+                  <label
+                    htmlFor="type"
+                    className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                  >
+                    Shartnoma turi
+                  </label>
+                  <select
+                    name="type"
+                    id="type"
+                    className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                    value={tp_id}
+                    onChange={(e) => {
+                      setTpId(e.target.value)
+                    }}
+                  >
+                    <option value="" disabled={tp_id}>Tanlang</option>
+                    <option value="0">FREE</option>
+                    <option value="1">START</option>
+                    <option value="2">STANDARD</option>
+                    <option value="3">PRO</option>
+                    <option value="4">MAX</option>
+                    <option value="999">AUTO</option>
+                  </select>
+                </div>
+                <div className="w-11/12 my-2 flex items-center">
+                  <div className="w-2/4">
+                    <label
+                      htmlFor="contract_number"
+                      className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                    >
+                      Shartnoma raqami
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <input
+                        id="contract_number"
+                        type={'text'}
+                        className="rounded w-[65%] py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                        placeholder={'Shartnoma raqam'}
+                        value={vpsContractNum || ''}
+                        onChange={(e) => setVpsContractNumber(e.target.value)}
+                      />
+                      <button
+                        className={`px-4 py-2 rounded text-white`}
+                        style={{backgroundColor: currentColor}}
+                        onClick={getVpsContractNumber}
+                      >
+                        Raqam olish
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col w-4/5">
+                    <label className={'block text-gray-700 text-sm font-bold mb-1 ml-3'} htmlFor="contract_date">Shartnoma sanasi</label>
+                    <input
+                      id="contract_date"
+                      type={'date'}
+                      className="rounded w-[45%] py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                      placeholder={'Shartnoma sanasi'}
+                      value={contract_date || ''}
+                      onChange={(e) => setContractDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="w-full flex items-center justify-between">
+                  <div className={'w-[79%] flex items-center justify-between flex-wrap gap-4 mt-4'}>
+                    <div className="ml-2 font-bold w-full">Shartnoma malumotlari</div>
+                    {server && server?.map((data, index) => (
+                      <div key={index} className="border rounded p-3 w-full flex flex-col gap-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-bold text-2xl">Konfiguratsiya {index + 1}</h3>
+                          {data.billing_status !== 3 && (
+                            <div>
+                              <button
+                                onClick={() => handleServerDelete(index)}
+                                disabled={data.length === 1}
+                              >
+                                <TrashIcon
+                                  color={currentColor}
+                                  className="size-6 cursor-pointer"
+                                />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          {data.account_id === null && (
+                            <div className={'w-full mb-2'}>
+                              <label
+                                htmlFor="tariff"
+                                className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                              >
+                                Tarif
+                              </label>
+                              <select
+                                id="tariff"
+                                className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                                name='tariff'
+                                value={data.tariff || ''}
+                                onChange={(e) => changeServer(e, index)}
+                              >
+                                <option value={''}>Tanlash</option>
+                                {vpsTariffs && vpsTariffs.map((item) => (
+                                  <option key={item.id} value={item.id}>{item.tariff_name}</option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                          {
+                            data.billing_status !== 3 && (
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                {data && (
+                                  server[index].vm_systems?.map((element, i) => (
+                                    <div key={i} className="flex justify-between items-start gap-4 w-full">
+                                      <div className="w-[49%] flex flex-col">
+                                        <label
+                                          className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                          htmlFor="vm_name"
+                                        >
+                                          VM: Nomini kiriting {i + 1}
+                                        </label>
+                                        <input
+                                          disabled={data.account_id !== null}
+                                          type="text"
+                                          id={'vm_name'}
+                                          name={'vm_name'}
+                                          value={element.vm_name}
+                                          onChange={(e) => changeServerNum(e, i, index)}
+                                          className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                        />
+                                        <div>
+                                          <input
+                                            type="checkbox"
+                                            onChange={(e) => changeServerNum(e, i, index)}
+                                            checked={element.ipv_address}
+                                            disabled={(data?.tariff !== null || data?.tariff === '')}
+                                            name="ipv_address"
+                                            className="w-[5%] mr-2"
+                                          />
+                                          <label className="w-2/4">Static ip address</label>
+                                        </div>
+                                      </div>
+                                      <div className="w-[49%] flex items-center justify-between">
+                                        <div className="flex flex-col w-[49%]">
+                                          <label htmlFor="version">VM: Operatsion tizim</label>
+                                          <select
+                                            className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                                            id="version"
+                                            name='os_type'
+                                            disabled={data?.account_id}
+                                            value={data?.os_type_id || ""}
+                                            onChange={(e) => changeServer(e, index)}
+                                          >
+                                            <option value="" disabled={data?.os_type_id !== ''}>Tanlash...</option>
+                                            {operationSystems && operationSystems.map((el) => (
+                                              <option key={el?.os_type_id} value={el.os_type_id}>{el.name}</option>
+                                            ))}
+                                          </select>
+                                        </div>
+                                        <div className="flex flex-col w-[49%]">
+                                          <label htmlFor="version">Operatsion tizim versiyasi</label>
+                                          <select
+                                            className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                                            id="version"
+                                            name='image_id'
+                                            disabled={operationSystemsDetail?.length === 0 || data?.account_id}
+                                            value={data?.image_id || ''}
+                                            onChange={(e) => {
+                                              changeServer(e, index)
+                                              // dispatch(getOperationSystemsDetail(access, data.image_id))
+                                            }}
+                                          >
+                                            <option value="" disabled={data?.image_id !== ''}>Tanlash...</option>
+                                            {operationSystemsDetail && operationSystemsDetail.map((el) => (
+                                              el.os_type_id === data?.os_type_id &&
+                                              <option key={el?.image_id} value={el.image_id}>{el.name}</option>
+                                            ))}
+                                          </select>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))
+                                )}
+                                <div className="flex flex-col mt-2 w-[49%]">
+                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="cpu">CPU
+                                    (CORE)</label>
+                                  <input
+                                    disabled={data.tariff !== null}
+                                    name="cpu"
+                                    id="cpu"
+                                    type={'text'}
+                                    className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                    placeholder={'CPU'}
+                                    value={data.cpu || ''}
+                                    onChange={(e) => changeServer(e, index)}
+                                  />
+                                  {operationSystemsDetail && Number(data.cpu) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu) && Number(data.cpu) < Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu) && (
+                                    <label className="text-red-500" htmlFor="cpu">
+                                      *
+                                      Minimum {Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_cpu)} (CORE)
+                                    </label>
+                                  )}
+                                </div>
+                                <div className="flex flex-col mt-2 w-[49%]">
+                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="ram">RAM
+                                    (GB)</label>
+                                  <input
+                                    disabled={data.tariff !== null}
+                                    name="ram"
+                                    id="ram"
+                                    type={'text'}
+                                    className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                    placeholder={'RAM'}
+                                    value={data.ram || ''}
+                                    onChange={(e) => changeServer(e, index)}
+                                  />
+                                  {operationSystemsDetail && Number(data.ram) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram) && Number(data.ram) < (Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram)) && (
+                                    <label className="text-red-500" htmlFor="ram">
+                                      *
+                                      Minimum {(Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_ram))} (GB)
+                                    </label>
+                                  )}
+                                </div>
+                                <div className="w-[49%] flex justify-between flex-col mt-2" id={'dataSaved'}>
+                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="dataSaved">Operatsion
+                                    sistema (GB)</label>
+                                  <div>
+                                    <select
+                                      disabled={data.tariff !== null}
+                                      name="system_storage"
+                                      value={data.system_storage || ''}
+                                      onChange={(e) => changeServer(e, index)}
+                                      className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                                    >
+                                      <option value="">Tanlang...</option>
+                                      <option value="hdd">HDD</option>
+                                      <option value="ssd">SSD</option>
+                                    </select>
+                                    <div className="flex justify-between w-full">
+                                      {data.system_storage && (
+                                        <input
+                                          placeholder={data.system_storage.toUpperCase()}
+                                          name="system_storage_disk"
+                                          value={data.system_storage_disk || ''}
+                                          disabled={data.tariff !== null}
+                                          onChange={(e) => changeServer(e, index)}
+                                          className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                          id="type"
+                                          type={'text'}
+                                        />
+                                      )}
+                                    </div>
+                                  </div>
+                                  {operationSystemsDetail && Number(data.system_storage_disk) <= Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk) && (Number(data.system_storage_disk)) < (Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk)) && (
+                                    <label className="text-red-500" htmlFor="cpu">
+                                      *
+                                      Minimum {(Number(operationSystemsDetail.find(os => os.image_id === data.image_id)?.min_disk))} (GB)
+                                    </label>
+                                  )}
+                                  {Number(data?.system_storage_disk) > 4096 && (
+                                    <label className="text-red-500" htmlFor="cpu">
+                                      * Maksimal qiymat 4096 GB. Ko&apos;proq qo&apos;shish uchun yangi disk yarating
+                                    </label>
+                                  )}
+                                </div>
+                                <div className="w-[49%] flex justify-between flex-col mt-2">
+                                  {data.vm_systems[0].ipv_address && (
+                                    <>
+                                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                             htmlFor="internet"
+                                      >Internet(МИР)
+                                        (mbit/s)</label>
+                                      <input
+                                        disabled={data.tariff !== null}
+                                        name="internet"
+                                        value={data.internet || ''}
+                                        onChange={(e) => changeServer(e, index)}
+                                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                        type={'text'}
+                                        id="internet"
+                                      />
+                                      {Number(data.internet) > 10 && (
+                                        <label htmlFor="tasIx" className="text-green-500">
+                                          *10 (mbit/s) gacha bepul
+                                        </label>
+                                      )}
+
+                                      <div className="w-full flex flex-col mt-2">
+                                        <label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                               htmlFor="tasIx"
+                                        >TAS-IX/UZ-IX
+                                          (mbit/s)</label>
+                                        <input
+                                          disabled={data.tariff !== null}
+                                          name="tasix"
+                                          value={data.tasix || ''}
+                                          onChange={(e) => changeServer(e, index)}
+                                          className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                          id="tasIx"
+                                          type={'text'}
+                                        />
+                                        {Number(data.tasix) > 100 && (
+                                          <label htmlFor="tasIx" className="text-green-500">
+                                            *100 (mbit/s) gacha bepul
+                                          </label>
+                                        )}
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                                <div className="w-[49%] flex justify-between flex-col mt-2">
+                                <span className="flex items-center gap-4 mb-2">
+                                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                         htmlFor="dataSaved"
+                                  >Malumotlarni saqlash (GB)</label>
+                                  <button
+                                    className={`rounded-full py-1.5 px-3 bg-inherit border ${(data.tariff !== null ? true : handleSecondValidate()) ? 'opacity-25' : ''}`}
+                                    disabled={data.tariff !== null ? true : handleSecondValidate()}
+                                    onClick={() => addDisks(index)}
+                                  >
+                                    +
+                                  </button>
+                                </span>
+                                  {server[index]?.data_disks?.map((disk, diskIndex) => (
+                                    disk.status !== 3 && (
+                                      <div key={diskIndex}>
+                                        <div className="flex items-center gap-4">
+                                          <select
+                                            disabled={data.tariff !== null}
+                                            className="w-4/5 px-3 py-2 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                            name="storage"
+                                            value={disk.storage || ''}
+                                            onChange={(e) => changeDisks(e, index, diskIndex)}
+                                          >
+                                            <option value="">Tanlang...</option>
+                                            <option value="ssd">SSD</option>
+                                            <option value="hdd">HDD</option>
+                                          </select>
+                                          <div>
+                                            <button
+                                              className={`rounded-full py-1.5 px-3 bg-inherit border ${(data.tariff !== null ? true : handleValidateStorages()) ? "opacity-25" : ''}`}
+                                              onClick={() => disksDelete(index, diskIndex)}
+                                              disabled={data.tariff !== null ? true : handleValidateStorages()}
+                                            >
+                                              -
+                                            </button>
+                                          </div>
+                                        </div>
+                                        {disk.storage && (
+                                          <input
+                                            disabled={data.tariff !== null}
+                                            placeholder={disk.storage.toUpperCase() || ''}
+                                            name='storage_disk'
+                                            value={disk.storage_disk || ""}
+                                            onChange={(e) => changeDisks(e, index, diskIndex)}
+                                            className="rounded w-4/5 py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                                            id='type'
+                                            type={"text"}
+                                          />
+                                        )}
+                                        {Number(disk?.storage_disk) > 4096 && (
+                                          <label style={{color: 'red'}} htmlFor="cpu">
+                                            * Maksimal qiymat 4096 GB. Ko&apos;proq qo&apos;shish uchun yangi disk
+                                            yarating
+                                          </label>
+                                        )}
+                                      </div>
+                                    )
+                                  ))}
+                                </div>
+                              </div>
+                            )
+                          }
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="w-[20%] border rounded p-3">
+                    <h3 className="font-bold">Serverlar</h3>
+                    <div className="text-red-500 mb-2">
+                      {vpsCalculate?.success === false && vpsCalculate?.err_msg}
+                    </div>
+                    <div className="mb-8">
+                      {vpsCalculate?.device_price_type === 'Standard' &&
+                        <h4 className={'text-red-500'}>
+                          Jami 10dan kop yadro uchun, 15% chegirma bilan:
+                        </h4>
+                      }
+                      {vpsCalculate?.device_price_type === 'Pro' &&
+                        <h4 className={'text-red-500'}>
+                          Jami 100dan kop yadro uchun, 25% chegirma bilan:
+                        </h4>
+                      }
+                    </div>
+
+                    {
+                      server.map((data, index) => (
+                        data.billing_status !== 3 && (
+                          <div className="server_conf" key={index}>
+
+                            {Number(data?.cpu) !== 1 && Number(data?.cpu) % 2 !== 0 &&
+                              <h4
+                                className={'text-red-500 mb-4'}
+                              >
+                                Xar bir virtual serverda yadrolar soni juft bo‘lishi lozim
+                              </h4>
+                            }
+                          </div>
+                        )
+                      ))
+                    }
+
+                    <div className="server_conf">
+                      <>
+                        <div className="flex justify-between">
+                          <h4 className="text-2xl mb-2">Konfiguratsiya</h4>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>CPU</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.cpu} so&apos;m</p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>RAM</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.ram} so&apos;m</p>
+                        </div>
+                        {reducedObject?.ssd_price ? (
+                          <div className="flex justify-between">
+                            <p>SSD</p>
+                            <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.ssd_price} so&apos;m</p>
+                          </div>
+                        ) : (
+                          <div className="flex justify-between">
+                            <p>HDD</p>
+                            <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.hdd_price} so&apos;m</p>
+                          </div>
+                        )}
+
+                        <div className="flex justify-between">
+                          <p>{'DISK'}</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.additional_disks} so&apos;m</p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>IP</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.ipv_address_price} so&apos;m</p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>INTERNET</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.internet} so&apos;m</p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>TASIX</p>
+                          <p>{vpsCalculate?.success && vpsCalculate?.configurations_prices?.length !== 0 && reducedObject?.tasix} so&apos;m</p>
+                        </div>
+                      </>
+                      <div className="flex justify-between">
+                        <p>JAMI:</p>
+                        <p>{vpsCalculate?.success && vpsCalculate?.configurations_total_price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so&apos;m/oy</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full text-center mt-2">
+                  <button
+                    className={`px-3 py-2 rounded text-white ${handleSecondValidate() ? 'opacity-25' : ''}`}
+                    style={{backgroundColor: currentColor}}
+                    onClick={handleServerAdd}
+                    disabled={handleSecondValidate()}
+                  >
+                    Qo'shish
+                  </button>
+                </div>
+                <div className={'flex flex-col mt-4'}>
+                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="document">
+                    Hujjat
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      setFile(e.target.files[0]) || setFileName(e.target.files[0].name)
+                    }}
+                    name="document"
+                    id="document"
+                    type="file"
+                    className="rounded w-[79%] py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                </div>
+                <div className="w-full flex items-center justify-between mt-2">
+                  <button
+                    className={`px-3 py-2 rounded text-white`}
+                    style={{color: currentColor, border: `1px solid ${currentColor}`}}
+                    onClick={() => setCurrentStep(1)}
+                  >
+                    Orqaga
+                  </button>
+                  <button
+                    className={`px-3 py-2 rounded text-white ${handleSecondValidate() ? 'opacity-25' : ''}`}
+                    style={{backgroundColor: currentColor}}
+                    disabled={handleSecondValidate()}
+                    onClick={postSignedContract}
+                  >
+                    Saqlash
                   </button>
                 </div>
               </>
@@ -1273,7 +1937,7 @@ const CreateVps = () => {
 
   return (
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
-    <Header category="Vps" title="Shartnomalar yaratish"/>
+      <Header category="Vps" title="Shartnomalar yaratish"/>
       {displayStep(currentStep)}
     </div>
   );
