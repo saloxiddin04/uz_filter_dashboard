@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import instance from "../../../../API";
+import {toast} from "react-toastify";
 
 const initialState = {
   dataCenterList: null,
@@ -46,9 +47,27 @@ export const calculateColocation = createAsyncThunk(
   }
 )
 
+export const createColocation = createAsyncThunk(
+  "colocationCreateContract/createColocation",
+  async (data) => {
+    try {
+      const response = await instance.post(`colocation/contract-create`, data)
+      if (data.save === 1) {
+        toast.success('Shartnoma yuborildi')
+      }
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const createContractColocationSlice = createSlice({
   name: 'colocationCreateContract',
   initialState,
+  reducers: {
+    clearStatesColocation: () => initialState
+  },
   extraReducers: (builder) => {
     builder.addCase(getDataCenterList.pending, (state) => {
       state.loading = true
@@ -87,7 +106,22 @@ const createContractColocationSlice = createSlice({
       state.calculate = null
       state.error = payload
     })
+
+    // create
+    builder.addCase(createColocation.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(createColocation.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.colocationDocument = payload
+    })
+    builder.addCase(createColocation.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.colocationDocument = null
+    })
   }
 })
 
+export const {clearStatesColocation} = createContractColocationSlice.actions
 export default createContractColocationSlice.reducer

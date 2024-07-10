@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Header, Input, Loader} from "../../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {
-  calculateColocation,
+  calculateColocation, clearStatesColocation, createColocation,
   getDataCenterList,
   getDataCenterTariff
 } from "../../../redux/slices/contractCreate/Colocation/ColocationSlices";
@@ -11,7 +11,7 @@ import {toast} from "react-toastify";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {useStateContext} from "../../../contexts/ContextProvider";
 import {useNavigate} from "react-router-dom";
-import {getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
+import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import moment from "moment/moment";
 
 const CreateColocation = () => {
@@ -20,7 +20,7 @@ const CreateColocation = () => {
 
   const {currentColor} = useStateContext();
 
-  const {dataCenterList, dataCenterTariff, calculate, loading} = useSelector((state) => state.createColocation);
+  const {dataCenterList, dataCenterTariff, calculate, colocationDocument, loading} = useSelector((state) => state.createColocation);
   const {userByTin} = useSelector((state) => state.userByTin);
 
   const [client, setClient] = useState('');
@@ -77,6 +77,12 @@ const CreateColocation = () => {
       dispatch(calculateColocation({data, check: handleValidateForCalculate()}))
     }
   }, [data]);
+
+  useEffect(() => {
+    if (typeContract === "2") {
+      fetchContractNum().then()
+    }
+  }, [typeContract]);
 
   const validationJuridic = () => {
     return stir === '' || name === '' || bank_mfo === '' || bank_name === '' || per_adr === '' || paymentAccount === '';
@@ -215,30 +221,28 @@ const CreateColocation = () => {
     }, 200)
   }
 
-  // const fetchContractNum = async () => {
-  //   await instance.get(`colocation/booked-contract?pin_or_tin=${userByTin === 'yur' ? stir : pinfl}`, {headers: {Authorization: `Bearer ${access}`}}).then((res) => {
-  //     if (res?.data?.success) {
-  //       setContractNumberColocation(res?.data?.valid_new_contract_number)
-  //     } else {
-  //       toast.error(res?.response?.data?.err_msg)
-  //     }
-  //   })
-  // }
-  //
-  // const postContractNum = async () => {
-  //   await instance.post('colocation/booked-contract', {
-  //     pin_or_tin: client === 'yur' ? stir : pinfl,
-  //     contract_date: bookedContractDate?.toISOString()
-  //   }).then((res) => {
-  //     if (res.status === 201) {
-  //       toast.error(`${contractNumberColocation} raqam muvuffaqiyatli band qilindi!`)
-  //       // navigate('/shartnomalar')
-  //       // dispatch(clearChange())
-  //       // dispatch(handleType(vpsActionTypes.CLEAR_VPS_BILLING, null))
-  //       // setContractNumberColocation(null)
-  //     }
-  //   })
-  // }
+  const fetchContractNum = async () => {
+    await instance.get(`colocation/booked-contract?pin_or_tin=${userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin}`).then((res) => {
+      if (res?.data?.success) {
+        setContractNumberColocation(res?.data?.valid_new_contract_number)
+      } else {
+        toast.error(res?.response?.data?.err_msg)
+      }
+    })
+  }
+
+  const postContractNum = async () => {
+    await instance.post('colocation/booked-contract', {
+      pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
+      contract_date: bookedContractDate?.toISOString()
+    }).then((res) => {
+      if (res.status === 201) {
+        toast.success(`${contractNumberColocation} raqam muvuffaqiyatli band qilindi!`)
+        navigate('/shartnomalar/colocation')
+        setContractNumberColocation('')
+      }
+    })
+  }
 
   const displayStep = (step) => {
     switch (step) {
@@ -709,7 +713,20 @@ const CreateColocation = () => {
                     <button
                       className={`px-4 py-2 rounded text-white ${handleValidateColocation() ? 'opacity-50' : ''}`}
                       style={{backgroundColor: currentColor}}
-                      onClick={() => setCurrentStep(3)}
+                      onClick={async () => {
+                        try {
+                          await dispatch(createColocation({
+                            colocation: data,
+                            service: 1,
+                            is_back_office: true,
+                            pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
+                            save: 0,
+                            user_type: userByTin?.bank_mfo ? 2 : 1,
+                          })).then(() => setCurrentStep(3))
+                        } catch (e) {
+                          toast.error(e.message)
+                        }
+                      }}
                       disabled={handleValidateColocation()}
                     >
                       Keyingi
@@ -731,7 +748,7 @@ const CreateColocation = () => {
                   <button
                     className={`px-4 py-2 rounded text-white w-2/12`}
                     style={{backgroundColor: currentColor}}
-                    onClick={searchUserJuridic}
+                    onClick={fetchContractNum}
                   >
                     Raqam olish
                   </button>
@@ -746,8 +763,89 @@ const CreateColocation = () => {
                     />
                   </div>
                 </div>
+                <div className="w-full flex items-center justify-between">
+                  <div>
+                    <button
+                      className={'px-4 py-2 rounded'}
+                      style={{
+                        color: currentColor,
+                        border: `1px solid ${currentColor}`
+                      }}
+                      onClick={() => navigate(-1)}
+                    >
+                      Bekor qilish
+                    </button>
+                  </div>
+                  <button
+                    className={`px-4 py-2 rounded text-white`}
+                    style={{backgroundColor: currentColor}}
+                    onClick={postContractNum}
+                  >
+                    Saqlash
+                  </button>
+                </div>
               </div>
             )}
+          </>
+        )
+      case 3:
+        return (
+          <>
+            <div
+              dangerouslySetInnerHTML={{__html: colocationDocument}}
+              className="px-2 py-3 border rounded"
+            />
+            <div className="w-full flex items-center justify-between mt-4">
+              <div>
+                <button
+                  className={'px-4 py-2 rounded'}
+                  style={{
+                    color: currentColor,
+                    border: `1px solid ${currentColor}`
+                  }}
+                  onClick={() => {
+                    navigate(-1)
+                    dispatch(clearStatesColocation())
+                  }}
+                >
+                  Bekor qilish
+                </button>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  className={`px-4 py-2 rounded text-white border border-[${currentColor}]`}
+                  style={{color: currentColor}}
+                  onClick={() => setCurrentStep(2)}
+                >
+                  Orqaga
+                </button>
+                <button
+                  className={`px-4 py-2 rounded text-white`}
+                  style={{backgroundColor: currentColor}}
+                  onClick={async () => {
+                    try {
+                      await dispatch(createColocation({
+                        colocation: data,
+                        service: 1,
+                        is_back_office: true,
+                        pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
+                        save: 1,
+                        user_type: userByTin?.bank_mfo ? 2 : 1,
+                      })).then(() => {
+                        navigate('/shartnomalar/colocation')
+                        dispatch(clearStatesColocation())
+                        dispatch(clearStatesFirstStep())
+                      })
+                    } catch (e) {
+                      setCurrentStep(2)
+                      toast.error(e.message)
+                    }
+                  }}
+                >
+                  Saqlash
+                </button>
+              </div>
+            </div>
           </>
         )
       default:

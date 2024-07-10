@@ -40,6 +40,9 @@ export const getMfo = createAsyncThunk(
 const firstStepSlices = createSlice({
   name: 'contractCreate',
   initialState,
+  reducers: {
+    clearStatesFirstStep: () => initialState,
+  },
   extraReducers: (builder) => {
     builder.addCase(getUserByTin.pending, (state) => {
       state.loading = true
@@ -67,5 +70,7 @@ const firstStepSlices = createSlice({
     })
   }
 })
+
+export const {clearStatesFirstStep} = firstStepSlices.actions
 
 export default firstStepSlices.reducer;
