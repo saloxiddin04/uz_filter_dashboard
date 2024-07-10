@@ -49,6 +49,21 @@ export const getOperationSystemsDetail = createAsyncThunk(
   }
 )
 
+export const createVps = createAsyncThunk(
+  "vps/createVps",
+  async (data) => {
+    try {
+      const response = await instance.post('/vps/contract-create', data)
+      if (data.save === 1) {
+        toast.success('Shartnoma yuborildi')
+      }
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 export const postVpsCalculate = createAsyncThunk(
   "vps/postVpsCalculate",
   async (data) => {
@@ -64,6 +79,9 @@ export const postVpsCalculate = createAsyncThunk(
 const createVpsSlice = createSlice({
   name: 'vps',
   initialState,
+  reducers: {
+    clearStatesVps: () => initialState,
+  },
   extraReducers: (builder) => {
     builder.addCase(getVpsTariff.pending, (state) => {
       state.loading = true
@@ -119,7 +137,23 @@ const createVpsSlice = createSlice({
       state.error = payload
       state.vpsCalculate = null
     })
+
+    // createVps
+    builder.addCase(createVps.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(createVps.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.vpsDocument = payload
+    })
+    builder.addCase(createVps.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.vpsDocument = null
+    })
   }
 })
+
+export const {clearStatesVps} = createVpsSlice.actions
 
 export default createVpsSlice.reducer

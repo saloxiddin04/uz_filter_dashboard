@@ -3,14 +3,17 @@ import {Header, Input, Loader} from "../../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {useStateContext} from "../../../contexts/ContextProvider";
-import {getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
+import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import {
+  clearStatesVps, createVps,
   getOperationSystems,
   getOperationSystemsDetail,
   getVpsTariff,
   postVpsCalculate
 } from "../../../redux/slices/contractCreate/Vps/VpsSlices";
 import {TrashIcon} from "@heroicons/react/16/solid";
+import {toast} from "react-toastify";
+import moment from "moment/moment";
 
 const CreateVps = () => {
   const dispatch = useDispatch();
@@ -27,10 +30,9 @@ const CreateVps = () => {
     vpsTariffs,
     vpsCalculate,
     vpsDocument,
-    vpsConfig,
   } = useSelector((state) => state.createVps);
 
-  const [currentStep, setCurrentStep] = useState(2)
+  const [currentStep, setCurrentStep] = useState(1)
 
   const [client, setClient] = useState('');
 
@@ -468,8 +470,6 @@ const CreateVps = () => {
 
     return false;
   }
-
-  console.log("validate", !handleSecondValidateForCalculate())
 
   const reducedObject = vpsCalculate?.configurations_prices?.reduce((accumulator, item) => {
     Object.entries(item).forEach(([key, value]) => {
@@ -1167,13 +1167,102 @@ const CreateVps = () => {
                     Qo'shish
                   </button>
                 </div>
+                <div className="w-full flex items-center justify-between mt-2">
+                  <button
+                    className={`px-3 py-2 rounded text-white ${handleSecondValidate() ? 'opacity-25' : ''}`}
+                    style={{color: currentColor, border: `1px solid ${currentColor}`}}
+                    onClick={() => setCurrentStep(1)}
+                  >
+                    Orqaga
+                  </button>
+                  <button
+                    className={`px-3 py-2 rounded text-white ${handleSecondValidate() ? 'opacity-25' : ''}`}
+                    style={{backgroundColor: currentColor}}
+                    onClick={async () => {
+                      try {
+                        await dispatch(createVps({
+                          tp_id,
+                          contract_date: moment(new Date(), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ'),
+                          configuration: server,
+                          service: 18,
+                          is_back_office: true,
+                          pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
+                          save: 0,
+                          user_type: userByTin?.bank_mfo ? 2 : 1,
+                        })).then(() => setCurrentStep(3))
+                      } catch (e) {
+                        toast.error(e.message)
+                      }
+                    }}
+                  >
+                    Keyingi
+                  </button>
+                </div>
               </>
             )}
           </>
         )
       case 3:
         return (
-          <></>
+          <>
+            <div
+              dangerouslySetInnerHTML={{__html: vpsDocument}}
+              className="px-2 py-3 border rounded"
+            />
+            <div className="w-full flex items-center justify-between mt-4">
+              <div>
+                <button
+                  className={'px-4 py-2 rounded'}
+                  style={{
+                    color: currentColor,
+                    border: `1px solid ${currentColor}`
+                  }}
+                  onClick={() => {
+                    navigate(-1)
+                    dispatch(clearStatesVps())
+                  }}
+                >
+                  Bekor qilish
+                </button>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  className={`px-4 py-2 rounded text-white border border-[${currentColor}]`}
+                  style={{color: currentColor}}
+                  onClick={() => setCurrentStep(2)}
+                >
+                  Orqaga
+                </button>
+                <button
+                  className={`px-4 py-2 rounded text-white`}
+                  style={{backgroundColor: currentColor}}
+                  onClick={async () => {
+                    try {
+                      await dispatch(createVps({
+                        tp_id,
+                        contract_date: moment(new Date(), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ'),
+                        configuration: server,
+                        service: 18,
+                        is_back_office: true,
+                        pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
+                        save: 1,
+                        user_type: userByTin?.bank_mfo ? 2 : 1,
+                      })).then(() => {
+                        navigate('/shartnomalar/vps')
+                        dispatch(clearStatesVps())
+                        dispatch(clearStatesFirstStep())
+                      })
+                    } catch (e) {
+                      setCurrentStep(2)
+                      toast.error(e.message)
+                    }
+                  }}
+                >
+                  Saqlash
+                </button>
+              </div>
+            </div>
+          </>
         )
       default:
         return null
