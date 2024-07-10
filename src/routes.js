@@ -6,11 +6,11 @@ import {
   Dashboard,
   Profile,
   NotFound,
-  CreateColocation
+  CreateColocation, CreateVps
 } from './pages';
 
 export const routes = [
-  { path: '*', element: Dashboard },
+  { path: '*', element: NotFound },
 
   { path: '/dashboard', element: Dashboard },
   { path: '/profile', element: Profile },
@@ -24,4 +24,5 @@ export const routes = [
   { path: '/application/:id', element: ApplicationDetail },
   
   {path: '/shartnomalar/colocation/create', element: CreateColocation },
+  {path: '/shartnomalar/vps/create', element: CreateVps },
 ]

@@ -6,6 +6,7 @@ import applicationsSlice from "./slices/applications/applicationsSlice";
 import dashboardSlice from "./slices/dashboard/dashboardSlice";
 import firstStepSlices from "./slices/contractCreate/FirstStepSlices";
 import createColocationSlices from "./slices/contractCreate/Colocation/ColocationSlices";
+import createVpsSlice from "./slices/contractCreate/Vps/VpsSlices";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     applications: applicationsSlice,
     userByTin: firstStepSlices,
     createColocation: createColocationSlices,
+    createVps: createVpsSlice,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false})
 })

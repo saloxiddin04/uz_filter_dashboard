@@ -14,3 +14,4 @@ export {default as Applications} from './Applications/Applications'
 export {default as ApplicationDetail} from './Applications/ApplicationDetail'
 
 export {default as CreateColocation} from './CreateContracts/Colocation/CreateColocation'
+export {default as CreateVps} from './CreateContracts/Vps/CreateVps'
