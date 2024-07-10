@@ -127,10 +127,15 @@ export function HooksCommission() {
   };
 
   let uiFillCombo = function (items) {
-    document.getElementById("S@loxiddin").innerHTML = "";
+    const item = document.getElementById("S@loxiddin")
+    if (item) {
+      document.getElementById("S@loxiddin").innerHTML = "";
+    }
     let combo = document.getElementById("S@loxiddin");
-    for (let itm in items) {
-      combo.append(items[itm]);
+    if (combo) {
+      for (let itm in items) {
+        combo.append(items[itm]);
+      }
     }
   };
 
@@ -167,7 +172,7 @@ export function HooksCommission() {
     }
   };
 
-  const sign = (data_b4, service, contract_id) => {
+  const sign = (data_b4, service, contract_id, confirmContract) => {
     const itm = document.getElementById("S@loxiddin").value;
     if (itm) {
       let id = document.getElementById(itm);
@@ -191,19 +196,22 @@ export function HooksCommission() {
                   {
                     pkcs7: pkcs7,
                     contract_id: contract_id,
+                    service,
                   },
-                  service,
                 )
               ).then((res) => {
-                  if (!res?.success) {
-                    toast.error(res?.err_msg)
-                    setErrMsg(res?.err_msg)
-                    setError(true)
-                  } else {
-                    dispatch(getContractDetail(contract_id))
-                  }
+                if (!res?.payload?.success) {
+                  toast.error(res?.payload?.err_msg)
+                } else {
+                  confirmContract().then(() => {
+                    dispatch(getContractDetail({
+                      id: contract_id,
+                      slug: service,
+                    }))
+                  })
+                  toast.success('Muvoffaqiyatli xulosa berildi')
                 }
-              );
+              });
             },
             function (e, r) {
               if (r) {

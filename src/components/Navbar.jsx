@@ -54,7 +54,7 @@ const Navbar = () => {
 
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
   
-  const activeLink = 'flex items-center gap-5 p-2.5 rounded  text-white  text-md m-2';
+  const activeLink = 'flex items-center gap-5 p-2.5 rounded  text-white text-md m-2 border-b-neutral-50';
   const normalLink = 'flex items-center gap-5 p-2.5 rounded text-md text-gray-700 dark:text-gray-200' +
     ' dark:hover:text-black hover:bg-light-gray m-2';
   
@@ -62,7 +62,7 @@ const Navbar = () => {
   if (loading) return <Loader/>
 
   return (
-    <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative">
+    <div className="flex justify-between items-center p-2 md:ml-6 md:mr-6 relative">
       <NavButton title="Menu" customFunc={handleActiveMenu} color={currentColor} icon={<AiOutlineMenu/>}/>
       <div className="relative flex items-center gap-5">
         <div>
@@ -102,10 +102,10 @@ const Navbar = () => {
       <div className="flex">
         <TooltipComponent content="Profile" position="BottomCenter">
           <div
-            className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
+            className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray hover:text-gray-900 rounded-lg userProfile"
             onClick={() => handleClick('userProfile')}
           >
-            <span className="text-gray-400 font-bold ml-1 text-14 flex items-center gap-2">
+            <span className="text-white-400 font-bold ml-1 text-14 flex items-center gap-2 hover:text-gray-900">
               <svg
                 className='w-10 h-10 rounded-full'
                 xmlns='http://www.w3.org/2000/svg'
@@ -120,7 +120,7 @@ const Navbar = () => {
                     {user?.first_name?.charAt(0)}
                 </text>
               </svg>
-              <h1>{user?.first_name}</h1>
+              <h1 className="text-neutral-50">{user?.first_name}</h1>
             </span>
             <MdKeyboardArrowDown className="text-gray-400 text-14"/>
           </div>
