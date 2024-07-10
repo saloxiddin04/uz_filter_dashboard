@@ -6,32 +6,37 @@ import Loader from "../../components/Loader";
 import {useStateContext} from "../../contexts/ContextProvider";
 import moment from "moment/moment";
 import {EyeIcon} from "@heroicons/react/16/solid";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 const Contracts = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {slug} = useParams();
+  const {pathname} = useLocation();
   const {currentColor} = useStateContext();
-  
+
+  const {sidebar} = useSelector(state => state.sections)
   const {contracts, loading} = useSelector(state => state.contracts)
   
   const currentPage = parseInt(localStorage.getItem("currentPage")) || undefined
-  
-  const headers = [
-    {key: 'client?.full_name', label: 'Mijoz'},
-    {key: 'client?.pin', label: 'STIR/JSHSHIR'},
-    {key: 'contract_number', label: 'Shartnoma raqami'},
-    {key: 'contract_date', label: 'Shartnoma sanasi'},
-    {key: 'expiration_date', label: 'Amal qilish sanasi'},
-    {key: 'contract_cash', label: "Shartnoma qiymati (so'm)"},
-    {key: 'payed_cash', label: "To'langan qiymat (so'm)"},
-    {key: 'arrearage', label: "Qarzdorlik (so'm)"},
-    {key: 'contract_status', label: 'Status'},
-  ];
+
+  function filterBySlug() {
+    const matchedPermission = sidebar?.permissions.find(permission => `${permission.slug}` === pathname.split('/')[1]);
+    return matchedPermission ? matchedPermission.children : [];
+  }
+
+  const children = filterBySlug();
+
+  const filteredChildren = children.filter(item =>
+    item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat'
+  );
   
   useEffect(() => {
-    dispatch(getContracts({page: currentPage, slug}))
+    if (!slug) {
+      navigate(`/shartnomalar/${filteredChildren[0]?.slug}`);
+    } else {
+      dispatch(getContracts({page: currentPage, slug}))
+    }
   }, [dispatch, slug]);
   
   const handlePageChange = (page) => {

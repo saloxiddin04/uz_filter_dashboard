@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Link, NavLink} from 'react-router-dom';
+import {Link, NavLink, useLocation, useNavigate, useNavigation} from 'react-router-dom';
 import {AiOutlineMenu} from 'react-icons/ai';
 import {MdKeyboardArrowDown} from 'react-icons/md';
 import {TooltipComponent} from '@syncfusion/ej2-react-popups';
@@ -58,7 +58,6 @@ const Navbar = () => {
   const normalLink = 'flex items-center gap-5 p-2.5 rounded font-semibold text-md text-gray-300 dark:text-gray-200' +
     ' dark:hover:text-black hover:bg-gray-100 hover:text-black m-2';
   
-  
   if (loading) return <Loader/>
 
   return (
@@ -87,7 +86,6 @@ const Navbar = () => {
               key={item.slug}
               onClick={() => {
                 localStorage.setItem("currentPage", '1');
-                // handleCloseSideBar();
               }}
               style={({isActive}) => ({
                 backgroundColor: isActive ? currentColor : '',

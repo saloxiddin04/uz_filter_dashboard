@@ -54,21 +54,23 @@ const Sidebar = () => {
             </TooltipComponent>
           </div>
           <div className="pl-3 mt-5">
-            <div>
-              <NavLink
-                to={`/dashboard`}
-                onClick={() => {
-                  localStorage.setItem("currentPage", '1');
-                  handleCloseSideBar();
-                }}
-                style={({isActive}) => ({
-                  backgroundColor: isActive ? currentColor : '',
-                })}
-                className={({isActive}) => (isActive ? activeLink : normalLink)}
-              >
-                <span className="capitalize">Statistika</span>
-              </NavLink>
-            </div>
+            {children.length === 0 && (
+              <div>
+                <NavLink
+                  to={`/dashboard`}
+                  onClick={() => {
+                    localStorage.setItem("currentPage", '1');
+                    handleCloseSideBar();
+                  }}
+                  style={({isActive}) => ({
+                    backgroundColor: isActive ? currentColor : '',
+                  })}
+                  className={({isActive}) => (isActive ? activeLink : normalLink)}
+                >
+                  <span className="capitalize">Statistika</span>
+                </NavLink>
+              </div>
+            )}
             {children && children?.map((item) => {
               const newPath = `${pathname.split('/')[1]}/${item.slug}`;
               if (item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat') {
