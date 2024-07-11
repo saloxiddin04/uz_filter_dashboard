@@ -5,7 +5,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {useStateContext} from "../../../contexts/ContextProvider";
 import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import {
-  clearStatesVps, createVps,
+  clearStatesVps, createAgreementVps, createVps,
   getOperationSystems,
   getOperationSystemsDetail,
   getVpsTariff, postSignedVpsContract,
@@ -15,6 +15,7 @@ import {TrashIcon} from "@heroicons/react/16/solid";
 import {toast} from "react-toastify";
 import moment from "moment/moment";
 import instance from "../../../API";
+import {MdOutlineUTurnLeft} from "react-icons/md";
 
 const CreateVps = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const CreateVps = () => {
     vpsTariffs,
     vpsCalculate,
     vpsDocument,
+    vpsConfig
   } = useSelector((state) => state.createVps);
 
   const [currentStep, setCurrentStep] = useState(1)
@@ -115,7 +117,7 @@ const CreateVps = () => {
   const [vpsContractNum, setVpsContractNumber] = useState('')
 
   const [tp_id, setTpId] = useState('')
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState(null)
 
   const hiddenFileInput = useRef(null)
 
@@ -140,7 +142,10 @@ const CreateVps = () => {
       image_id: null,
       os_type_id: null,
       account_id: null,
-      data_disks: [],
+      data_disks: [{
+        storage: "",
+        storage_disk: ""
+      }],
       vm_systems: [{
         ipv_address: false,
         vm_name: '',
@@ -155,6 +160,61 @@ const CreateVps = () => {
     dispatch(getVpsTariff())
     dispatch(getOperationSystems())
   }, []);
+
+  useEffect(() => {
+    if (currentStep === 2) {
+      dispatch(createAgreementVps({user: userByTin?.bank_mfo ? stir : pinfl})).then((res) => {
+        if (res?.payload?.error_code === 3) {
+          toast.error('Bu mijozga shartnoma tuzish mumkin emas!')
+          navigate('/shartnomalar/vps')
+          dispatch(clearStatesVps())
+          dispatch(clearStatesFirstStep())
+        } else if (res?.payload?.error_code === 1) return setCode(1)
+      })
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (code === 1) {
+      const serverObjects = vpsConfig?.configurations?.map((configuration) => ({
+        tariff: null,
+        cpu: configuration.cpu,
+        account_id: configuration.account_id,
+        ram: configuration.ram,
+        internet: configuration.internet,
+        is_imut: configuration.imut ? true : false,
+        tasix: configuration.tasix,
+        imut: configuration.imut,
+        system_storage: configuration.system_storage,
+        system_storage_disk: configuration.system_storage_disk,
+        data_disks: configuration.data_disks,
+        billing_status: configuration.billing_status,
+        count_vm: 1,
+        image_id: configuration.image_id,
+        os_type_id: configuration.os_type_id,
+        id: configuration.id,
+        vm_systems: [
+          {
+            ipv_address: configuration.ipv_address,
+            vm_name: configuration.name,
+            account_id: configuration.account_id,
+            vm_id: configuration.vm_id,
+            // id: configuration.id,
+          },
+        ],
+      }))
+      setServer(serverObjects)
+      setTpId(vpsConfig?.tp_id)
+      setTypeContract('1')
+
+      postBilling(serverObjects)
+      for (let i = 0; i < serverObjects.length; i++) {
+        if (serverObjects[i].os_type_id) {
+          dispatch(getOperationSystemsDetail({id: serverObjects[i].os_type_id}))
+        }
+      }
+    }
+  }, [code]);
 
   useEffect(() => {
     if (!handleSecondValidateForCalculate()) {
@@ -212,7 +272,14 @@ const CreateVps = () => {
       value[i].billing_status = 3
     }
     setServer(value)
-    // postBilling(value)
+    postBilling(value)
+  }
+
+  const recoveryConfig = (i) => {
+    const updatedServer = [...server]
+    updatedServer[i].billing_status = 2
+    setServer(updatedServer)
+    postBilling(updatedServer)
   }
 
   const changeServer = (e, i) => {
@@ -231,7 +298,9 @@ const CreateVps = () => {
       }
       updatedServer[i].billing_status = 4
       setServer(updatedServer);
-      // postBilling(updatedServer)
+      if (code === 1) {
+        postBilling(updatedServer)
+      }
     } else {
       if (
         name === 'cpu' ||
@@ -250,7 +319,9 @@ const CreateVps = () => {
             [name]: Number(value)
           };
           setServer(updatedServer);
-          // postBilling(updatedServer)
+          if (code === 1) {
+            postBilling(updatedServer)
+          }
           updatedServer[i].billing_status = 4
           if (Number(updatedServer[i].tariff) > 0) {
             const tariffId = vpsTariffs.find((item) => (
@@ -272,11 +343,15 @@ const CreateVps = () => {
             updatedServer[i].vm_systems?.some((s) => s.ipv_address = tariffId?.vps_device?.ipv_address)
             updatedServer[i].vm_systems?.some((s) => s.account_id = tariffId?.vps_device?.account_id)
             updatedServer[i].vm_systems?.some((s) => s.vm_id = tariffId?.vps_device?.vm_id)
-            // postBilling(updatedServer)
+            if (code === 1) {
+              postBilling(updatedServer)
+            }
           } else {
             updatedServer[i].tariff = null
             updatedServer[i].billing_status = 4
-            // postBilling(updatedServer)
+            if (code === 1) {
+              postBilling(updatedServer)
+            }
           }
         }
         // if (name === 'tasix' || name === 'internet') {
@@ -299,14 +374,18 @@ const CreateVps = () => {
             ...updatedServer[i]
           }
           setServer(updatedServer)
-          // postBilling(updatedServer)
+          if (code === 1) {
+            postBilling(updatedServer)
+          }
         } else if (name === 'os_type') {
           const updatedServer = [...server]
           updatedServer[i].os_type_id = value
           updatedServer[i].billing_status = 4
           dispatch(getOperationSystemsDetail({id: value}))
           setServer(updatedServer)
-          // postBilling(updatedServer)
+          if (code === 1) {
+            postBilling(updatedServer)
+          }
         } else {
           const updatedServer = [...server];
           updatedServer[i] = {
@@ -315,7 +394,9 @@ const CreateVps = () => {
           };
           updatedServer[i].billing_status = 4
           setServer(updatedServer);
-          // postBilling(updatedServer)
+          if (code === 1) {
+            postBilling(updatedServer)
+          }
         }
       }
     }
@@ -357,9 +438,10 @@ const CreateVps = () => {
 
   const addDisks = (i) => {
     const updatedServerState = [...server]
+    console.log("i", i)
     updatedServerState[i].data_disks.push({
       storage: '',
-      storage_disk: null,
+      storage_disk: '',
       id: null,
       vm_id: null,
       name: null,
@@ -436,8 +518,6 @@ const CreateVps = () => {
         (!currentServer?.cpu ||
           !currentServer?.ram ||
           currentServer?.vm_systems?.some((value) => value.ipv_address && (!currentServer?.internet || !currentServer?.tasix)) ||
-          // !currentServer?.internet ||
-          // !currentServer?.tasix ||
           currentServer?.data_disks?.some((s) => Number(s.storage_disk) > 4096) ||
           (currentServer?.is_imut && !currentServer?.imut) ||
           !currentServer?.system_storage ||
@@ -455,9 +535,9 @@ const CreateVps = () => {
           }) ||
           (currentServer?.data_disks?.length !== 0 && currentServer?.data_disks?.some((s) => !s.storage || !s.storage_disk)) ||
           !currentServer?.image_id ||
-          Number(currentServer?.cpu) < Number(operationSystemsDetail.find(os => os.image_id === currentServer.image_id)?.min_cpu) ||
-          Number(currentServer?.ram) < Number(operationSystemsDetail.find(os => os.image_id === currentServer.image_id)?.min_ram) ||
-          Number(currentServer?.system_storage_disk) < Number(operationSystemsDetail.find(os => os.image_id === currentServer.image_id)?.min_disk))
+          Number(currentServer?.cpu) < Number(operationSystemsDetail?.find(os => os.image_id === currentServer.image_id)?.min_cpu) ||
+          Number(currentServer?.ram) < Number(operationSystemsDetail?.find(os => os.image_id === currentServer.image_id)?.min_ram) ||
+          Number(currentServer?.system_storage_disk) < Number(operationSystemsDetail?.find(os => os.image_id === currentServer.image_id)?.min_disk))
       ) {
         return true;
       }
@@ -948,6 +1028,20 @@ const CreateVps = () => {
                                 disabled={data.length === 1}
                               >
                                 <TrashIcon
+                                  color={currentColor}
+                                  className="size-6 cursor-pointer"
+                                />
+                              </button>
+                            </div>
+                          )}
+                          {data.billing_status === 3 && (
+                            <div>
+                              <button
+                                onClick={() => recoveryConfig(index)}
+                                disabled={data.length === 1}
+                                className="rotate-90"
+                              >
+                                <MdOutlineUTurnLeft
                                   color={currentColor}
                                   className="size-6 cursor-pointer"
                                 />

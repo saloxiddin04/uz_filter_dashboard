@@ -95,6 +95,18 @@ export const postSignedVpsContract = createAsyncThunk(
   }
 )
 
+export const createAgreementVps = createAsyncThunk(
+  "vps/createAgreementVps",
+  async (data) => {
+    try {
+      const response = await instance.get(`/vps/contract-create?pin_or_tin=${data?.user}`)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const createVpsSlice = createSlice({
   name: 'vps',
   initialState,
@@ -181,6 +193,20 @@ const createVpsSlice = createSlice({
     builder.addCase(postSignedVpsContract.rejected, (state, {payload}) => {
       state.loading = false
       state.error = payload
+    })
+
+    // createAgreementVps
+    builder.addCase(createAgreementVps.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(createAgreementVps.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.vpsConfig = payload
+    })
+    builder.addCase(createAgreementVps.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.vpsConfig = null
     })
   }
 })
