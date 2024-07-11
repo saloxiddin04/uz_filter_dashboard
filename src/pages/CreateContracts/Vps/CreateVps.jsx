@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Header, Input, Loader} from "../../../components";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useStateContext} from "../../../contexts/ContextProvider";
 import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import {
@@ -19,10 +19,12 @@ import instance from "../../../API";
 const CreateVps = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {state} = useLocation()
 
   const {currentColor} = useStateContext();
 
   const {userByTin} = useSelector((state) => state.userByTin);
+  const {sidebar} = useSelector((state) => state.sections);
 
   const {
     loading,
@@ -563,6 +565,8 @@ const CreateVps = () => {
     });
     return accumulator;
   }, {});
+
+  const service = sidebar?.permissions.find(item => item?.slug === state?.path)?.children?.find(el => el?.slug === state?.slug)
 
   const displayStep = (step) => {
     switch (step) {
@@ -1355,7 +1359,7 @@ const CreateVps = () => {
                           tp_id,
                           contract_date: moment(new Date(), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ'),
                           configuration: server,
-                          service: 18,
+                          service: service?.id,
                           is_back_office: true,
                           pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
                           save: 0,
@@ -1930,7 +1934,7 @@ const CreateVps = () => {
                         tp_id,
                         contract_date: moment(new Date(), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ'),
                         configuration: server,
-                        service: 18,
+                        service: service?.id,
                         is_back_office: true,
                         pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
                         save: 1,

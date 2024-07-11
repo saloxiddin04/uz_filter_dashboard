@@ -10,7 +10,7 @@ import instance from "../../../API";
 import {toast} from "react-toastify";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {useStateContext} from "../../../contexts/ContextProvider";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import moment from "moment/moment";
 
@@ -18,10 +18,12 @@ const CreateColocation = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
+  const {state} = useLocation()
   const {currentColor} = useStateContext();
 
   const {dataCenterList, dataCenterTariff, calculate, colocationDocument, loading} = useSelector((state) => state.createColocation);
   const {userByTin} = useSelector((state) => state.userByTin);
+  const {sidebar} = useSelector((state) => state.sections);
 
   const [client, setClient] = useState('');
 
@@ -243,6 +245,8 @@ const CreateColocation = () => {
       }
     })
   }
+
+  const service = sidebar?.permissions.find(item => item?.slug === state?.path)?.children?.find(el => el?.slug === state?.slug)
 
   const displayStep = (step) => {
     switch (step) {
@@ -717,7 +721,7 @@ const CreateColocation = () => {
                         try {
                           await dispatch(createColocation({
                             colocation: data,
-                            service: 1,
+                            service: service?.id,
                             is_back_office: true,
                             pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
                             save: 0,
@@ -826,7 +830,7 @@ const CreateColocation = () => {
                     try {
                       await dispatch(createColocation({
                         colocation: data,
-                        service: 1,
+                        service: service?.id,
                         is_back_office: true,
                         pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
                         save: 1,

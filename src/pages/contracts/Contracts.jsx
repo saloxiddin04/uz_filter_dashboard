@@ -50,7 +50,7 @@ const Contracts = () => {
         <button
           className={'px-4 py-2 rounded text-white mb-10'}
           style={{backgroundColor: currentColor}}
-          onClick={() => navigate(`/shartnomalar/${slug}/create`)}
+          onClick={() => navigate(`/shartnomalar/${slug}/create`, {state: {slug, path: 'shartnomalar'}})}
         >
           Shartnoma yaratish
         </button>
