@@ -5,7 +5,7 @@ import {toast} from "react-toastify";
 const initialState = {
   loading: false,
   operationSystems: null,
-  operationSystemsDetail: null,
+  operationSystemsDetail: [],
   vpsTariffs: null,
   vpsCalculate: null,
   vpsDocument: null,
@@ -146,8 +146,14 @@ const createVpsSlice = createSlice({
       state.loading = true
     })
     builder.addCase(getOperationSystemsDetail.fulfilled, (state, {payload}) => {
-      state.loading = false
-      state.operationSystemsDetail = payload
+      const uniquePayload = payload.filter(
+        (item) => !state.operationSystemsDetail?.some((detail) => detail.image_id === item.id)
+      );
+      return {
+        ...state,
+        loading: false,
+        operationSystemsDetail: [...state.operationSystemsDetail, ...uniquePayload],
+      };
     })
     builder.addCase(getOperationSystemsDetail.rejected, (state, {payload}) => {
       state.loading = false

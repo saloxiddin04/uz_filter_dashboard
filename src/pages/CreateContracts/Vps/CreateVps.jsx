@@ -272,14 +272,12 @@ const CreateVps = () => {
       value[i].billing_status = 3
     }
     setServer(value)
-    postBilling(value)
   }
 
   const recoveryConfig = (i) => {
     const updatedServer = [...server]
     updatedServer[i].billing_status = 2
     setServer(updatedServer)
-    postBilling(updatedServer)
   }
 
   const changeServer = (e, i) => {
@@ -298,9 +296,6 @@ const CreateVps = () => {
       }
       updatedServer[i].billing_status = 4
       setServer(updatedServer);
-      if (code === 1) {
-        postBilling(updatedServer)
-      }
     } else {
       if (
         name === 'cpu' ||
@@ -343,15 +338,9 @@ const CreateVps = () => {
             updatedServer[i].vm_systems?.some((s) => s.ipv_address = tariffId?.vps_device?.ipv_address)
             updatedServer[i].vm_systems?.some((s) => s.account_id = tariffId?.vps_device?.account_id)
             updatedServer[i].vm_systems?.some((s) => s.vm_id = tariffId?.vps_device?.vm_id)
-            if (code === 1) {
-              postBilling(updatedServer)
-            }
           } else {
             updatedServer[i].tariff = null
             updatedServer[i].billing_status = 4
-            if (code === 1) {
-              postBilling(updatedServer)
-            }
           }
         }
         // if (name === 'tasix' || name === 'internet') {
@@ -374,18 +363,12 @@ const CreateVps = () => {
             ...updatedServer[i]
           }
           setServer(updatedServer)
-          if (code === 1) {
-            postBilling(updatedServer)
-          }
         } else if (name === 'os_type') {
           const updatedServer = [...server]
           updatedServer[i].os_type_id = value
           updatedServer[i].billing_status = 4
           dispatch(getOperationSystemsDetail({id: value}))
           setServer(updatedServer)
-          if (code === 1) {
-            postBilling(updatedServer)
-          }
         } else {
           const updatedServer = [...server];
           updatedServer[i] = {
@@ -394,9 +377,6 @@ const CreateVps = () => {
           };
           updatedServer[i].billing_status = 4
           setServer(updatedServer);
-          if (code === 1) {
-            postBilling(updatedServer)
-          }
         }
       }
     }
@@ -414,7 +394,7 @@ const CreateVps = () => {
       }
     } else if (e.target.name === 'vm_name') {
       if (e.target.value === '' || /^[A-Za-z0-9]+$/.test(e.target.value)) {
-        updatedServer[dataIndex].vm_systems[i].vm_name = e.target.value;
+        updatedServer[dataIndex].vm_systems[i].vm_name = e.target.value.slice(0, 7);
         updatedServer[dataIndex].billing_status = 4;
       }
     }
@@ -437,19 +417,30 @@ const CreateVps = () => {
   }
 
   const addDisks = (i) => {
-    const updatedServerState = [...server]
-    console.log("i", i)
-    updatedServerState[i].data_disks.push({
-      storage: '',
-      storage_disk: '',
-      id: null,
-      vm_id: null,
-      name: null,
-      status: 1
-    })
-    updatedServerState[i].billing_status = 4
-    setServer(updatedServerState)
-  }
+    const updatedServerState = server.map((item, index) => {
+      if (index === i) {
+        const updatedDataDisks = [...item.data_disks];
+
+        updatedDataDisks.push({
+          storage: '',
+          storage_disk: '',
+          id: null,
+          vm_id: null,
+          name: null,
+          status: 1,
+        });
+
+        return {
+          ...item,
+          data_disks: updatedDataDisks,
+          billing_status: 4,
+        };
+      }
+      return item;
+    });
+
+    setServer(updatedServerState);
+  };
 
   const disksDelete = (i, diskIndex) => {
     const value = [...server]
