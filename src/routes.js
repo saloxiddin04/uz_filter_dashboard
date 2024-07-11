@@ -6,7 +6,7 @@ import {
   Dashboard,
   Profile,
   NotFound,
-  CreateColocation, CreateVps
+  CreateColocation, CreateVps, CreateEmail
 } from './pages';
 
 export const routes = [
@@ -25,4 +25,5 @@ export const routes = [
   
   {path: '/shartnomalar/colocation/create', element: CreateColocation },
   {path: '/shartnomalar/vps/create', element: CreateVps },
+  {path: '/shartnomalar/e-xat/create', element: CreateEmail },
 ]
