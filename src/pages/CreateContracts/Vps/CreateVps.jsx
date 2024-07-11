@@ -536,6 +536,18 @@ const CreateVps = () => {
     setVpsContractNumber(response?.data?.contract_number)
   }
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setFileName(selectedFile.name);
+    }
+  };
+
+  const handleFileClick = () => {
+    document.getElementById('hiddenFileInput').click();
+  };
+
   const reducedObject = vpsCalculate?.configurations_prices?.reduce((accumulator, item) => {
     Object.entries(item).forEach(([key, value]) => {
       if (typeof value === 'number') {
@@ -1413,7 +1425,8 @@ const CreateVps = () => {
                     </div>
                   </div>
                   <div className="flex flex-col w-4/5">
-                    <label className={'block text-gray-700 text-sm font-bold mb-1 ml-3'} htmlFor="contract_date">Shartnoma sanasi</label>
+                    <label className={'block text-gray-700 text-sm font-bold mb-1 ml-3'} htmlFor="contract_date">Shartnoma
+                      sanasi</label>
                     <input
                       id="contract_date"
                       type={'date'}
@@ -1831,20 +1844,31 @@ const CreateVps = () => {
                     Qo'shish
                   </button>
                 </div>
-                <div className={'flex flex-col mt-4'}>
-                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="document">
-                    Hujjat
-                  </label>
+                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="document">
+                  Hujjat
+                </label>
+                <div className="flex items-center gap-4 rounded w-[79%] py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1">
+                  <button
+                    onClick={handleFileClick}
+                    className="ml-2 py-1.5 px-2 text-white rounded"
+                    style={{backgroundColor: currentColor}}
+                  >
+                    Fayl tanlang
+                  </button>
                   <input
-                    onChange={(e) => {
-                      setFile(e.target.files[0]) || setFileName(e.target.files[0].name)
-                    }}
-                    name="document"
-                    id="document"
-                    type="file"
-                    className="rounded w-[79%] py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                    type="text"
+                    readOnly
+                    value={fileName}
+                    onClick={handleFileClick}
+                    placeholder="Choose file"
                   />
                 </div>
+                <input
+                  id="hiddenFileInput"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
                 <div className="w-full flex items-center justify-between mt-2">
                   <button
                     className={`px-3 py-2 rounded text-white`}
