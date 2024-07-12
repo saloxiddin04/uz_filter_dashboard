@@ -13,6 +13,7 @@ import {
 } from "../../../redux/slices/contractCreate/Expertise/expertiseSlices";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {toast} from "react-toastify";
+import instance from "../../../API";
 
 const CreateExpertise = () => {
   const navigate = useNavigate();
@@ -203,6 +204,22 @@ const CreateExpertise = () => {
       toast.error(e.message)
       setCurrentStep(2)
     })
+  }
+
+  const expertiseBookedContract = async () => {
+    try {
+      await instance.post('/expertise/booked-contract', {pin_or_tin: stir}).then((res) => {
+        if (res?.data?.success) {
+          toast.success('Muvoffaqiyatli saqlandi')
+          navigate('/shartnomalar/expertise')
+          setTypeContract('')
+          setContractDate('')
+          setContractNumber('')
+        }
+      })
+    } catch (e) {
+      toast.error(e.message)
+    }
   }
 
   const displayStep = (step) => {
@@ -627,6 +644,70 @@ const CreateExpertise = () => {
                   </div>
                 </div>
               </>
+            )}
+            {typeContract === "2" && (
+              <div className="w-full flex items-center justify-between flex-wrap gap-4 mt-4">
+                <div className={'w-[49%] flex items-end gap-4'}>
+                  <div className={'w-[80%]'}>
+                    <Input
+                      value={contract_number}
+                      label={'Shartnoma raqami'}
+                      disabled={true}
+                    />
+                  </div>
+                  <button
+                    className={`px-4 py-2 rounded text-white w-2/12`}
+                    style={{backgroundColor: currentColor}}
+                    onClick={fetchContractNum}
+                  >
+                    Raqam olish
+                  </button>
+                </div>
+                <div className={'w-[49%] flex items-end'}>
+                  <div className="w-full">
+                    <Input
+                      value={contractDate}
+                      label={'Shartnoma sanasi'}
+                      type={'date'}
+                      onChange={(e) => setContractDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="w-full flex items-center justify-between">
+                  <div>
+                    <button
+                      className={'px-4 py-2 rounded'}
+                      style={{
+                        color: currentColor,
+                        border: `1px solid ${currentColor}`
+                      }}
+                      onClick={() => {
+                        dispatch(clearStatesFirstStep())
+                        navigate(-1)
+                      }}
+                    >
+                      Bekor qilish
+                    </button>
+                  </div>
+                  <div className="flex gap-4 items-center">
+                    <button
+                      className={`px-4 py-2 rounded text-white`}
+                      style={{color: currentColor, border: `1px solid ${currentColor}`}}
+                      onClick={() => setCurrentStep(1)}
+                    >
+                      Orqaga
+                    </button>
+                    <button
+                      className={`px-4 py-2 rounded text-white`}
+                      style={{backgroundColor: currentColor}}
+                      onClick={expertiseBookedContract}
+                    >
+                      Saqlash
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
           </>
         )
