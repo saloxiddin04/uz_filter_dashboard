@@ -8,6 +8,7 @@ const initialState = {
   expertiseContractNumber: null,
   loading: false,
   error: null,
+  expertiseDocument: ''
 }
 
 export const getTariffsExpertise = createAsyncThunk(
@@ -46,9 +47,27 @@ export const getCalculateExpertise = createAsyncThunk(
   }
 )
 
+export const createContractExpertise = createAsyncThunk(
+  "expertise/createContractExpertise",
+  async (data) => {
+    try {
+      const response = await instance.post('/expertise/contract-create', data)
+      if (data.save === 1) {
+        toast.success('Shartnoma yuborildi')
+      }
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const createExpertiseSlice = createSlice({
   name: "expertise",
   initialState,
+  reducers: {
+    clearStatesExpertise: () => initialState,
+  },
   extraReducers: (builder) => {
     builder.addCase(getTariffsExpertise.pending, (state) => {
       state.loading = true
@@ -90,7 +109,23 @@ const createExpertiseSlice = createSlice({
       state.loading = false
       state.calculate = null
     })
+
+    // createContractExpertise
+    builder.addCase(createContractExpertise.pending, state => {
+      state.loading = true
+    })
+    builder.addCase(createContractExpertise.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.expertiseDocument = payload
+    })
+    builder.addCase(createContractExpertise.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.expertiseDocument = null
+    })
   }
 })
+
+export const {clearStatesExpertise} = createExpertiseSlice.actions
 
 export default createExpertiseSlice.reducer

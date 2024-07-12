@@ -2,15 +2,17 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Header, Input, Loader} from "../../../components";
 import {useStateContext} from "../../../contexts/ContextProvider";
-import {getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
-import moment from "moment";
+import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import {useLocation, useNavigate} from "react-router-dom";
 import {
+  clearStatesExpertise,
+  createContractExpertise,
   getCalculateExpertise,
   getExpertiseContractNumber,
   getTariffsExpertise
 } from "../../../redux/slices/contractCreate/Expertise/expertiseSlices";
 import {TrashIcon} from "@heroicons/react/16/solid";
+import {toast} from "react-toastify";
 
 const CreateExpertise = () => {
   const navigate = useNavigate();
@@ -19,9 +21,9 @@ const CreateExpertise = () => {
   const {sidebar} = useSelector((state) => state.sections);
   const {state} = useLocation()
 
-  const [currentStep, setCurrentStep] = useState(2)
+  const [currentStep, setCurrentStep] = useState(1)
 
-  const [typeContract, setTypeContract] = useState('1')
+  const [typeContract, setTypeContract] = useState('')
 
   const [client, setClient] = useState('');
 
@@ -75,7 +77,8 @@ const CreateExpertise = () => {
   const {
     tarifsApplication,
     calculate,
-    loading
+    loading,
+    expertiseDocument
   } = useSelector(state => state.createExpertise)
   const [contract_number, setContractNumber] = useState('')
   const [contractDate, setContractDate] = useState('')
@@ -84,7 +87,7 @@ const CreateExpertise = () => {
   const service = sidebar?.permissions.find(item => item?.slug === state?.path)?.children?.find(el => el?.slug === state?.slug)
 
   const [val, setVal] = useState([
-    {expertise_service_tarif: '', price: 0, name_of_tarif: '', is_discount: false},
+    {expertise_service_tarif: '', price: 0, name_of_tarif: '', is_discount: false, discount_price: ''},
   ])
 
   useEffect(() => {
@@ -98,18 +101,18 @@ const CreateExpertise = () => {
     if (!handleValidateSecondForCalculate()) {
       getCalculate(val)
     }
-  }, [val]);
+  }, [val, contractDate]);
 
   const timeoutId = useRef(null)
   const getCalculate = useCallback((data) => {
     clearTimeout(timeoutId.current)
     timeoutId.current = setTimeout(() => {
       dispatch(getCalculateExpertise(data))
-    }, 200)
+    }, 500)
   }, [])
 
   const handleValAdd = () => {
-    const abc = [...val, {expertise_service_tarif: '', price: 0, name_of_tarif: '', is_discount: false}]
+    const abc = [...val, {expertise_service_tarif: '', price: 0, name_of_tarif: '', is_discount: false, discount_price: ''}]
     setVal(abc)
   }
 
@@ -126,7 +129,7 @@ const CreateExpertise = () => {
       setVal(prevState => [prevState[i].price = tariffPriceFilter?.price])
       if (inputData[i].is_discount === 'on') {
         inputData[i].is_discount = false
-        inputData[i].discount_price = null
+        inputData[i].discount_price = ''
       }
     }
     setVal(inputData)
@@ -145,6 +148,7 @@ const CreateExpertise = () => {
         !contract_number ||
         !contractDate ||
         !currentProject?.expertise_service_tarif ||
+        (currentProject?.is_discount && !currentProject?.discount_price) ||
         !currentProject?.price ||
         !currentProject?.name_of_tarif) {
         return true
@@ -159,6 +163,7 @@ const CreateExpertise = () => {
         typeContract === '1' && !priceSelect ||
         !contract_number ||
         !contractDate || !calculate?.total_cash ||
+        (currentProject?.is_discount && !currentProject?.discount_price) ||
         !currentProject?.expertise_service_tarif ||
         !currentProject?.price ||
         !currentProject?.name_of_tarif) {
@@ -175,7 +180,7 @@ const CreateExpertise = () => {
   }
 
   const yurBody = {
-    stir: stir,
+    stir,
     service: Number(service?.id),
     service_id: Number(service?.id),
     price_select_percentage: Number(priceSelect),
@@ -184,6 +189,20 @@ const CreateExpertise = () => {
     projects: val,
     contract_cash: Number(calculate?.total_cash),
     save: currentStep === 2 ? 0 : 1,
+  }
+
+  const postContractExpertise = async () => {
+    await dispatch(createContractExpertise(yurBody)).then((res) => {
+      setCurrentStep(3)
+      if (yurBody.save === 1) {
+        navigate('/shartnomalar/expertise')
+        dispatch(clearStatesExpertise())
+        dispatch(clearStatesFirstStep())
+      }
+    }).catch(e => {
+      toast.error(e.message)
+      setCurrentStep(2)
+    })
   }
 
   const displayStep = (step) => {
@@ -458,7 +477,7 @@ const CreateExpertise = () => {
                       />
                     </div>
                   </div>
-                  <div className="w-full flex flex-wrap gap-4 my-4">
+                  <div className="w-full flex flex-wrap gap-4 my-2">
                     {val && val?.map((data, i) => (
                       <div key={i} className="border-dashed border p-2 w-full flex flex-col gap-4">
                         <div className="w-full text-end">
@@ -504,25 +523,76 @@ const CreateExpertise = () => {
                             />
                           </div>
                         </div>
-                        {!data.is_discount && <div className="w-2/4"></div>}
-                        {data.is_discount && (
-                          <div className={'flex flex-col w-[49%]'}>
-                            <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-                              Chegirmadagi to'lov miqdori
+                        <div className="w-full flex items-center justify-between">
+                          {!data.is_discount && <div className="w-2/4 min-h-9"></div>}
+                          {data.is_discount && (
+                            <div className={'flex flex-col w-[49%]'}>
+                              <label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                                     htmlFor="discount_price"
+                              >
+                                Chegirmadagi to'lov miqdori
+                              </label>
+                              <input
+                                value={data.discount_price}
+                                onChange={(e) => handleChangeVal(e, i)}
+                                name='discount_price'
+                                id="discount_price"
+                                type="number"
+                                className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                              />
+                            </div>
+                          )}
+                          <div className={'flex items-center gap-4 w-2/4'}>
+                            <label className="block text-gray-700 text-sm font-bold ml-3" htmlFor="amount">
+                              Chegirma berish
                             </label>
                             <input
-                              value={data.discount_price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
-                              disabled={true}
+                              checked={data.is_discount}
                               onChange={(e) => handleChangeVal(e, i)}
-                              name='discount_price'
+                              name='is_discount'
                               id="amount"
-                              type="text"
-                              className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                              type="checkbox"
+                              className="rounded py-1.5 px-2"
                             />
                           </div>
-                        )}
+                        </div>
+                        <div className={'flex flex-col w-full'}>
+                          <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="name_of_tarif">
+                            Loyiha nomini kiriting
+                          </label>
+                          <input
+                            value={data.name_of_tarif}
+                            onChange={(e) => handleChangeVal(e, i)}
+                            name='name_of_tarif'
+                            id='name_of_tarif'
+                            type="text"
+                            className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                          />
+                        </div>
                       </div>
                     ))}
+                  </div>
+                  <div className="w-full flex items-center justify-between">
+                    <button
+                      className={`px-4 py-2 rounded text-white ${handleValidateSecond() ? 'opacity-50' : ''}`}
+                      style={{backgroundColor: currentColor}}
+                      disabled={handleValidateSecond()}
+                      onClick={() => handleValAdd()}
+                    >
+                      Loyiha qo'shish
+                    </button>
+                    <div className={'flex flex-col w-[30%]'}>
+                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="cash">
+                        Jami (so'm)
+                      </label>
+                      <input
+                        value={calculate?.total_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+                        disabled={true}
+                        id="cash"
+                        type="text"
+                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                      />
+                    </div>
                   </div>
                   <div className="w-full flex items-center justify-between">
                     <div>
@@ -537,13 +607,23 @@ const CreateExpertise = () => {
                         Bekor qilish
                       </button>
                     </div>
-                    <button
-                      className={`px-4 py-2 rounded text-white`}
-                      style={{backgroundColor: currentColor}}
-                      // onClick={postContractNum}
-                    >
-                      Saqlash
-                    </button>
+                    <div className="flex gap-4 items-center">
+                      <button
+                        className={`px-4 py-2 rounded text-white`}
+                        style={{color: currentColor, border: `1px solid ${currentColor}`}}
+                        onClick={() => setCurrentStep(1)}
+                      >
+                        Orqaga
+                      </button>
+                      <button
+                        className={`px-4 py-2 rounded text-white ${handleValidateSecond() ? 'opacity-50' : ''}`}
+                        style={{backgroundColor: currentColor}}
+                        disabled={handleValidateSecond()}
+                        onClick={postContractExpertise}
+                      >
+                        Keyingi
+                      </button>
+                    </div>
                   </div>
                 </div>
               </>
@@ -552,7 +632,45 @@ const CreateExpertise = () => {
         )
       case 3:
         return (
-          <></>
+          <>
+            <div
+              dangerouslySetInnerHTML={{__html: expertiseDocument}}
+              className="px-2 py-3 border rounded"
+            />
+            <div className="w-full flex items-center justify-between mt-4">
+              <div>
+                <button
+                  className={'px-4 py-2 rounded'}
+                  style={{
+                    color: currentColor,
+                    border: `1px solid ${currentColor}`
+                  }}
+                  onClick={() => {
+                    navigate(-1)
+                    dispatch(clearStatesExpertise())
+                  }}
+                >
+                  Bekor qilish
+                </button>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  className={`px-4 py-2 rounded text-white border border-[${currentColor}]`}
+                  style={{color: currentColor}}
+                  onClick={() => setCurrentStep(2)}
+                >
+                  Orqaga
+                </button>
+                <button
+                  className={`px-4 py-2 rounded text-white`}
+                  style={{backgroundColor: currentColor}}
+                  onClick={postContractExpertise}
+                >
+                  Saqlash
+                </button>
+              </div>
+            </div>
+          </>
         )
       default:
         return null
