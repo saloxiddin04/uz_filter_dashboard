@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Header, Input, Loader} from "../../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {
-  calculateColocation, clearStatesColocation, createColocation,
+  calculateColocation, clearStatesColocation, createAgreementColocation, createColocation,
   getDataCenterList,
   getDataCenterTariff
 } from "../../../redux/slices/contractCreate/Colocation/ColocationSlices";
@@ -10,7 +10,7 @@ import instance from "../../../API";
 import {toast} from "react-toastify";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {useStateContext} from "../../../contexts/ContextProvider";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import moment from "moment/moment";
 
@@ -21,9 +21,11 @@ const CreateColocation = () => {
   const {state} = useLocation()
   const {currentColor} = useStateContext();
 
-  const {dataCenterList, dataCenterTariff, calculate, colocationDocument, loading} = useSelector((state) => state.createColocation);
+  const {dataCenterList, dataCenterTariff, calculate, colocationDocument, colocationConfig, loading} = useSelector((state) => state.createColocation);
   const {userByTin} = useSelector((state) => state.userByTin);
   const {sidebar} = useSelector((state) => state.sections);
+
+  const [code, setCode] = useState(null)
 
   const [client, setClient] = useState('');
 
@@ -68,15 +70,43 @@ const CreateColocation = () => {
   const [contractNumberColocation, setContractNumberColocation] = useState('')
 
   useEffect(() => {
+    dispatch(getDataCenterList())
+    dispatch(getDataCenterTariff())
+  }, []);
+
+  useEffect(() => {
     if (currentStep === 2) {
-      dispatch(getDataCenterList())
-      dispatch(getDataCenterTariff())
+      dispatch(createAgreementColocation({user: userByTin?.bank_mfo ? stir : pinfl})).then((res) => {
+        if (res?.payload?.error_code === 3) {
+          toast.error('Bu mijozga shartnoma tuzish mumkin emas!')
+          navigate('/shartnomalar/colocation')
+          dispatch(clearStatesColocation())
+          dispatch(clearStatesFirstStep())
+        } else if (res?.payload?.error_code === 1) return setCode(1)
+      })
     }
   }, [currentStep]);
 
   useEffect(() => {
+    if (code === 1) {
+      const dataObjects = colocationConfig?.colocation?.map((item) => ({
+        data_center: item?.data_center,
+        mounting_type: item?.mounting_type,
+        amount: item?.amount,
+        status: 4,
+        id: item?.id,
+        tariff: item?.tariff === undefined ? '' : item?.tariff
+      }))
+      if (colocationConfig?.colocation?.length !== 0) {
+        setData(dataObjects)
+        setTypeContract('1')
+      }
+    }
+  }, [colocationConfig, code]);
+
+  useEffect(() => {
     if (!handleValidateForCalculate()) {
-      dispatch(calculateColocation({data, check: handleValidateForCalculate()}))
+      dispatch(calculateColocation({data}))
     }
   }, [data]);
 
@@ -580,6 +610,7 @@ const CreateColocation = () => {
                 className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
                 value={typeContract}
                 onChange={(e) => setTypeContract(e.target.value)}
+                disabled={code === 1}
               >
                 <option value="" disabled={typeContract}>Tanlang...</option>
                 <option value="1">Yangi shartnoma tuzish</option>
