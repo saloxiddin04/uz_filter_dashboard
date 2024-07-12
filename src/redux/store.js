@@ -7,6 +7,7 @@ import dashboardSlice from "./slices/dashboard/dashboardSlice";
 import firstStepSlices from "./slices/contractCreate/FirstStepSlices";
 import createColocationSlices from "./slices/contractCreate/Colocation/ColocationSlices";
 import createVpsSlice from "./slices/contractCreate/Vps/VpsSlices";
+import createExpertiseSlice from "./slices/contractCreate/Expertise/expertiseSlices";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     userByTin: firstStepSlices,
     createColocation: createColocationSlices,
     createVps: createVpsSlice,
+    createExpertise: createExpertiseSlice
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false})
 })
