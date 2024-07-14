@@ -6,7 +6,7 @@ import {
   Dashboard,
   Profile,
   NotFound,
-  CreateColocation, CreateVps, CreateEmail, CreateExpertise
+  CreateColocation, CreateVps, CreateEmail, CreateExpertise, CreateCertification
 } from './pages';
 
 export const routes = [
@@ -27,4 +27,5 @@ export const routes = [
   {path: '/shartnomalar/vps/create', element: CreateVps },
   {path: '/shartnomalar/e-xat/create', element: CreateEmail },
   {path: '/shartnomalar/expertise/create', element: CreateExpertise },
+  {path: '/shartnomalar/tte_certification/create', element: CreateCertification },
 ]

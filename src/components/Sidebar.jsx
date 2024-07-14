@@ -73,7 +73,7 @@ const Sidebar = () => {
             )}
             {children && children?.map((item) => {
               const newPath = `${pathname.split('/')[1]}/${item.slug}`;
-              if (item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat' || item?.slug === 'expertise') {
+              if (item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat' || item?.slug === 'expertise' || item?.slug === 'tte_certification') {
                 return (
                   <div key={item.slug}>
                     <NavLink
