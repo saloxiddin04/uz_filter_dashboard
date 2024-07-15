@@ -109,9 +109,9 @@ const CreateCertification = () => {
   const [load, setLoad] = useState(false);
   const [loader, setLoader] = useState(false)
   const [typeCertification, setTypeCertification] = useState(null)
-  const [certificationScheme, setCertificationScheme] = useState(null)
+  const [certificationScheme, setCertificationScheme] = useState('')
   const [compliance, setCompliance] = useState(false)
-  const [complianceInput, setComplianceInput] = useState(null)
+  const [complianceInput, setComplianceInput] = useState('')
 
   const [data, setData] = useState([
     {
@@ -171,16 +171,25 @@ const CreateCertification = () => {
         tariff_telecommunications: requestData?.tariff_telecommunications,
         tariff_telecommunications_prices: (requestData.certification_type === 1 && requestData.tariff_telecommunications_prices === undefined) ? category.filter(cat => cat.type_of_tariff === Number(requestData.certification_type))[0]?.id : tariff_telecommunications_prices
       }
-      try {
-        const response = await dispatch(getCertificationCountPrices(dataForCountPrices));
-        inputData[i].selected_count = response?.payload?.devices_count_for_testing;
-        inputData[i].price = response?.payload?.calculated_price
-        setData([...inputData]);
-      } catch (error) {
-        console.log(error);
+
+      if (
+        (requestData.certification_type === 0 && (requestData.tariff_telecommunications !== null && requestData.tariff_telecommunications_prices !== null))
+        ||
+        (requestData.certification_type === 1 && (requestData.tariff_telecommunications !== null && requestData.tariff_telecommunications_prices !== undefined)) ||
+        (requestData.certification_type === 2) ||
+        (requestData.certification_type === 3)
+      ) {
+        try {
+          const response = await dispatch(getCertificationCountPrices(dataForCountPrices));
+          inputData[i].selected_count = response?.payload?.devices_count_for_testing;
+          inputData[i].price = response?.payload?.calculated_price
+          setData([...inputData]);
+        } catch (error) {
+          console.log(error);
+        }
       }
     }, 200);
-  }, [category, dispatch])
+  }, [category, dispatch, data])
 
   const handleChangeVal = (onChangeVal, i) => {
     let inputData = [...data]
@@ -238,7 +247,7 @@ const CreateCertification = () => {
         // tariff_telecommunications_prices: Number(inputData[i].certification_type) === 0 ? inputData[i].tariff_telecommunications_prices : category[0]?.id
       };
 
-      getCountPrices(inputData, i, requestData)
+      // getCountPrices(inputData, i, requestData)
       // getCalculate(inputData)
     }
     setData([...inputData]);
@@ -385,6 +394,7 @@ const CreateCertification = () => {
     });
     if (!handleValidateForCalculate()) return getCalculate(dataForCalculate)
   }, [certificationScheme, complianceInput, data]);
+
   useEffect(() => {
     getCertificationContractNumber().then()
   }, []);
@@ -397,7 +407,7 @@ const CreateCertification = () => {
         certification_devices: data,
         certification_schema: {schema_type: Number(certificationScheme), compliance_flag: compliance}
       }))
-    }, 200)
+    }, 500)
   }
 
   const getCertificationScheme = async (data) => {
@@ -960,8 +970,139 @@ const CreateCertification = () => {
                             className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
                           />
                         </div>
+                        {!item.is_discount && <div className="w-[49%] min-h-9"></div>}
+                        {item.is_discount && (
+                          <div className={'flex flex-col w-[49%]'}>
+                            <label
+                              className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                              htmlFor="discount_price"
+                            >
+                              Chegirmadagi to'lov miqdori
+                            </label>
+                            <input
+                              value={item.discount_price || ''}
+                              onChange={(e) => handleChangeVal(e, i)}
+                              name='discount_price'
+                              id="discount_price"
+                              type="number"
+                              className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                            />
+                          </div>
+                        )}
+                        <div className={'flex items-center gap-4 w-[49%]'}>
+                          <label className="block text-gray-700 text-sm font-bold ml-3" htmlFor="amount">
+                            Chegirma berish
+                          </label>
+                          <input
+                            checked={item.is_discount}
+                            onChange={(e) => handleChangeVal(e, i)}
+                            name='is_discount'
+                            id="amount"
+                            type="checkbox"
+                            className="rounded py-1.5 px-2"
+                          />
+                        </div>
                       </div>
                     ))}
+                  </div>
+                  <div className="w-full flex items-center justify-center">
+                    <button
+                      className={`px-4 py-2 rounded text-white ${handleValidateForCalculate() ? 'opacity-50' : ''}`}
+                      style={{backgroundColor: currentColor}}
+                      disabled={handleValidateForCalculate()}
+                      onClick={() => handleValAdd()}
+                    >
+                      Qo'shish
+                    </button>
+                  </div>
+                  <div className="w-full flex items-center justify-between gap-4 flex-wrap">
+                    <div className={'flex flex-col w-[49%]'}>
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                        htmlFor="scheme"
+                      >
+                        Sertifikatlash sxemasini tanlang
+                      </label>
+                      <select
+                        className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                        value={certificationScheme}
+                        onChange={(e) => {
+                          if (e.target.value === '0') {
+                            setCompliance(true)
+                            getCertificationScheme({
+                              schema_type: Number(e.target.value),
+                              compliance_flag: true
+                            }).then((res) => {
+                              setComplianceInput(res?.schema_price)
+                            })
+                          }
+                          setCertificationScheme(e.target.value)
+                        }}
+                        name="scheme"
+                        id="scheme"
+                      >
+                        <option value="2" disabled={certificationScheme}>Tanlang</option>
+                        <option value="0">3-sxema</option>
+                        <option value="1">7-sxema</option>
+                      </select>
+                    </div>
+                    <div className={'flex items-center gap-4 w-[49%]'}>
+                      <input
+                        checked={compliance}
+                        onChange={(e) => {
+                          setCompliance(e.target.checked)
+                          getCertificationScheme({
+                            schema_type: Number(certificationScheme),
+                            compliance_flag: e.target.checked
+                          }).then((res) => {
+                            setComplianceInput(res?.schema_price)
+                          })
+                        }}
+                        name='is_discount'
+                        id="amount"
+                        type="checkbox"
+                        className="rounded py-1.5 px-2"
+                        disabled={certificationScheme === '0'}
+                      />
+                      <label className="block text-gray-700 text-sm font-bold ml-3" htmlFor="amount">
+                        Muvofiqlik belgisi
+                      </label>
+                    </div>
+                    {!compliance && <div className="w-[49%] min-h-9"></div>}
+                    {compliance && (
+                      <div className={'flex flex-col w-[49%]'}>
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                          htmlFor="discount_price"
+                        >
+                          Muvofiqlik belgisi uchun jami to’lov miqdori (so’m)
+                        </label>
+                        <input
+                          value={complianceInput}
+                          name='discount_price'
+                          id="discount_price"
+                          type="number"
+                          disabled={true}
+                          className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                        />
+                      </div>
+                    )}
+                    <div className={'flex flex-col w-[49%]'}>
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                        htmlFor="allPrice"
+                      >
+                        Shartnoma bo’yicha jami to’lov miqdori (so’m)
+                      </label>
+                      <input
+                        value={calculateCertification?.calculated_price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') || ""}
+                        type='text'
+                        name='allPrice'
+                        id='allPrice'
+                        disabled={true}
+                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                      />
+                    </div>
                   </div>
                 </div>
               </>
