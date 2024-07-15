@@ -3,14 +3,17 @@ import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useStateContext} from "../../../contexts/ContextProvider";
 import {Header, Input} from "../../../components";
-import {getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
+import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import {
+  clearStatesCertification,
   getCertificationCalculate,
   getCertificationCategory, getCertificationCountPrices,
-  getCertificationTariff
+  getCertificationTariff, postCertificationContract
 } from "../../../redux/slices/contractCreate/Certification/CertificationSlice";
 import instance from "../../../API";
 import {TrashIcon} from "@heroicons/react/16/solid";
+import {toast} from "react-toastify";
+import {clearStatesExpertise} from "../../../redux/slices/contractCreate/Expertise/expertiseSlices";
 
 const CreateCertification = () => {
 
@@ -19,11 +22,9 @@ const CreateCertification = () => {
 
   const [client, setClient] = useState('');
 
-  const {state} = useLocation()
   const {currentColor} = useStateContext();
 
-  const {sidebar} = useSelector((state) => state.sections);
-  const {tariff, category, calculateCertification} = useSelector((state) => state.createCertification);
+  const {tariff, category, calculateCertification, contractDoc} = useSelector((state) => state.createCertification);
 
 
   // -------------------- juridic ---------------------
@@ -52,9 +53,9 @@ const CreateCertification = () => {
   const [pport_no, setPportNo] = useState('')
   const [pinfl, setPinfl] = useState('')
 
-  const [currentStep, setCurrentStep] = useState(2)
+  const [currentStep, setCurrentStep] = useState(1)
 
-  const [typeContract, setTypeContract] = useState('1')
+  const [typeContract, setTypeContract] = useState('')
   const [contract_number, setContractNumber] = useState('')
   const [contractDate, setContractDate] = useState('')
   const [priceSelect, setPriceSelect] = useState(2)
@@ -105,10 +106,6 @@ const CreateCertification = () => {
 
 
   // ---------------- data -----------------------
-
-  const [load, setLoad] = useState(false);
-  const [loader, setLoader] = useState(false)
-  const [typeCertification, setTypeCertification] = useState(null)
   const [certificationScheme, setCertificationScheme] = useState('')
   const [compliance, setCompliance] = useState(false)
   const [complianceInput, setComplianceInput] = useState('')
@@ -126,8 +123,6 @@ const CreateCertification = () => {
       device_name: ''
     }
   ])
-
-  const [file, setFile] = useState(null)
 
   const handleValAdd = () => {
     const abc = [...data, {
@@ -209,11 +204,9 @@ const CreateCertification = () => {
         inputData[i].tariff_telecommunications_prices = null
       } else if (onChangeVal?.target?.name === 'tariff_telecommunications') {
         try {
-          setLoader(true)
-          dispatch(getCertificationCategory({id: onChangeVal?.target?.value})).then(() => setLoader(false))
+          dispatch(getCertificationCategory({id: onChangeVal?.target?.value}))
         } catch (e) {
           console.log(e)
-          setLoader(false)
         }
       }
     }
@@ -332,8 +325,7 @@ const CreateCertification = () => {
         (currentProject?.certification_type === '2' || currentProject?.certification_type === '3') && !currentProject?.device_name ||
         currentProject?.is_discount && !currentProject?.discount_price ||
         !calculateCertification?.success ||
-        !typeCertification ||
-        !file
+        !priceSelect
       ) {
         return true
       }
@@ -421,6 +413,42 @@ const CreateCertification = () => {
       setContractNumber(response?.data?.contract_number)
     } catch (e) {
       console.log(e)
+    }
+  }
+
+  const postContractCertification = async () => {
+    try {
+      await dispatch(postCertificationContract({
+        certification_devices: data?.map(item => ({
+          certification_type: item.certification_type === '0' || item.certification_type === '1' ? 0 : item.certification_type === '2' ? 1 : 2,
+          device_name: item.device_name === '' ? null : item.device_name,
+          discount_price: item.discount_price,
+          input_device_count: item.input_device_count,
+          is_discount: item.is_discount,
+          price: item.price,
+          selected_count: item.selected_count,
+          tariff_telecommunications: item.tariff_telecommunications,
+          tariff_telecommunications_prices: item.certification_type === "0" ? item?.tariff_telecommunications_prices : item.certification_type === "1" ? category.filter(cat => cat.type_of_tariff === Number(item.certification_type))[0]?.id : undefined
+        })),
+        certification_schema: {
+          schema_type: Number(certificationScheme),
+          compliance_flag: compliance,
+        },
+        pay_choose: Number(priceSelect),
+        save: currentStep === 2 ? 0 : 1,
+        contract_date: new Date()?.toISOString(),
+        pin_or_tin: client === 'fiz' ? pinfl : stir
+      })).then(() => {
+        if (currentStep === 3) {
+          toast.success("Shartnoma yuborildi")
+          navigate('/shartnomalar/tte_certification')
+          dispatch(clearStatesCertification())
+          dispatch(clearStatesFirstStep())
+        }
+        setCurrentStep(3);
+      })
+    } catch (e) {
+      toast.error(e.message)
     }
   }
 
@@ -786,7 +814,7 @@ const CreateCertification = () => {
             )}
             {(typeContract === '1' && priceSelect) && (
               <>
-                <div className="w-full flex items-center justify-between flex-wrap gap-4 mt-4">
+                <div className="w-full flex items-center justify-between flex-wrap gap-4 my-4">
                   <div className={'w-[49%] flex items-end gap-4'}>
                     <div className={'w-[80%]'}>
                       <Input
@@ -1105,13 +1133,82 @@ const CreateCertification = () => {
                     </div>
                   </div>
                 </div>
+                <div className="w-full flex items-center justify-between">
+                  <div>
+                    <button
+                      className={'px-4 py-2 rounded'}
+                      style={{
+                        color: currentColor,
+                        border: `1px solid ${currentColor}`
+                      }}
+                      onClick={() => navigate(-1)}
+                    >
+                      Bekor qilish
+                    </button>
+                  </div>
+                  <div className="flex gap-4 items-center">
+                    <button
+                      className={`px-4 py-2 rounded text-white`}
+                      style={{color: currentColor, border: `1px solid ${currentColor}`}}
+                      onClick={() => setCurrentStep(1)}
+                    >
+                      Orqaga
+                    </button>
+                    <button
+                      className={`px-4 py-2 rounded text-white ${handleValidateSecond() ? 'opacity-50' : ''}`}
+                      style={{backgroundColor: currentColor}}
+                      disabled={handleValidateSecond()}
+                      onClick={postContractCertification}
+                    >
+                      Keyingi
+                    </button>
+                  </div>
+                </div>
               </>
             )}
           </>
         )
       case 3:
         return (
-          <></>
+          <>
+            <div
+              dangerouslySetInnerHTML={{__html: contractDoc}}
+              className="px-2 py-3 border rounded"
+            />
+            <div className="w-full flex items-center justify-between mt-4">
+              <div>
+                <button
+                  className={'px-4 py-2 rounded'}
+                  style={{
+                    color: currentColor,
+                    border: `1px solid ${currentColor}`
+                  }}
+                  onClick={() => {
+                    navigate(-1)
+                    dispatch(clearStatesCertification())
+                  }}
+                >
+                  Bekor qilish
+                </button>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  className={`px-4 py-2 rounded text-white border border-[${currentColor}]`}
+                  style={{color: currentColor}}
+                  onClick={() => setCurrentStep(2)}
+                >
+                  Orqaga
+                </button>
+                <button
+                  className={`px-4 py-2 rounded text-white`}
+                  style={{backgroundColor: currentColor}}
+                  onClick={postContractCertification}
+                >
+                  Saqlash
+                </button>
+              </div>
+            </div>
+          </>
         )
 
       default:

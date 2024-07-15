@@ -1,6 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import instance from "../../../../API";
-import {toast} from "react-toastify";
 
 const initialState = {
   tariff: [],
@@ -64,10 +63,7 @@ export const postCertificationContract = createAsyncThunk(
   "certification/postCertificationContract",
   async (data) => {
     try {
-      const response = await instance.post('/certification/contract-create', data)
-      if (data.save === 1) {
-        toast.success("Shartnoma yuborildi")
-      }
+      const response = await instance.post('/tte_certification/contract-create', data)
       return response.data
     } catch (e) {
       return e.message
