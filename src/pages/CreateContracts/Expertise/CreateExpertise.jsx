@@ -83,7 +83,7 @@ const CreateExpertise = () => {
   } = useSelector(state => state.createExpertise)
   const [contract_number, setContractNumber] = useState('')
   const [contractDate, setContractDate] = useState('')
-  const [priceSelect, setPriceSelect] = useState(30)
+  const [priceSelect, setPriceSelect] = useState('')
 
   const service = sidebar?.permissions.find(item => item?.slug === state?.path)?.children?.find(el => el?.slug === state?.slug)
 
@@ -510,8 +510,7 @@ const CreateExpertise = () => {
                         </div>
                         <div className="w-full flex items-center justify-between gap-4">
                           <div className={'flex flex-col w-[49%]'}>
-                            <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="tariff"
-                            >Tarif</label>
+                            <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="tariff">Tarif</label>
                             <select
                               className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
                               value={data.expertise_service_tarif}
