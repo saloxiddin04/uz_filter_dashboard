@@ -58,7 +58,7 @@ const CreateCertification = () => {
   const [typeContract, setTypeContract] = useState('')
   const [contract_number, setContractNumber] = useState('')
   const [contractDate, setContractDate] = useState('')
-  const [priceSelect, setPriceSelect] = useState(2)
+  const [priceSelect, setPriceSelect] = useState('')
 
   const validationJuridic = () => {
     return stir === '' || name === '' || bank_mfo === '' || bank_name === '' || per_adr === '' || paymentAccount === '';
@@ -449,6 +449,26 @@ const CreateCertification = () => {
       })
     } catch (e) {
       toast.error(e.message)
+    }
+  }
+
+  const postContractBookedCertification = async () => {
+    try {
+      await instance.post('/tte_certification/booked-contract', {
+        pin_or_tin: client === 'fiz' ? pinfl : stir,
+        contract_date: new Date(contractDate)?.toISOString()
+      },).then((res) => {
+        if (res.status === 201) {
+          toast.success(`${contract_number} raqam muvuffaqiyatli band qilindi!`)
+          navigate('/shartnomalar/tte_certification')
+          setContractNumber('')
+        } else {
+          toast.error(res?.response?.data?.err_msg)
+        }
+      })
+    } catch (e) {
+      console.log(e)
+      toast.error('Xatolik')
     }
   }
 
@@ -1161,6 +1181,77 @@ const CreateCertification = () => {
                       onClick={postContractCertification}
                     >
                       Keyingi
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+            {typeContract === '2' && (
+              <>
+                <div className="w-full flex items-center justify-between flex-wrap gap-4 my-4">
+                  <div className={'w-[49%] flex items-end gap-4'}>
+                    <div className={'w-[80%]'}>
+                      <Input
+                        value={contract_number}
+                        label={'Shartnoma raqami'}
+                        disabled={true}
+                      />
+                    </div>
+                    <button
+                      className={`px-4 py-2 rounded text-white w-2/12`}
+                      style={{backgroundColor: currentColor}}
+                      onClick={getCertificationContractNumber}
+                    >
+                      Raqam olish
+                    </button>
+                  </div>
+                  <div className={'w-[49%] flex items-end'}>
+                    <div className="w-full">
+                      <Input
+                        value={contractDate}
+                        label={'Shartnoma sanasi'}
+                        type={'date'}
+                        onChange={(e) => setContractDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full flex items-center justify-between">
+                  <div>
+                    <button
+                      className={'px-4 py-2 rounded'}
+                      style={{
+                        color: currentColor,
+                        border: `1px solid ${currentColor}`
+                      }}
+                      onClick={() => {
+                        dispatch(clearStatesCertification())
+                        dispatch(clearStatesFirstStep())
+                        navigate(-1)}
+                      }
+                    >
+                      Bekor qilish
+                    </button>
+                  </div>
+                  <div className="flex gap-4 items-center">
+                    <button
+                      className={`px-4 py-2 rounded text-white`}
+                      style={{color: currentColor, border: `1px solid ${currentColor}`}}
+                      onClick={() => {
+                        dispatch(clearStatesCertification())
+                        dispatch(clearStatesFirstStep())
+                        navigate(-1)}
+                      }
+                    >
+                      Orqaga
+                    </button>
+                    <button
+                      className={`px-4 py-2 rounded text-white ${(!contract_number || !contractDate) ? 'opacity-50' : ''}`}
+                      style={{backgroundColor: currentColor}}
+                      disabled={!contract_number || !contractDate}
+                      onClick={postContractBookedCertification}
+                    >
+                      Saqlash
                     </button>
                   </div>
                 </div>
