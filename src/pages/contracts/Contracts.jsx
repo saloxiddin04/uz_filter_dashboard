@@ -28,7 +28,7 @@ const Contracts = () => {
   const children = filterBySlug();
 
   const filteredChildren = children.filter(item =>
-    item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat'
+    item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat' || item?.slug === 'tte_certification'
   );
   
   useEffect(() => {

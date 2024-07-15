@@ -17,7 +17,7 @@ const NavButton = ({title, customFunc, icon, color, dotColor}) => (
       type="button"
       onClick={() => customFunc()}
       style={{color}}
-      className="relative text-xl rounded-full p-3 hover:bg-light-gray"
+      className="relative text-xl rounded-full p-3"
     >
       <span
         style={{background: dotColor}}
@@ -62,7 +62,7 @@ const Navbar = () => {
 
   return (
     <div className="flex justify-between items-center p-2 md:ml-6 md:mr-6 relative">
-      <NavButton title="Menu" customFunc={handleActiveMenu} color={currentColor} icon={<AiOutlineMenu/>}/>
+      <NavButton title="Menu" customFunc={handleActiveMenu} color={'#fff'} icon={<AiOutlineMenu/>}/>
       <div className="relative flex items-center gap-5">
         <div>
           <NavLink
