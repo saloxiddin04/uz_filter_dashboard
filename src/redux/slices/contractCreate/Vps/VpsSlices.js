@@ -11,6 +11,7 @@ const initialState = {
   vpsDocument: null,
   vpsConfig: null,
   error: null,
+  vpsFinish: null
 }
 
 export const getVpsTariff = createAsyncThunk(
@@ -101,6 +102,26 @@ export const createAgreementVps = createAsyncThunk(
     try {
       const response = await instance.get(`/vps/contract-create?pin_or_tin=${data?.user}`)
       return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const postVpsFinish = createAsyncThunk(
+  "vps/postVpsFinish",
+  async (data) => {
+    try {
+      if (data?.expiration_date) {
+        const response = await instance.post(`/vps/contract/finish`, data)
+        if (response.status === 201) {
+          toast.success('Shartnoma yuborildi')
+        }
+        return response.data
+      } else {
+        const response = await instance.get(`/vps/contract/finish?innpinfl=${data.innpinfl}&is_back_office=${true}`)
+        return response.data
+      }
     } catch (e) {
       return e.message
     }
@@ -213,6 +234,20 @@ const createVpsSlice = createSlice({
       state.loading = false
       state.error = payload
       state.vpsConfig = null
+    })
+
+    // postVpsFinish
+    builder.addCase(postVpsFinish.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(postVpsFinish.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.vpsFinish = payload
+    })
+    builder.addCase(postVpsFinish.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.vpsFinish = null
     })
   }
 })

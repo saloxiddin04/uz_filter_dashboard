@@ -9,7 +9,7 @@ import {
   getOperationSystems,
   getOperationSystemsDetail,
   getVpsTariff, postSignedVpsContract,
-  postVpsCalculate
+  postVpsCalculate, postVpsFinish
 } from "../../../redux/slices/contractCreate/Vps/VpsSlices";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {toast} from "react-toastify";
@@ -34,7 +34,8 @@ const CreateVps = () => {
     vpsTariffs,
     vpsCalculate,
     vpsDocument,
-    vpsConfig
+    vpsConfig,
+    vpsFinish
   } = useSelector((state) => state.createVps);
 
   const [currentStep, setCurrentStep] = useState(1)
@@ -115,11 +116,10 @@ const CreateVps = () => {
 
   const [typeContract, setTypeContract] = useState('')
   const [vpsContractNum, setVpsContractNumber] = useState('')
+  const [expiration_date, setExpirationDate] = useState('')
 
   const [tp_id, setTpId] = useState('')
   const [code, setCode] = useState(null)
-
-  const hiddenFileInput = useRef(null)
 
   const [file, setFile] = useState(null)
   const [fileName, setFileName] = useState('')
@@ -171,6 +171,10 @@ const CreateVps = () => {
           dispatch(clearStatesFirstStep())
         } else if (res?.payload?.error_code === 1) return setCode(1)
       })
+      dispatch(postVpsFinish({
+        is_back_office: true,
+        innpinfl: client === 'fiz' ? pinfl : stir
+      }))
     }
   }, [currentStep]);
 
@@ -205,7 +209,6 @@ const CreateVps = () => {
       }))
       setServer(serverObjects)
       setTpId(vpsConfig?.tp_id)
-      setTypeContract('1')
 
       postBilling(serverObjects)
       for (let i = 0; i < serverObjects.length; i++) {
@@ -621,6 +624,47 @@ const CreateVps = () => {
     document.getElementById('hiddenFileInput').click();
   };
 
+  const postFinishContract = async () => {
+    await dispatch(postVpsFinish({
+      is_back_office: true,
+      innpinfl: client === 'fiz' ? pinfl : stir,
+      expiration_date: new Date(expiration_date)?.toISOString(),
+      save: currentStep === 2 ? 0 : 1,
+    })).then(() => {
+      if (currentStep === 3) {
+        navigate('/shartnomalar/vps')
+        dispatch(clearStatesFirstStep())
+        dispatch(clearStatesVps())
+      }
+      setCurrentStep(3)
+    }).catch((e) => {
+      toast.error(e.message)
+      setCurrentStep(2)
+    })
+  }
+
+  const createVpsFunc = async () => {
+    try {
+      await dispatch(createVps({
+        tp_id,
+        contract_date: moment(new Date(), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ'),
+        configuration: server,
+        service: service?.id,
+        is_back_office: true,
+        pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
+        save: 1,
+        user_type: userByTin?.bank_mfo ? 2 : 1,
+      })).then(() => {
+        navigate('/shartnomalar/vps')
+        dispatch(clearStatesVps())
+        dispatch(clearStatesFirstStep())
+      })
+    } catch (e) {
+      setCurrentStep(2)
+      toast.error(e.message)
+    }
+  }
+
   const reducedObject = vpsCalculate?.configurations_prices?.reduce((accumulator, item) => {
     Object.entries(item).forEach(([key, value]) => {
       if (typeof value === 'number') {
@@ -975,6 +1019,7 @@ const CreateVps = () => {
                 <option value="" disabled={typeContract}>Tanlang...</option>
                 <option value="1">Yangi shartnoma tuzish</option>
                 <option value="2">Imzolangan shartnomani yuklash</option>
+                <option value="3" disabled={vpsFinish?.err_code !== 2}>Shartnomalarni to'liq yakunlash</option>
               </select>
             </div>
 
@@ -1977,13 +2022,45 @@ const CreateVps = () => {
                 </div>
               </>
             )}
+            {typeContract === '3' && (
+              <>
+                <div className="w-11/12 my-2 flex items-center">
+                  <div className="w-full">
+                    <label
+                      htmlFor="contract_number"
+                      className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                    >
+                      Shartnoma yakunlash sanasi
+                    </label>
+                    <div className="flex items-center gap-10">
+                      <input
+                        id="contract_number"
+                        type={'date'}
+                        className="rounded w-[65%] py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                        placeholder={'Shartnoma yakunlash sanasi'}
+                        value={expiration_date || ''}
+                        onChange={(e) => setExpirationDate(e.target.value)}
+                      />
+                      <button
+                        className={`px-4 py-2 rounded text-white ${!expiration_date ? 'opacity-25' : ''}`}
+                        style={{backgroundColor: currentColor}}
+                        disabled={!expiration_date || expiration_date === ''}
+                        onClick={postFinishContract}
+                      >
+                        Yuborish
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </>
         )
       case 3:
         return (
           <>
             <div
-              dangerouslySetInnerHTML={{__html: vpsDocument}}
+              dangerouslySetInnerHTML={{__html: typeContract === '3' ? vpsFinish : vpsDocument}}
               className="px-2 py-3 border rounded"
             />
             <div className="w-full flex items-center justify-between mt-4">
@@ -2013,27 +2090,7 @@ const CreateVps = () => {
                 <button
                   className={`px-4 py-2 rounded text-white`}
                   style={{backgroundColor: currentColor}}
-                  onClick={async () => {
-                    try {
-                      await dispatch(createVps({
-                        tp_id,
-                        contract_date: moment(new Date(), 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ'),
-                        configuration: server,
-                        service: service?.id,
-                        is_back_office: true,
-                        pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
-                        save: 1,
-                        user_type: userByTin?.bank_mfo ? 2 : 1,
-                      })).then(() => {
-                        navigate('/shartnomalar/vps')
-                        dispatch(clearStatesVps())
-                        dispatch(clearStatesFirstStep())
-                      })
-                    } catch (e) {
-                      setCurrentStep(2)
-                      toast.error(e.message)
-                    }
-                  }}
+                  onClick={typeContract === '3' ? postFinishContract : createVpsFunc}
                 >
                   Saqlash
                 </button>
