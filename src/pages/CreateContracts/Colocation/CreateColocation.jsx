@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {
   calculateColocation, clearStatesColocation, createAgreementColocation, createColocation,
   getDataCenterList,
-  getDataCenterTariff
+  getDataCenterTariff, postColocationFinish
 } from "../../../redux/slices/contractCreate/Colocation/ColocationSlices";
 import instance from "../../../API";
 import {toast} from "react-toastify";
@@ -21,7 +21,7 @@ const CreateColocation = () => {
   const {state} = useLocation()
   const {currentColor} = useStateContext();
 
-  const {dataCenterList, dataCenterTariff, calculate, colocationDocument, colocationConfig, loading} = useSelector((state) => state.createColocation);
+  const {dataCenterList, dataCenterTariff, calculate, colocationDocument, colocationConfig, loading, colocationFinish} = useSelector((state) => state.createColocation);
   const {userByTin} = useSelector((state) => state.userByTin);
   const {sidebar} = useSelector((state) => state.sections);
 
@@ -62,6 +62,8 @@ const CreateColocation = () => {
 
   const [typeContract, setTypeContract] = useState('')
 
+  const [expiration_date, setExpirationDate] = useState('')
+
   const [data, setData] = useState([
     {data_center: '', mounting_type: '', amount: '', status: 1, tariff: ''}
   ])
@@ -84,6 +86,10 @@ const CreateColocation = () => {
           dispatch(clearStatesFirstStep())
         } else if (res?.payload?.error_code === 1) return setCode(1)
       })
+      dispatch(postColocationFinish({
+        is_back_office: true,
+        innpinfl: client === 'fiz' ? pinfl : stir
+      }))
     }
   }, [currentStep]);
 
@@ -99,7 +105,6 @@ const CreateColocation = () => {
       }))
       if (colocationConfig?.colocation?.length !== 0) {
         setData(dataObjects)
-        setTypeContract('1')
       }
     }
   }, [colocationConfig, code]);
@@ -274,6 +279,45 @@ const CreateColocation = () => {
         setContractNumberColocation('')
       }
     })
+  }
+
+  const postFinishContract = async () => {
+    await dispatch(postColocationFinish({
+      is_back_office: true,
+      innpinfl: client === 'fiz' ? pinfl : stir,
+      expiration_date: new Date(expiration_date)?.toISOString(),
+      save: currentStep === 2 ? 0 : 1,
+    })).then(() => {
+      if (currentStep === 3) {
+        navigate('/shartnomalar/colocation')
+        dispatch(clearStatesFirstStep())
+        dispatch(clearStatesColocation())
+      }
+      setCurrentStep(3)
+    }).catch((e) => {
+      toast.error(e.message)
+      setCurrentStep(2)
+    })
+  }
+
+  const postContract = async () => {
+    try {
+      await dispatch(createColocation({
+        colocation: data,
+        service: service?.id,
+        is_back_office: true,
+        pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
+        save: 1,
+        user_type: userByTin?.bank_mfo ? 2 : 1,
+      })).then(() => {
+        navigate('/shartnomalar/colocation')
+        dispatch(clearStatesColocation())
+        dispatch(clearStatesFirstStep())
+      })
+    } catch (e) {
+      setCurrentStep(2)
+      toast.error(e.message)
+    }
   }
 
   const service = sidebar?.permissions.find(item => item?.slug === state?.path)?.children?.find(el => el?.slug === state?.slug)
@@ -610,11 +654,11 @@ const CreateColocation = () => {
                 className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
                 value={typeContract}
                 onChange={(e) => setTypeContract(e.target.value)}
-                disabled={code === 1}
               >
-                <option value="" disabled={typeContract}>Tanlang...</option>
+                <option value="0" disabled={typeContract}>Tanlang...</option>
                 <option value="1">Yangi shartnoma tuzish</option>
                 <option value="2">Shartnoma raqam bron qilish</option>
+                <option value="3" disabled={colocationFinish?.err_code !== 2}>Shartnomalarni to'liq yakunlash</option>
               </select>
             </div>
             {typeContract === "1" && (
@@ -636,7 +680,7 @@ const CreateColocation = () => {
                       <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="tariff">Tarif</label>
                       <select
                         className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-                        value={el.tariff}
+                        value={el.tariff || ''}
                         onChange={(e) => handleChangeDataColocation(e, i)}
                         name="tariff"
                         id="tariff"
@@ -821,13 +865,45 @@ const CreateColocation = () => {
                 </div>
               </div>
             )}
+            {typeContract === '3' && (
+              <>
+                <div className="w-11/12 my-2 flex items-center">
+                  <div className="w-full">
+                    <label
+                      htmlFor="contract_number"
+                      className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                    >
+                      Shartnoma yakunlash sanasi
+                    </label>
+                    <div className="flex items-center gap-10">
+                      <input
+                        id="contract_number"
+                        type={'date'}
+                        className="rounded w-[65%] py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                        placeholder={'Shartnoma yakunlash sanasi'}
+                        value={expiration_date || ''}
+                        onChange={(e) => setExpirationDate(e.target.value)}
+                      />
+                      <button
+                        className={`px-4 py-2 rounded text-white ${!expiration_date ? 'opacity-25' : ''}`}
+                        style={{backgroundColor: currentColor}}
+                        disabled={!expiration_date || expiration_date === ''}
+                        onClick={postFinishContract}
+                      >
+                        Yuborish
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </>
         )
       case 3:
         return (
           <>
             <div
-              dangerouslySetInnerHTML={{__html: colocationDocument}}
+              dangerouslySetInnerHTML={{__html: typeContract === '3' ? colocationFinish : colocationDocument}}
               className="px-2 py-3 border rounded"
             />
             <div className="w-full flex items-center justify-between mt-4">
@@ -857,25 +933,7 @@ const CreateColocation = () => {
                 <button
                   className={`px-4 py-2 rounded text-white`}
                   style={{backgroundColor: currentColor}}
-                  onClick={async () => {
-                    try {
-                      await dispatch(createColocation({
-                        colocation: data,
-                        service: service?.id,
-                        is_back_office: true,
-                        pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
-                        save: 1,
-                        user_type: userByTin?.bank_mfo ? 2 : 1,
-                      })).then(() => {
-                        navigate('/shartnomalar/colocation')
-                        dispatch(clearStatesColocation())
-                        dispatch(clearStatesFirstStep())
-                      })
-                    } catch (e) {
-                      setCurrentStep(2)
-                      toast.error(e.message)
-                    }
-                  }}
+                  onClick={typeContract === '3' ? postFinishContract : postContract}
                 >
                   Saqlash
                 </button>

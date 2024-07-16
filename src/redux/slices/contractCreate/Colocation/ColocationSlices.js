@@ -9,7 +9,8 @@ const initialState = {
   calculate: null,
   colocationDocument: null,
   dataCenterTariff: null,
-  colocationConfig: null
+  colocationConfig: null,
+  colocationFinish: null,
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -69,6 +70,26 @@ export const createAgreementColocation = createAsyncThunk(
     try {
       const response = await instance.get(`/colocation/contract-create?pin_or_tin=${data?.user}`)
       return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const postColocationFinish = createAsyncThunk(
+  "colocation/postColocationFinish",
+  async (data) => {
+    try {
+      if (data?.expiration_date) {
+        const response = await instance.post(`/colocation/contract/finish`, data)
+        if (response.status === 201) {
+          toast.success('Shartnoma yuborildi')
+        }
+        return response.data
+      } else {
+        const response = await instance.get(`/colocation/contract/finish?innpinfl=${data.innpinfl}&is_back_office=${true}`)
+        return response.data
+      }
     } catch (e) {
       return e.message
     }
@@ -146,6 +167,20 @@ const createContractColocationSlice = createSlice({
       state.loading = false
       state.error = payload
       state.colocationConfig = null
+    })
+
+    // postColocationFinish
+    builder.addCase(postColocationFinish.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(postColocationFinish.fulfilled, (state, {payload}) => {
+      state.colocationFinish = payload
+      state.loading = false
+    })
+    builder.addCase(postColocationFinish.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.colocationFinish = null
     })
   }
 })
