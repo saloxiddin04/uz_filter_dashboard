@@ -31,8 +31,6 @@ const Sidebar = () => {
 
   const slugs = ['vps', 'colocation', 'e-xat', 'expertise', 'tte_certification'];
 
-  console.log(pathname.indexOf('/shartnomalar'))
-
   if (loading) return <Loader/>
 
   return (
