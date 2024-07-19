@@ -31,6 +31,8 @@ const Sidebar = () => {
 
   const slugs = ['vps', 'colocation', 'e-xat', 'expertise', 'tte_certification'];
 
+  console.log(pathname.indexOf('/shartnomalar'))
+
   if (loading) return <Loader/>
 
   return (
@@ -73,9 +75,9 @@ const Sidebar = () => {
                 </NavLink>
               </div>
             )}
-            {children && children.filter(item => slugs.includes(item?.slug))?.map((item) => {
-              const newPath = `${pathname.split('/')[1]}/${item.slug}`;
-              if (pathname.indexOf('/shartnomalar') === 0 && item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat' || item?.slug === 'expertise' || item?.slug === 'tte_certification') {
+            {pathname.indexOf('/shartnomalar') === 0 ? (
+              children && children.filter(item => slugs.includes(item?.slug))?.map((item) => {
+                const newPath = `${pathname.split('/')[1]}/${item.slug}`;
                 return (
                   <div key={item.slug}>
                     <NavLink
@@ -94,11 +96,13 @@ const Sidebar = () => {
                     </NavLink>
                   </div>
                 )
-              } else {
+              })) : (
+              children && children.map((item) => {
+                const newPath = `${pathname.split('/')[1]}/${item.slug}`;
                 return (
                   <div key={item.slug}>
                     <NavLink
-                      to={`${newPath}`}
+                      to={newPath}
                       key={item.slug}
                       onClick={() => {
                         localStorage.setItem("currentPage", '1');
@@ -113,8 +117,8 @@ const Sidebar = () => {
                     </NavLink>
                   </div>
                 )
-              }
-            })}
+              })
+            )}
           </div>
         </>
       )}
