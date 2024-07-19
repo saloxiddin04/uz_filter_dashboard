@@ -9,6 +9,7 @@ import createColocationSlices from "./slices/contractCreate/Colocation/Colocatio
 import createVpsSlice from "./slices/contractCreate/Vps/VpsSlices";
 import createExpertiseSlice from "./slices/contractCreate/Expertise/expertiseSlices";
 import createCertificationSlice from "./slices/contractCreate/Certification/CertificationSlice";
+import dataCenterSlice from "./slices/dataCenter/dataCenterSlice";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     dashboard: dashboardSlice,
     sections: sectionSlice,
     contracts: contractsSlice,
+    dataCenter: dataCenterSlice,
     applications: applicationsSlice,
     userByTin: firstStepSlices,
     createColocation: createColocationSlices,

@@ -18,3 +18,5 @@ export {default as CreateVps} from './CreateContracts/Vps/CreateVps'
 export {default as CreateEmail} from './CreateContracts/Email/CreateEmail'
 export {default as CreateExpertise} from './CreateContracts/Expertise/CreateExpertise'
 export {default as CreateCertification} from './CreateContracts/Certification/CreateCertification'
+
+export {default as DataCenter} from './DataCenter/DataCenter'

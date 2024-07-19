@@ -29,6 +29,8 @@ const Sidebar = () => {
 
   const children = filterBySlug();
 
+  const slugs = ['vps', 'colocation', 'e-xat', 'expertise', 'tte_certification'];
+
   if (loading) return <Loader/>
 
   return (
@@ -71,13 +73,32 @@ const Sidebar = () => {
                 </NavLink>
               </div>
             )}
-            {children && children?.map((item) => {
+            {children && children.filter(item => slugs.includes(item?.slug))?.map((item) => {
               const newPath = `${pathname.split('/')[1]}/${item.slug}`;
-              if (item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat' || item?.slug === 'expertise' || item?.slug === 'tte_certification') {
+              if (pathname.indexOf('/shartnomalar') === 0 && item?.slug === 'vps' || item?.slug === 'colocation' || item?.slug === 'e-xat' || item?.slug === 'expertise' || item?.slug === 'tte_certification') {
                 return (
                   <div key={item.slug}>
                     <NavLink
                       to={newPath}
+                      key={item.slug}
+                      onClick={() => {
+                        localStorage.setItem("currentPage", '1');
+                        handleCloseSideBar();
+                      }}
+                      style={({isActive}) => ({
+                        backgroundColor: isActive ? currentColor : '',
+                      })}
+                      className={({isActive}) => (isActive ? activeLink : normalLink)}
+                    >
+                      <span className="capitalize">{item.name}</span>
+                    </NavLink>
+                  </div>
+                )
+              } else {
+                return (
+                  <div key={item.slug}>
+                    <NavLink
+                      to={`${newPath}`}
                       key={item.slug}
                       onClick={() => {
                         localStorage.setItem("currentPage", '1');

@@ -6,7 +6,7 @@ import {
   Dashboard,
   Profile,
   NotFound,
-  CreateColocation, CreateVps, CreateEmail, CreateExpertise, CreateCertification
+  CreateColocation, CreateVps, CreateEmail, CreateExpertise, CreateCertification, DataCenter
 } from './pages';
 
 export const routes = [
@@ -22,6 +22,10 @@ export const routes = [
 
   { path: '/application', element: Applications },
   { path: '/application/:id', element: ApplicationDetail },
+
+  { path: '/data-center', element: DataCenter },
+  { path: '/data-center/:id', element: DataCenter },
+
   
   {path: '/shartnomalar/colocation/create', element: CreateColocation },
   {path: '/shartnomalar/vps/create', element: CreateVps },
