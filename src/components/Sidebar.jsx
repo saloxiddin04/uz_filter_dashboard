@@ -39,7 +39,7 @@ const Sidebar = () => {
         <>
           <div className="pl-3 flex justify-between items-center py-2" style={{backgroundColor: currentColor}}>
             <Link
-              to="/" onClick={handleCloseSideBar}
+              to={pathname} onClick={handleCloseSideBar}
               className="ml-3 mt-2"
             >
               <Logo/>
