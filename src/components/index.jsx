@@ -9,4 +9,3 @@ export { default as Loader } from './Loader';
 export { default as TabsRender } from './Tabs';
 export { default as Pagination } from './Pagination';
 export { default as DetailNav } from './DetailNav';
-
