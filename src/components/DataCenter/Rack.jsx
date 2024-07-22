@@ -36,7 +36,7 @@ const Rack = ({
         </div>
       )}
       <div
-        className={`rack flex items-center mt-6`}
+        className={`rack flex items-center mt-4`}
         title={(rack_valid_action !== null && rack_valid_action?.status_code === 1) ? rack_valid_action?.message : ''}
       >
         {type === 'rack' && (
@@ -85,6 +85,13 @@ const Rack = ({
             <span className="max-w-[55px] text-[#b6b6b6] text-xs">№ {number}</span>
             <div className="rack-battery w-[150px] h-[65px] bg-[#343a40] py-[10px] px-[8px] rounded cursor-pointer" style={{marginLeft: 15}}>
             </div>
+          </>
+        )}
+        {type === '' && (
+          <>
+            <div
+              className={`rack-ups w-[150px] h-[65px] bg-[#343a40] py-[10px] px-[8px] rounded cursor-pointer ${left ? "ml-[39px]" : ""}`}
+            />
           </>
         )}
       </div>

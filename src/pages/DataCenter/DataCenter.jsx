@@ -15,7 +15,7 @@ const DataCenter = () => {
 
   useEffect(() => {
     dispatch(getDataCenterList()).then((res) => {
-      navigate(`/data-center/${res?.payload[1]?.id}`);
+      navigate(`/data-center/${res?.payload[0]?.id}`);
     })
   }, [dispatch]);
 
@@ -213,7 +213,7 @@ const DataCenter = () => {
               backgroundRepeat: 'no-repeat'
             }}
           >
-            <div className={'flex items-center justify-center gap-14 pb-14 ml-24'}>
+            <div className={'flex items-center justify-center gap-14 pb-8 ml-24'}>
               <div className="capsula">
                 <div className="text-center">CAPSULA № 1</div>
                 <div className="flex items-center gap-4">
@@ -237,9 +237,24 @@ const DataCenter = () => {
                           unit={rack?.busy_units_count}
                           isForUnit={rack?.is_for_unit_service}
                           rack_valid_action={rack?.rack_valid_action}
+                          client={rack?.rack_buyer}
                         />
                       )
                     })}
+                    <Rack
+                      key={99}
+                      type={''}
+                      left={true}
+                      id={99}
+                      elKw={0}
+                      sold={false}
+                      percentage={0}
+                      number={''}
+                      unitsCount={''}
+                      unit={''}
+                      isForUnit={''}
+                      rack_valid_action={''}
+                    />
                   </div>
                   <div className="flex flex-col">
                     {dividedRackData2[1]?.reverse().map((rack, index) => {
@@ -261,9 +276,24 @@ const DataCenter = () => {
                           unit={rack?.busy_units_count}
                           isForUnit={rack?.is_for_unit_service}
                           rack_valid_action={rack?.rack_valid_action}
+                          client={rack?.rack_buyer}
                         />
                       )
                     })}
+                    <Rack
+                      key={99}
+                      type={''}
+                      left={false}
+                      id={99}
+                      elKw={0}
+                      sold={false}
+                      percentage={0}
+                      number={''}
+                      unitsCount={''}
+                      unit={''}
+                      isForUnit={''}
+                      rack_valid_action={''}
+                    />
                   </div>
                 </div>
               </div>
@@ -290,6 +320,7 @@ const DataCenter = () => {
                           unit={rack?.busy_units_count}
                           isForUnit={rack?.is_for_unit_service}
                           rack_valid_action={rack?.rack_valid_action}
+                          client={rack?.rack_buyer}
                         />
                       )
                     })}
@@ -314,6 +345,7 @@ const DataCenter = () => {
                           unit={rack?.busy_units_count}
                           isForUnit={rack?.is_for_unit_service}
                           rack_valid_action={rack?.rack_valid_action}
+                          client={rack?.rack_buyer}
                         />
                       )
                     })}
@@ -336,6 +368,7 @@ const DataCenter = () => {
                           unit={rack?.busy_units_count}
                           isForUnit={rack?.is_for_unit_service}
                           rack_valid_action={rack?.rack_valid_action}
+                          client={rack?.rack_buyer}
                         />
                       )
                     })}
