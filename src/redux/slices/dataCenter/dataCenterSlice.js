@@ -186,6 +186,20 @@ const dataCenterSlice = createSlice({
       state.error = payload
     })
 
+    // getDataCenterListDetail
+    builder.addCase(getDataCenterListDetail.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getDataCenterListDetail.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.dataCenterListDetail = payload
+    })
+    builder.addCase(getDataCenterListDetail.rejected, (state, {payload}) => {
+      state.loading = false
+      state.dataCenterListDetail = null
+      state.error = payload
+    })
+
   }
 })
 
