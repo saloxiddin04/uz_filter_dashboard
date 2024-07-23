@@ -958,7 +958,7 @@ const ShowRack = () => {
   if (loading) return <Loader />
 
   return (
-    <div className="flex justify-between w-full h-full showRack md:mt-8 mt-24 p-2 md:px-4 bg-white rounded">
+    <div className="flex justify-between w-full showRack md:mt-8 mt-24 p-2 md:px-4 bg-white rounded">
       <div className="flex-3 flex flex-col w-1/3">
         <div className="flex items-center justify-between w-full h-14 bg-white border rounded p-5">
           <span className="font-bold text-2xl leading-6 text-black">Unitni tanlang</span>
