@@ -15,6 +15,7 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import EmptyBlock from "./EmptyBlock";
 import EmptyIcon from "../../assets/images/EmptyIcon";
 import SelectIcon from "../../assets/images/SelectIcon";
+import {BiBadgeCheck} from "react-icons/bi";
 
 const ShowRack = () => {
   const location = useLocation()
@@ -997,20 +998,18 @@ const ShowRack = () => {
           <span className="font-bold text-2xl leading-6 text-dark">Rack: {rack_detail?.place_number}</span>
           {rack_detail?.is_busy ? (
             <div
-              className="flex items-center bg-yellow-500 rounded-full cursor-pointer showRack_rackBlock-head-sold"
+              className="flex items-center rounded-full cursor-pointer showRack_rackBlock-head-sold"
               onClick={() => setDrawer(true)}
-              style={{background: currentColor}}
             >
-              <span className="ml-2.5 font-medium text-xs leading-3 p-2 text-white">sotilgan</span>
+              {<BiBadgeCheck size={30} color={currentColor}/> }
             </div>
           ) : (
             <button
               className={`flex items-center rounded-full border-0 p-1 disabled:opacity-50`}
               onClick={() => setDrawer(true)}
-              style={{background: currentColor}}
               disabled={rack_detail?.is_for_unit_service || ["direktor", "direktor o'rinbosari", "departament boshlig'i"].includes(user?.userdata?.role?.name)}
             >
-              <span className="ml-2.5 font-medium text-xs leading-3 text-white">RACK sotilgan belgisi</span>
+              {<BiBadgeCheck size={30} color={'#b6b6b6'}/> }
             </button>
           )}
         </div>
