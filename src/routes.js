@@ -8,6 +8,7 @@ import {
   NotFound,
   CreateColocation, CreateVps, CreateEmail, CreateExpertise, CreateCertification, DataCenter
 } from './pages';
+import ShowRack from "./components/DataCenter/ShowRack";
 
 export const routes = [
   { path: '*', element: NotFound },
@@ -25,6 +26,7 @@ export const routes = [
 
   { path: '/data-center', element: DataCenter },
   { path: '/data-center/:id', element: DataCenter },
+  { path: 'data-center/:id/rack/:id', element: ShowRack },
 
   
   {path: '/shartnomalar/colocation/create', element: CreateColocation },

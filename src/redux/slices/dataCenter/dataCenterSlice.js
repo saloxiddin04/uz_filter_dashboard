@@ -11,6 +11,8 @@ const initialState = {
   listProvider: null,
   rack_contract_detail: null,
   deviceDetail: null,
+  contractInfo: null,
+  unitContractInfo: null
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -54,6 +56,7 @@ export const getRackDetail = createAsyncThunk(
   async (id) => {
     try {
       const response = await instance.get(`/colocation/detail/rack/${id}`)
+      return response.data?.data
     } catch (e) {
       return e.message
     }
@@ -132,6 +135,30 @@ export const getRackContractDetail = createAsyncThunk(
   }
 )
 
+export const getUnitContractInfo = createAsyncThunk(
+  "dataCenter/getUnitContractInfo",
+  async (data) => {
+    try {
+      const response = await instance.post(`/colocation/contract-get/unit`, {data})
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const getContractInfo = createAsyncThunk(
+  "dataCenter/getContractInfo",
+  async (data) => {
+    try {
+      const response = await instance.get(`/contracts/rack-contract-with-number?contract_number=${data.contract_number}&rack_id=${data.rack_id}`)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 export const deleteDevice = createAsyncThunk(
   "dataCenter/deleteDevice",
   async (data) => {
@@ -198,6 +225,48 @@ const dataCenterSlice = createSlice({
       state.loading = false
       state.dataCenterListDetail = null
       state.error = payload
+    })
+
+    // getRackDetail
+    builder.addCase(getRackDetail.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getRackDetail.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.rack_detail = payload
+    })
+    builder.addCase(getRackDetail.rejected, (state, {payload}) => {
+      state.loading = false
+      state.rack_detail = null
+      state.error = payload
+    })
+
+    // getUnitContractInfo
+    builder.addCase(getUnitContractInfo.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getUnitContractInfo.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.unitContractInfo = payload
+    })
+    builder.addCase(getUnitContractInfo.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.unitContractInfo = null
+    })
+
+    // getContractInfo
+    builder.addCase(getContractInfo.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getContractInfo.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.contractInfo = payload
+    })
+    builder.addCase(getContractInfo.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.contractInfo = null
     })
 
   }

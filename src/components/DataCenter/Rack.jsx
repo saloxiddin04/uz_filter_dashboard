@@ -49,7 +49,7 @@ const Rack = ({
                 marginRight: !left ? 15 : 0,
                 background: rack_valid_action ? 'red' : '',
               }}
-              onClick={() => navigate(`/data-center/rack/${id}`, {state: {rack: id}})}
+              onClick={() => navigate(`rack/${id}`, {state: {rack: id}})}
             >
               <div className="rack-block_info flex items-center justify-between">
                 <span className="text-xs">
