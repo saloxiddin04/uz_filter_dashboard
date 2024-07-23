@@ -7,7 +7,7 @@ const EmptyBlock = ({ icon, title, descr, button, onClick, style, role }) => {
       <div className="mt-12 font-bold text-2xl leading-6 text-[#0E0E4B]">
         {title}
       </div>
-      <div className="mt-4 font-normal text-2xl leading-6 text-[#0E0E4B] max-w-[345px] text-center">
+      <div className="mt-4 font-normal text-xl leading-6 text-[#0E0E4B] max-w-[345px] text-center">
         {descr}
       </div>
       <button
