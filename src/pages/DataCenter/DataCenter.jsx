@@ -37,10 +37,6 @@ const DataCenter = () => {
   };
 
   const dividedRackData = divideArray(withSort, 7).map(chunk => {
-    chunk.forEach((rack) => {
-      rack.type = (rack?.place_number === 1 || rack?.place_number === 16) ? 'battery' :
-        (rack?.place_number === 15 || rack?.place_number === 2) ? 'ups' : 'rack';
-    });
     return chunk;
   });
 
@@ -88,7 +84,7 @@ const DataCenter = () => {
                       return (
                         <Rack
                           key={index}
-                          type={rack?.type}
+                          type={(rack?.place_number === 1 || rack?.place_number === 16 || rack?.place_number === 15 || rack?.place_number === 2) ? 'ups' : 'rack'}
                           left={true}
                           id={rack?.id}
                           elKw={
@@ -113,7 +109,7 @@ const DataCenter = () => {
                       return (
                         <Rack
                           key={index}
-                          type={rack?.type}
+                          type={(rack?.place_number === 1 || rack?.place_number === 16 || rack?.place_number === 15 || rack?.place_number === 2) ? 'ups' : 'rack'}
                           left={false}
                           id={rack?.id}
                           elKw={
@@ -143,7 +139,7 @@ const DataCenter = () => {
                       return (
                         <Rack
                           key={index}
-                          type={rack?.type}
+                          type={(rack?.place_number === 1 || rack?.place_number === 16 || rack?.place_number === 15 || rack?.place_number === 2) ? 'ups' : 'rack'}
                           left={true}
                           id={rack?.id}
                           elKw={
@@ -168,7 +164,7 @@ const DataCenter = () => {
                       return (
                         <Rack
                           key={index}
-                          type={rack?.type}
+                          type={(rack?.place_number === 1 || rack?.place_number === 16 || rack?.place_number === 15 || rack?.place_number === 2) ? 'ups' : 'rack'}
                           left={false}
                           id={rack?.id}
                           elKw={

@@ -60,7 +60,7 @@ const Rack = ({
                   {/*<span className="rack-block_info-elkw_value">{elKw}</span>*/}
                 </div>
                 <span className="text-xs">
-                  {<BiBadgeCheck size={20} color={sold ? '#ffb800' : currentColor}/> }
+                  {<BiBadgeCheck size={20} color={sold ? currentColor : '#b6b6b6'}/> }
                 </span>
               </div>
               <div className="rack-block_process mt-1 w-full h-[7px] bg-[#d9d9d9] rounded relative">
