@@ -269,6 +269,34 @@ const dataCenterSlice = createSlice({
       state.contractInfo = null
     })
 
+    // getListProvider
+    builder.addCase(getListProvider.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getListProvider.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.listProvider = payload
+    })
+    builder.addCase(getListProvider.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.listProvider = null
+    })
+
+    // getDeviceDetail
+    builder.addCase(getDeviceDetail.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getDeviceDetail.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.deviceDetail = payload
+    })
+    builder.addCase(getDeviceDetail.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.deviceDetail = null
+    })
+
   }
 })
 

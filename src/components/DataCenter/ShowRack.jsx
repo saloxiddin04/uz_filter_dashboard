@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import {useLocation} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {Loader} from "../index";
+import {Input, Loader} from "../index";
 import {toast} from "react-toastify";
 import {
   createDevice, createUnit, deleteDevice,
@@ -16,6 +16,7 @@ import EmptyBlock from "./EmptyBlock";
 import EmptyIcon from "../../assets/images/EmptyIcon";
 import SelectIcon from "../../assets/images/SelectIcon";
 import {BiBadgeCheck} from "react-icons/bi";
+import DeleteUnitModal from "./DeleteUnitModal";
 
 const ShowRack = () => {
   const location = useLocation()
@@ -123,7 +124,7 @@ const ShowRack = () => {
     if (deviceCount === 4) {
       return (
         <div
-          className="absolute top-1 left-6 w-[90%] h-[149px] ml-4 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
+          className="absolute top-1 left-6 w-[87%] h-[149px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
           onClick={() => showUnitInfo(number, busy, device)}
         />
       )
@@ -131,7 +132,7 @@ const ShowRack = () => {
     if (deviceCount === 3) {
       return (
         <div
-          className="absolute top-[-1.5rem] left-6 w-[90%] h-[121px] ml-4 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
+          className="absolute top-[-1.5rem] left-6 w-[87%] h-[121px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
           onClick={() => showUnitInfo(number, busy, device)}
         />
       )
@@ -139,7 +140,7 @@ const ShowRack = () => {
     if (deviceCount === 2) {
       return (
         <div
-          className="absolute top-[-0.5rem] left-6 w-[90%] h-[76px] ml-4 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
+          className="absolute top-0 left-6 w-[87%] h-[65px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
           onClick={() => showUnitInfo(number, busy, device)}
         />
       )
@@ -162,7 +163,7 @@ const ShowRack = () => {
       return <div className="absolute top-[-1.5rem] left-6 w-[90%] h-[121px] ml-4 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10" style={{ cursor: 'no-drop' }} />
     }
     if (deviceCount === 2) {
-      return <div className="absolute top-[-0.5rem] left-6 w-[90%] h-[76px] ml-4 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10" style={{ cursor: 'no-drop' }} />
+      return <div className="absolute top-0 left-6 w-[90%] h-[65px] ml-4 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10" style={{ cursor: 'no-drop' }} />
     }
     if (deviceCount === 1) {
       return <div className="w-[90%] h-7 ml-4 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat" style={{ cursor: 'no-drop' }} />
@@ -215,6 +216,20 @@ const ShowRack = () => {
 
   const clearData = () => {
     setDrawer(false)
+    setModal(false)
+    setSelectable(false)
+    setAddUnit(0)
+    setUnitInfo(0)
+    setSelectedUnits([])
+    setContractNumber('')
+    setConnectMethod('')
+    setConnectContractNumber('')
+    setContractDate('')
+    setDeviceValue('')
+    setPublisherValue('')
+    setDeviceModel('')
+    setDeviceNumber('')
+    setElectricityValue('')
   }
 
   const addDevice = () => {
@@ -265,8 +280,9 @@ const ShowRack = () => {
     if (rack_detail?.is_busy) {
       dispatch(createDevice(soldBody)).then(() => {
         dispatch(getRackDetail(rack))
-        dispatch(getListProvider(access))
+        dispatch(getListProvider())
         setSelectable(false)
+        clearData()
       })
     }
     if (!rack_detail?.is_busy && rack_detail?.is_for_unit_service) {
@@ -274,6 +290,7 @@ const ShowRack = () => {
         dispatch(getRackDetail(rack))
         dispatch(getListProvider())
         setSelectable(false)
+        clearData()
       })
     }
     dispatch(getRackDetail(rack))
@@ -281,7 +298,7 @@ const ShowRack = () => {
   }
 
   const handleDeleteDevice = () => {
-    dispatch(deleteDevice(deviceDetail?.unit?.id, 'unit')).then((res) => {
+    dispatch(deleteDevice({id: deviceDetail?.unit?.id, slug: 'unit'})).then((res) => {
       if (res?.payload?.success) {
         dispatch(getListProvider())
         dispatch(getRackDetail(rack))
@@ -508,13 +525,14 @@ const ShowRack = () => {
           )
         } else
           return (
-            <div className="showRack_rackBlock-infoBody">
+            <div className="showRack_rackBlock-infoBody h-[750px] overflow-y-scroll rounded shadow-md mt-5 border p-4">
               <div className="showRack_rackBlock-infoBody-head">
-                <span>
+                <span className="font-bold">
                   UNIT raqami:{' '}
                   {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
                 </span>
                 <button
+                  className="px-4 py-2 rounded bg-red-500 text-white"
                   disabled={
                     user?.userdata?.role?.name === 'direktor' ||
                     user?.userdata?.role?.name === "direktor o'rinbosari" ||
@@ -528,222 +546,320 @@ const ShowRack = () => {
               </div>
               {!rack_detail?.is_busy && (
                 <>
-                  <div className="showRack_rackBlock-infoBody-text">Shartnoma maʼlumotlari</div>
-                  <div className="showRack_rackBlock-infoBody-contractInfo">
-                    <div className="showRack_rackBlock-infoBody-contractInfo_block">
+                  <div className="font-bold text-center">Shartnoma maʼlumotlari</div>
+                  <div className="my-4 flex justify-between">
+                    <div className="w-[49%] flex flex-wrap gap-4 rounded border p-4">
                       <div className="showRack_rackBlock-infoBody-contractInfo_block_title">
                         {/*<ContractIcon />*/}
-                        <span>Shartnoma</span>
+                        <span className="font-bold">Shartnoma</span>
                       </div>
-                      {/*<InputBlock*/}
-                      {/*  type="inputWithButton"*/}
-                      {/*  label={handleLabel(unitContractInfo?.contract?.contract_status?.name)}*/}
-                      {/*  labelColor={handleLabelColor(*/}
-                      {/*    unitContractInfo?.contract?.contract_status?.name,*/}
-                      {/*  )}*/}
-                      {/*  submit={sendContractNumber}*/}
-                      {/*  value={contractNumber}*/}
-                      {/*  onChange={(e) => setContractNumber(e.target.value)}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="STIR/JShShIR"*/}
-                      {/*  value={*/}
-                      {/*    unitContractInfo?.client?.tin*/}
-                      {/*      ? unitContractInfo?.client?.tin*/}
-                      {/*      : unitContractInfo?.client?.pin*/}
-                      {/*  }*/}
-                      {/*  disabled={true}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="Shartnoma sanasi"*/}
-                      {/*  disabled={true}*/}
-                      {/*  value={*/}
-                      {/*    unitContractInfo?.contract_date &&*/}
-                      {/*    moment(unitContractInfo?.contract_date).format('DD.MM.YYYY HH:mm:ss')*/}
-                      {/*  }*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="multipleInput"*/}
-                      {/*  label="Unit soni"*/}
-                      {/*  value={unitContractInfo?.unit_count}*/}
-                      {/*  label2="Unit qoldigʼi"*/}
-                      {/*  value2={unitContractInfo?.unit_quota}*/}
-                      {/*  disabled={true}*/}
-                      {/*/>*/}
+                      <div className={'w-full flex items-end gap-4'}>
+                        <div className={'w-full'}>
+                          <Input
+                            value={contractNumber || ''}
+                            onChange={(e) => setContractNumber(e.target.value.toUpperCase())}
+                            label={handleLabel(unitContractInfo?.contract?.contract_status?.name)}
+                          />
+                        </div>
+                        <button
+                          className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+                          style={{backgroundColor: currentColor}}
+                          onClick={sendContractNumber}
+                          disabled={!contractNumber}
+                        >
+                          Izlash
+                        </button>
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          label={'STIR/JShShIR'}
+                          value={unitContractInfo?.client?.tin
+                            ? unitContractInfo?.client?.tin
+                            : unitContractInfo?.client?.pin || ''
+                          }
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          label={'Shartnoma sanasi'}
+                          value={
+                            unitContractInfo?.contract_date &&
+                            moment(unitContractInfo?.contract_date).format('DD.MM.YYYY HH:mm:ss') || ''
+                          }
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="flex justify-between items-center w-full">
+                        <div className="w-[49%]">
+                          <Input
+                            label={'Unit soni'}
+                            value={unitContractInfo?.unit_count || ''}
+                            type={'text'}
+                            disabled={true}
+                          />
+                        </div>
+                        <div className="w-[49%]">
+                          <Input
+                            label={'Unit qoldigi'}
+                            value={unitContractInfo?.unit_quota || ''}
+                            type={'text'}
+                            disabled={true}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div className="showRack_rackBlock-infoBody-contractInfo_block">
-                      <div className="showRack_rackBlock-infoBody-contractInfo_block_title">
+                    <div className="w-[49%] flex flex-wrap gap-4 rounded border p-4">
+                      <div>
                         {/*<SoldIcon />*/}
-                        <span>Mijoz</span>
+                        <span className="font-bold">Mijoz</span>
                       </div>
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="F.I.SH."*/}
-                      {/*  value={unitContractInfo?.client?.full_name}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="Telefon"*/}
-                      {/*  value={unitContractInfo?.client?.mob_phone_no}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="Pochta manzili"*/}
-                      {/*  value={unitContractInfo?.client?.email}*/}
-                      {/*/>*/}
+                      <div className="w-full">
+                        <Input
+                          label={'F.I.SH'}
+                          value={unitContractInfo?.client?.full_name || ''}
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          label={'Telefon'}
+                          value={unitContractInfo?.client?.mob_phone_no || ''}
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          label={'Pochta manzili'}
+                          value={unitContractInfo?.client?.email || ''}
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <div className="showRack_rackBlock-infoBody-text">Izoh</div>
+                  <div className="my-4">
+                    <div className="text-center font-bold">Izoh</div>
                     <textarea
                       cols="30"
                       rows="10"
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
-                      style={{ width: '100%', marginTop: 20, borderRadius: 8, outline: 'none' }}
+                      className="rounded w-full border outline-none p-4"
                     />
                   </div>
-                  <div className="rackDrawer-internetConnect">
-                    <div className="rackDrawer-internetConnect_block">
-                      <div className="rackDrawer-internetConnect_block_title">
+                  <div className="rounded p-4 border">
+                    <div className="flex flex-wrap gap-4">
+                      <div className="pb-4">
                         {/*<LanguageIcon color="#0E0E4B" />*/}
-                        <span>Internetga ulanish manbayi</span>
+                        <span className="font-bold">Internetga ulanish manbayi</span>
                       </div>
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="ODF soni"*/}
-                      {/*  value={odf_count}*/}
-                      {/*  onChange={(e) => {*/}
-                      {/*    const inputValue = e.target.value;*/}
-                      {/*    const numericValue = inputValue.replace(/\D/g, '');*/}
-                      {/*    setOdfCount(numericValue);*/}
-                      {/*  }}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="select"*/}
-                      {/*  label="Provayder nomi"*/}
-                      {/*  value={connectMethod}*/}
-                      {/*  onChange={(e) => setConnectMethod(e.target.value)}*/}
-                      {/*  data={listProvider?.internet_provider}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="Shartnoma raqami"*/}
-                      {/*  value={connectContractNumber}*/}
-                      {/*  onChange={(e) => setConnectContractNumber(e.target.value)}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="datePicker"*/}
-                      {/*  label="Shartnoma sanasi"*/}
-                      {/*  value={contractDate}*/}
-                      {/*  onChange={(e) => setContractDate(e)}*/}
-                      {/*/>*/}
+                      <div className="w-full">
+                        <Input
+                          label={'ODF soni'}
+                          value={odf_count || ''}
+                          type={'text'}
+                          onChange={(e) => {
+                            const inputValue = e.target.value;
+                            const numericValue = inputValue.replace(/\D/g, '');
+                            setOdfCount(numericValue);
+                          }}
+                        />
+                      </div>
+                      <div className={'w-full'}>
+                        <label
+                          htmlFor="client"
+                          className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                        >
+                          Provayder nomi
+                        </label>
+                        <select
+                          name="client"
+                          id="client"
+                          className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                          value={connectMethod}
+                          onChange={(e) => setConnectMethod(e.target.value)}
+                        >
+                          <option value="" disabled={connectMethod}>Tanlang...</option>
+                          {listProvider?.internet_provider?.map((item, index) => (
+                            <option value={item?.id} key={index}>{item?.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          label={'Shartnoma raqami'}
+                          value={connectContractNumber || ''}
+                          type={'text'}
+                          onChange={(e) => setConnectContractNumber(e.target.value)}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          label={'Shartnoma sanasi'}
+                          value={contractDate || ''}
+                          type={'date'}
+                          onChange={(e) => setContractDate(e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="showRack_rackBlock-infoBody-payment">
-                    <div className="showRack_rackBlock-infoBody-payment_block">
-                      <div className="showRack_rackBlock-infoBody-payment_block_title">
+
+                  <div className="rounded border p-4 my-4">
+                    <div className="flex flex-wrap gap-4">
+                      <div>
                         {/*<PaymentIcon />*/}
-                        <span>Toʼlov</span>
+                        <span className="font-bold">Toʼlov</span>
                       </div>
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="Toʼlov miqdori"*/}
-                      {/*  value={unitContractInfo?.contract?.contract_cash}*/}
-                      {/*  disabled={true}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="Joriy oy uchun toʼlandi"*/}
-                      {/*  value={unitContractInfo?.contract?.payed_cash}*/}
-                      {/*  disabled={true}*/}
-                      {/*/>*/}
-                      {/*<InputBlock*/}
-                      {/*  type="input"*/}
-                      {/*  label="Qarzdorlik"*/}
-                      {/*  value={unitContractInfo?.contract?.arrearage}*/}
-                      {/*  disabled={true}*/}
-                      {/*/>*/}
+                      <div className="w-full">
+                        <Input
+                          label={"To'lov miqdori"}
+                          value={unitContractInfo?.contract?.contract_cash || ''}
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          label={"Joriy oy uchun to'landi"}
+                          value={unitContractInfo?.contract?.payed_cash || ''}
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          label={"Qarzdorlik"}
+                          value={unitContractInfo?.contract?.arrearage || ''}
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
                     </div>
-                    <div className="showRack_rackBlock-infoBody-payment_block">
-                      {/*{unitContractInfo && (*/}
-                      {/*  <InputBlock*/}
-                      {/*    type="payed"*/}
-                      {/*    label="Shartnoma holati"*/}
-                      {/*    status={unitContractInfo?.contract?.contract_status?.name}*/}
-                      {/*  />*/}
-                      {/*)}*/}
-                      {/*{unitContractInfo && (*/}
-                      {/*  <InputBlock*/}
-                      {/*    type="srok"*/}
-                      {/*    label="Shartnoma amal qilish muddati"*/}
-                      {/*    value={*/}
-                      {/*      unitContractInfo?.contract?.expiration_date*/}
-                      {/*        ? unitContractInfo?.contract?.expiration_date*/}
-                      {/*        : moment(unitContractInfo?.contract?.contract_date)*/}
-                      {/*          .add(1, 'y')*/}
-                      {/*          .format('DD-MM-YYYY')*/}
-                      {/*    }*/}
-                      {/*  />*/}
-                      {/*)}*/}
+                    <div className="flex flex-wrap gap-4">
+                      {unitContractInfo && (
+                        <>
+                          <div className="w-full">
+                            <Input
+                              label={"Shartnoma holati"}
+                              value={unitContractInfo?.contract?.contract_status?.name || ''}
+                              type={'text'}
+                              disabled={true}
+                            />
+                          </div>
+                          <div className="w-full">
+                            <Input
+                              label={"Shartnoma amal qilish muddati"}
+                              value={
+                                unitContractInfo?.contract?.expiration_date
+                                  ? unitContractInfo?.contract?.expiration_date
+                                  : moment(unitContractInfo?.contract?.contract_date)
+                                    .add(1, 'y')
+                                    .format('DD-MM-YYYY') || ''
+                              }
+                              type={'text'}
+                              disabled={true}
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </>
               )}
 
-              <div className="showRack_rackBlock-infoBody-text">Qurilma maʼlumotlari</div>
-              <div className="showRack_rackBlock-infoBody-deviceInfo">
-                <div className="showRack_rackBlock-infoBody-deviceInfo_title">
+              <div className="font-bold text-center">Qurilma maʼlumotlari</div>
+              <div className="my-4 flex flex-wrap justify-between gap-4 p-4 border rounded">
+                <div className="w-full">
                   {/*<DeviceInfoIcon />*/}
-                  <span>Umumiy maʼlumot</span>
+                  <span className="font-bold">Umumiy maʼlumot</span>
                 </div>
-                {/*<InputBlock*/}
-                {/*  type="select"*/}
-                {/*  label="Qurilma turi"*/}
-                {/*  value={deviceValue}*/}
-                {/*  onChange={(e) => setDeviceValue(e.target.value)}*/}
-                {/*  data={listProvider?.device}*/}
-                {/*/>*/}
-                {/*<InputBlock*/}
-                {/*  type="select"*/}
-                {/*  label="Ishlab chiqaruvchi"*/}
-                {/*  value={publisherValue}*/}
-                {/*  onChange={(e) => setPublisherValue(e.target.value)}*/}
-                {/*  data={listProvider?.device_publisher}*/}
-                {/*/>*/}
-                {/*<InputBlock*/}
-                {/*  type="input"*/}
-                {/*  label="Qurilma modeli"*/}
-                {/*  value={deviceModel}*/}
-                {/*  onChange={(e) => setDeviceModel(e.target.value)}*/}
-                {/*/>*/}
-                {/*<InputBlock*/}
-                {/*  type="input"*/}
-                {/*  label="Qurilma seriya raqami"*/}
-                {/*  value={deviceNumber}*/}
-                {/*  onChange={(e) => setDeviceNumber(e.target.value)}*/}
-                {/*/>*/}
-                {/*<InputBlock*/}
-                {/*  type="input"*/}
-                {/*  label="Elektr iste`moli (W)"*/}
-                {/*  inputType="number"*/}
-                {/*  value={electricityValue}*/}
-                {/*  onChange={(e) => setElectricityValue(e.target.value)}*/}
-                {/*/>*/}
+                <div className={'w-full'}>
+                  <label
+                    htmlFor="client"
+                    className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                  >
+                    Qurilma turi
+                  </label>
+                  <select
+                    name="client"
+                    id="client"
+                    className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                    value={deviceValue}
+                    onChange={(e) => setDeviceValue(e.target.value)}
+                  >
+                    <option value="" disabled={deviceValue}>Tanlang...</option>
+                    {listProvider?.device?.map((item, index) => (
+                      <option value={item?.id} key={index}>{item?.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className={'w-full'}>
+                  <label
+                    htmlFor="client"
+                    className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                  >
+                    Ishlab chiqaruvchi
+                  </label>
+                  <select
+                    name="client"
+                    id="client"
+                    className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                    value={publisherValue}
+                    onChange={(e) => setPublisherValue(e.target.value)}
+                  >
+                    <option value="" disabled={publisherValue}>Tanlang...</option>
+                    {listProvider?.device_publisher?.map((item, index) => (
+                      <option value={item?.id} key={index}>{item?.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-full">
+                  <Input
+                    label={"Qurilma modeli"}
+                    value={deviceModel || ''}
+                    onChange={(e) => setDeviceModel(e.target.value)}
+                    type={'text'}
+                  />
+                </div>
+                <div className="w-full">
+                  <Input
+                    label={"Qurilma seriya raqami"}
+                    value={deviceNumber || ''}
+                    onChange={(e) => setDeviceNumber(e.target.value)}
+                    type={'text'}
+                  />
+                </div>
+                <div className="w-full">
+                  <Input
+                    label={"Elektr iste'moli"}
+                    value={electricityValue || ''}
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const numericValue = inputValue.replace(/\D/g, '');
+                      setElectricityValue(numericValue);
+                    }}
+                    type={'text'}
+                  />
+                </div>
               </div>
 
-              <div className="showRack_rackBlock-infoBody-btnWrap">
-                <button onClick={handleClear}>Bekor qilish</button>
+              <div className="ml-auto w-full flex justify-start gap-4">
+                <button className="px-4 py-2 rounded bg-red-500 text-white" onClick={handleClear}>Bekor qilish</button>
                 <button
-                  onClick={addDevice}
-                  disabled={handleDisabled(unitContractInfo?.contract?.contract_status?.name)}
+                  className={`px-4 py-2 rounded text-white`}
                   style={{
+                    backgroundColor: currentColor,
                     opacity: handleDisabledOpacity(
                       unitContractInfo?.contract?.contract_status?.name,
                     ),
                   }}
+                  onClick={addDevice}
+                  disabled={handleDisabled(unitContractInfo?.contract?.contract_status?.name)}
                 >
                   Saqlash
                 </button>
@@ -763,190 +879,336 @@ const ShowRack = () => {
                   user?.userdata?.role?.name === "direktor o'rinbosari" ||
                   user?.userdata?.role?.name === "departament boshlig'i"
                 }
-                style={{ display: selectable ? 'none' : 'block' }}
-                onClick={() => setModal(true)}
+                className="px-4 py-2 rounded bg-red-500 text-white"
+                style={{display: selectable ? 'none' : 'block'}}
+                onClick={handleDeleteDevice}
               >
                 Serverni ochirish
               </button>
             </div>
             {!rack_detail?.is_busy && (
               <>
-                <div className="showRack_rackBlock-infoBody-text">Shartnoma maʼlumotlari</div>
-                <div className="showRack_rackBlock-infoBody-contractInfo">
-                  <div className="showRack_rackBlock-infoBody-contractInfo_block">
+                <div className="font-bold text-center">Shartnoma maʼlumotlari</div>
+                <div className="my-4 flex justify-between">
+                  <div className="w-[49%] flex flex-wrap gap-4 rounded border p-4">
                     <div className="showRack_rackBlock-infoBody-contractInfo_block_title">
                       {/*<ContractIcon />*/}
-                      <span>Shartnoma</span>
+                      <span className="font-bold">Shartnoma</span>
                     </div>
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="Shartnoma raqami"*/}
-                    {/*  value={deviceDetail?.contract_number || ''}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="STIR/JShShIR"*/}
-                    {/*  value={*/}
-                    {/*    deviceDetail?.client?.tin*/}
-                    {/*      ? deviceDetail?.client?.tin*/}
-                    {/*      : deviceDetail?.client?.pin || ''*/}
-                    {/*  }*/}
-                    {/*  disabled={true}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="Shartnoma sanasi"*/}
-                    {/*  value={*/}
-                    {/*    moment(deviceDetail?.contract?.contract_date).format('DD.MM.YYYY') || ''*/}
-                    {/*  }*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="multipleInput"*/}
-                    {/*  label="Unit soni"*/}
-                    {/*  value={deviceDetail?.unit_count || ''}*/}
-                    {/*  label2="Unit qoldigʼi"*/}
-                    {/*  value2={deviceDetail?.unit_quota || ''}*/}
-                    {/*  disabled={true}*/}
-                    {/*/>*/}
+                    <div className={'w-full flex items-end gap-4'}>
+                      <div className={'w-full'}>
+                        <Input
+                          value={contractNumber || ''}
+                          onChange={(e) => setContractNumber(e.target.value.toUpperCase())}
+                          label={handleLabel(unitContractInfo?.contract?.contract_status?.name)}
+                        />
+                      </div>
+                      <button
+                        className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+                        style={{backgroundColor: currentColor}}
+                        onClick={sendContractNumber}
+                        disabled={!contractNumber}
+                      >
+                        Izlash
+                      </button>
+                    </div>
+                    <div className="w-full">
+                      <Input
+                        label={'STIR/JShShIR'}
+                        value={unitContractInfo?.client?.tin
+                          ? unitContractInfo?.client?.tin
+                          : unitContractInfo?.client?.pin || ''
+                        }
+                        type={'text'}
+                        disabled={true}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Input
+                        label={'Shartnoma sanasi'}
+                        value={
+                          unitContractInfo?.contract_date &&
+                          moment(unitContractInfo?.contract_date).format('DD.MM.YYYY HH:mm:ss') || ''
+                        }
+                        type={'text'}
+                        disabled={true}
+                      />
+                    </div>
+                    <div className="flex justify-between items-center w-full">
+                      <div className="w-[49%]">
+                        <Input
+                          label={'Unit soni'}
+                          value={unitContractInfo?.unit_count || ''}
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="w-[49%]">
+                        <Input
+                          label={'Unit qoldigi'}
+                          value={unitContractInfo?.unit_quota || ''}
+                          type={'text'}
+                          disabled={true}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="showRack_rackBlock-infoBody-contractInfo_block">
-                    <div className="showRack_rackBlock-infoBody-contractInfo_block_title">
+                  <div className="w-[49%] flex flex-wrap gap-4 rounded border p-4">
+                    <div>
                       {/*<SoldIcon />*/}
-                      <span>Mijoz</span>
+                      <span className="font-bold">Mijoz</span>
                     </div>
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="F.I.Sh."*/}
-                    {/*  value={deviceDetail?.client?.full_name || ''}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="Telefon"*/}
-                    {/*  value={deviceDetail?.client?.mob_phone_no || ''}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="Pochta manzili"*/}
-                    {/*  value={deviceDetail?.client?.email || ''}*/}
-                    {/*/>*/}
+                    <div className="w-full">
+                      <Input
+                        label={'F.I.SH'}
+                        value={unitContractInfo?.client?.full_name || ''}
+                        type={'text'}
+                        disabled={true}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Input
+                        label={'Telefon'}
+                        value={unitContractInfo?.client?.mob_phone_no || ''}
+                        type={'text'}
+                        disabled={true}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Input
+                        label={'Pochta manzili'}
+                        value={unitContractInfo?.client?.email || ''}
+                        type={'text'}
+                        disabled={true}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="showRack_rackBlock-infoBody-text">Izoh</div>
+                <div className="my-4">
+                  <div className="text-center font-bold">Izoh</div>
                   <textarea
                     cols="30"
                     rows="10"
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    style={{ width: '100%', marginTop: 20, borderRadius: 8, outline: 'none' }}
+                    className="rounded w-full border outline-none p-4"
                   />
                 </div>
-                <div className="rackDrawer-internetConnect">
-                  <div className="rackDrawer-internetConnect_block">
-                    <div className="rackDrawer-internetConnect_block_title">
+                <div className="rounded p-4 border">
+                  <div className="flex flex-wrap gap-4">
+                    <div className="pb-4">
                       {/*<LanguageIcon color="#0E0E4B" />*/}
-                      <span>Internetga ulanish manbayi</span>
+                      <span className="font-bold">Internetga ulanish manbayi</span>
                     </div>
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="ODF soni"*/}
-                    {/*  value={odf_count}*/}
-                    {/*  onChange={(e) => {*/}
-                    {/*    const inputValue = e.target.value;*/}
-                    {/*    const numericValue = inputValue.replace(/\D/g, '');*/}
-                    {/*    setOdfCount(numericValue);*/}
-                    {/*  }}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="select"*/}
-                    {/*  label="Provayder nomi"*/}
-                    {/*  value={connectMethod}*/}
-                    {/*  onChange={(e) => setConnectMethod(e.target.value)}*/}
-                    {/*  data={listProvider?.internet_provider}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="Shartnoma raqami"*/}
-                    {/*  value={connectContractNumber}*/}
-                    {/*  onChange={(e) => setConnectContractNumber(e.target.value)}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="datePicker"*/}
-                    {/*  label="Shartnoma sanasi"*/}
-                    {/*  value={contractDate}*/}
-                    {/*  onChange={(e) => setContractDate(e)}*/}
-                    {/*/>*/}
+                    <div className="w-full">
+                      <Input
+                        label={'ODF soni'}
+                        value={odf_count || ''}
+                        type={'text'}
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          const numericValue = inputValue.replace(/\D/g, '');
+                          setOdfCount(numericValue);
+                        }}
+                      />
+                    </div>
+                    <div className={'w-full'}>
+                      <label
+                        htmlFor="client"
+                        className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                      >
+                        Provayder nomi
+                      </label>
+                      <select
+                        name="client"
+                        id="client"
+                        className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                        value={connectMethod}
+                        onChange={(e) => setConnectMethod(e.target.value)}
+                      >
+                        <option value="" disabled={connectMethod}>Tanlang...</option>
+                        {listProvider?.internet_provider?.map((item, index) => (
+                          <option value={item?.id} key={index}>{item?.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="w-full">
+                      <Input
+                        label={'Shartnoma raqami'}
+                        value={connectContractNumber || ''}
+                        type={'text'}
+                        onChange={(e) => setConnectContractNumber(e.target.value)}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Input
+                        label={'Shartnoma sanasi'}
+                        value={contractDate || ''}
+                        type={'date'}
+                        onChange={(e) => setContractDate(e.target.value)}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="showRack_rackBlock-infoBody-payment">
-                  <div className="showRack_rackBlock-infoBody-payment_block">
-                    <div className="showRack_rackBlock-infoBody-payment_block_title">
+
+                <div className="rounded border p-4 my-4">
+                  <div className="flex flex-wrap gap-4">
+                    <div>
                       {/*<PaymentIcon />*/}
-                      <span>Toʼlov</span>
+                      <span className="font-bold">Toʼlov</span>
                     </div>
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="Toʼlov miqdori"*/}
-                    {/*  // value={deviceDetail?.contract?.contract_cash}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="Joriy oy uchun toʼlandi"*/}
-                    {/*  // value={deviceDetail?.contract?.payed_cash}*/}
-                    {/*/>*/}
-                    {/*<InputBlock*/}
-                    {/*  type="input"*/}
-                    {/*  label="Qarzdorlik"*/}
-                    {/*  // value={deviceDetail?.contract?.arrearage}*/}
-                    {/*/>*/}
+                    <div className="w-full">
+                      <Input
+                        label={"To'lov miqdori"}
+                        value={unitContractInfo?.contract?.contract_cash || ''}
+                        type={'text'}
+                        disabled={true}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Input
+                        label={"Joriy oy uchun to'landi"}
+                        value={unitContractInfo?.contract?.payed_cash || ''}
+                        type={'text'}
+                        disabled={true}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Input
+                        label={"Qarzdorlik"}
+                        value={unitContractInfo?.contract?.arrearage || ''}
+                        type={'text'}
+                        disabled={true}
+                      />
+                    </div>
                   </div>
-                  <div className="showRack_rackBlock-infoBody-payment_block">
+                  <div className="flex flex-wrap gap-4">
+                    {unitContractInfo && (
+                      <>
+                        <div className="w-full">
+                          <Input
+                            label={"Shartnoma holati"}
+                            value={unitContractInfo?.contract?.contract_status?.name || ''}
+                            type={'text'}
+                            disabled={true}
+                          />
+                        </div>
+                        <div className="w-full">
+                          <Input
+                            label={"Shartnoma amal qilish muddati"}
+                            value={
+                              unitContractInfo?.contract?.expiration_date
+                                ? unitContractInfo?.contract?.expiration_date
+                                : moment(unitContractInfo?.contract?.contract_date)
+                                .add(1, 'y')
+                                .format('DD-MM-YYYY') || ''
+                            }
+                            type={'text'}
+                            disabled={true}
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </>
             )}
-            <div className="showRack_rackBlock-infoBody-text">Qurilma maʼlumotlari</div>
-            <div className="showRack_rackBlock-infoBody-deviceInfo">
-              <div className="showRack_rackBlock-infoBody-deviceInfo_title">
+
+            <div className="font-bold text-center">Qurilma maʼlumotlari</div>
+            <div className="my-4 flex flex-wrap justify-between gap-4 p-4 border rounded">
+              <div className="w-full">
                 {/*<DeviceInfoIcon />*/}
-                <span>Umumiy maʼlumot</span>
+                <span className="font-bold">Umumiy maʼlumot</span>
               </div>
-              {/*<InputBlock*/}
-              {/*  type="select"*/}
-              {/*  label="Qurilma turi"*/}
-              {/*  value={deviceValue}*/}
-              {/*  onChange={(e) => setDeviceValue(e.target.value)}*/}
-              {/*  data={listProvider?.device}*/}
-              {/*/>*/}
-              {/*<InputBlock*/}
-              {/*  type="select"*/}
-              {/*  label="Ishlab chiqaruvchi"*/}
-              {/*  value={publisherValue}*/}
-              {/*  data={listProvider?.device_publisher}*/}
-              {/*  onChange={(e) => setPublisherValue(e.target.value)}*/}
-              {/*/>*/}
-              {/*<InputBlock*/}
-              {/*  type="input"*/}
-              {/*  label="Qurilma modeli"*/}
-              {/*  value={deviceModel}*/}
-              {/*  onChange={(e) => setDeviceModel(e.target.value)}*/}
-              {/*/>*/}
-              {/*<InputBlock*/}
-              {/*  type="input"*/}
-              {/*  label="Qurilma seriya raqami"*/}
-              {/*  value={deviceNumber}*/}
-              {/*  onChange={(e) => setDeviceNumber(e.target.value)}*/}
-              {/*/>*/}
-              {/*<InputBlock*/}
-              {/*  type="input"*/}
-              {/*  label="Elektr iste`moli (W)"*/}
-              {/*  value={electricityValue}*/}
-              {/*  onChange={(e) => setElectricityValue(e.target.value)}*/}
-              {/*/>*/}
+              <div className={'w-full'}>
+                <label
+                  htmlFor="client"
+                  className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                >
+                  Qurilma turi
+                </label>
+                <select
+                  name="client"
+                  id="client"
+                  className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                  value={deviceValue}
+                  onChange={(e) => setDeviceValue(e.target.value)}
+                >
+                  <option value="" disabled={deviceValue}>Tanlang...</option>
+                  {listProvider?.device?.map((item, index) => (
+                    <option value={item?.id} key={index}>{item?.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className={'w-full'}>
+                <label
+                  htmlFor="client"
+                  className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                >
+                  Ishlab chiqaruvchi
+                </label>
+                <select
+                  name="client"
+                  id="client"
+                  className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+                  value={publisherValue}
+                  onChange={(e) => setPublisherValue(e.target.value)}
+                >
+                  <option value="" disabled={publisherValue}>Tanlang...</option>
+                  {listProvider?.device_publisher?.map((item, index) => (
+                    <option value={item?.id} key={index}>{item?.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="w-full">
+                <Input
+                  label={"Qurilma modeli"}
+                  value={deviceModel || ''}
+                  onChange={(e) => setDeviceModel(e.target.value)}
+                  type={'text'}
+                />
+              </div>
+              <div className="w-full">
+                <Input
+                  label={"Qurilma seriya raqami"}
+                  value={deviceNumber || ''}
+                  onChange={(e) => setDeviceNumber(e.target.value)}
+                  type={'text'}
+                />
+              </div>
+              <div className="w-full">
+                <Input
+                  label={"Elektr iste'moli"}
+                  value={electricityValue || ''}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    const numericValue = inputValue.replace(/\D/g, '');
+                    setElectricityValue(numericValue);
+                  }}
+                  type={'text'}
+                />
+              </div>
             </div>
-            <div className="showRack_rackBlock-infoBody-btnWrap">
-              <button onClick={() => setUnitInfo(0)}>Bekor qilish</button>
-              <button onClick={handleUpdate}>Saqlash</button>
+
+            <div className="ml-auto w-full flex justify-start gap-4">
+              <button
+                className="px-4 py-2 rounded bg-red-500 text-white"
+                onClick={() => {
+                  setUnitInfo(0)
+                  clearData()
+                }}
+              >
+                Bekor qilish
+              </button>
+              <button
+                className={`px-4 py-2 rounded text-white`}
+                style={{
+                  backgroundColor: currentColor,
+                }}
+                onClick={handleUpdate}
+              >
+                Saqlash
+              </button>
             </div>
           </div>
           {/*<Modal open={modal} onClose={() => setModal(false)}>*/}
@@ -956,7 +1218,7 @@ const ShowRack = () => {
       )
   }
 
-  if (loading) return <Loader />
+  if (loading) return <Loader/>
 
   return (
     <div className="flex justify-between w-full showRack md:mt-8 mt-24 p-2 md:px-4 bg-white rounded">
@@ -992,7 +1254,7 @@ const ShowRack = () => {
             ))}
         </div>
       </div>
-      <div className="flex-9 ml-14 showRack_rackBlock w-full">
+      <div className="flex-9 ml-14 w-full">
         <div className="flex items-center justify-between h-14 px-5 bg-white border rounded showRack_rackBlock-head">
           <div style={{ width: 50 }} />
           <span className="font-bold text-2xl leading-6 text-dark">Rack: {rack_detail?.place_number}</span>
