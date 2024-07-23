@@ -37,7 +37,7 @@ const Rack = ({
       )}
       <div
         className={`rack flex items-center mt-4`}
-        title={(rack_valid_action !== null && rack_valid_action?.status_code === 1) ? rack_valid_action?.message : ''}
+        title={client}
       >
         {type === 'rack' && (
           <>
