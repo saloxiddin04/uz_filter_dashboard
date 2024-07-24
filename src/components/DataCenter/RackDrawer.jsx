@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {
   addRack,
@@ -25,9 +25,18 @@ const RackDrawer = ({onClose, type}) => {
   const [connectMethod, setConnectMethod] = useState(rack_contract_detail?.device_colocation?.provider)
   const [connectContractNumber, setConnectContractNumber] = useState(rack_contract_detail?.device_colocation?.provider_contract_number)
   const [odf_count, setOdfCount] = useState(rack_contract_detail?.device_colocation?.odf_count)
-  const [modal, setModal] = useState(false)
   const [comment, setComment] = useState(rack_contract_detail?.device_colocation?.description)
   const [connectContractDate, setConnectContractDate] = useState(rack_contract_detail?.device_colocation?.provider_contract_date)
+
+  useEffect(() => {
+    if (rack_contract_detail) {
+      setConnectMethod(rack_contract_detail?.device_colocation?.provider)
+      setConnectContractNumber(rack_contract_detail?.device_colocation?.provider_contract_number)
+      setOdfCount(rack_contract_detail?.device_colocation?.odf_count)
+      setComment(rack_contract_detail?.device_colocation?.description)
+      setConnectContractDate(rack_contract_detail?.device_colocation?.provider_contract_date)
+    }
+  }, [rack_contract_detail]);
 
   const sendContractNumber = () => {
     dispatch(getRackContractInfo({contract_number: contractNumber, data_center: id, rack_id: rackId}))
@@ -275,9 +284,9 @@ const RackDrawer = ({onClose, type}) => {
               <div className="w-full">
                 <Input
                   label={'Shartnoma sanasi'}
-                  value={contractDate || ''}
+                  value={connectContractDate || ''}
                   type={'date'}
-                  onChange={(e) => setContractDate(e.target.value)}
+                  onChange={(e) => setConnectContractDate(e.target.value)}
                 />
               </div>
             </div>
@@ -526,9 +535,9 @@ const RackDrawer = ({onClose, type}) => {
               <div className="w-full">
                 <Input
                   label={'Shartnoma sanasi'}
-                  value={contractDate || ''}
+                  value={connectContractDate}
                   type={'date'}
-                  onChange={(e) => setContractDate(e.target.value)}
+                  onChange={(e) => setConnectContractDate(e.target.value)}
                 />
               </div>
             </div>

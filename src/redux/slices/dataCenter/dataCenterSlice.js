@@ -141,8 +141,8 @@ export const getUnitContractInfo = createAsyncThunk(
   "dataCenter/getUnitContractInfo",
   async (data) => {
     try {
-      const response = await instance.post(`/colocation/contract-get/unit`, {data})
-      return response.data
+      const response = await instance.post(`/colocation/contract-get/unit`, data)
+      return response.data?.data
     } catch (e) {
       return e.message
     }

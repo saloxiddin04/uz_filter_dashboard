@@ -931,26 +931,18 @@ const ShowRack = () => {
                       <div className={'w-full flex items-end gap-4'}>
                         <div className={'w-full'}>
                           <Input
-                            value={contractNumber || ''}
-                            onChange={(e) => setContractNumber(e.target.value.toUpperCase())}
-                            label={handleLabel(unitContractInfo?.contract?.contract_status?.name)}
+                            value={deviceDetail?.contract_number || ''}
+                            label="Shartnoma raqami"
+                            disabled={true}
                           />
                         </div>
-                        <button
-                          className={`px-4 py-2 rounded text-white disabled:opacity-25`}
-                          style={{backgroundColor: currentColor}}
-                          onClick={sendContractNumber}
-                          disabled={!contractNumber}
-                        >
-                          Izlash
-                        </button>
                       </div>
                       <div className="w-full">
                         <Input
                           label={'STIR/JShShIR'}
-                          value={unitContractInfo?.client?.tin
-                            ? unitContractInfo?.client?.tin
-                            : unitContractInfo?.client?.pin || ''
+                          value={deviceDetail?.client?.tin
+                            ? deviceDetail?.client?.tin
+                            : deviceDetail?.client?.pin || ''
                           }
                           type={'text'}
                           disabled={true}
@@ -960,8 +952,7 @@ const ShowRack = () => {
                         <Input
                           label={'Shartnoma sanasi'}
                           value={
-                            unitContractInfo?.contract_date &&
-                            moment(unitContractInfo?.contract_date).format('DD.MM.YYYY HH:mm:ss') || ''
+                            moment(deviceDetail?.contract?.contract_date).format('DD.MM.YYYY') || ''
                           }
                           type={'text'}
                           disabled={true}
@@ -971,7 +962,7 @@ const ShowRack = () => {
                         <div className="w-[49%]">
                           <Input
                             label={'Unit soni'}
-                            value={unitContractInfo?.unit_count || ''}
+                            value={deviceDetail?.unit_count || ''}
                             type={'text'}
                             disabled={true}
                           />
@@ -979,7 +970,7 @@ const ShowRack = () => {
                         <div className="w-[49%]">
                           <Input
                             label={'Unit qoldigi'}
-                            value={unitContractInfo?.unit_quota || ''}
+                            value={deviceDetail?.unit_quota || ''}
                             type={'text'}
                             disabled={true}
                           />
@@ -994,7 +985,7 @@ const ShowRack = () => {
                       <div className="w-full">
                         <Input
                           label={'F.I.SH'}
-                          value={unitContractInfo?.client?.full_name || ''}
+                          value={deviceDetail?.client?.full_name || ''}
                           type={'text'}
                           disabled={true}
                         />
@@ -1002,7 +993,7 @@ const ShowRack = () => {
                       <div className="w-full">
                         <Input
                           label={'Telefon'}
-                          value={unitContractInfo?.client?.mob_phone_no || ''}
+                          value={deviceDetail?.client?.mob_phone_no || ''}
                           type={'text'}
                           disabled={true}
                         />
@@ -1010,7 +1001,7 @@ const ShowRack = () => {
                       <div className="w-full">
                         <Input
                           label={'Pochta manzili'}
-                          value={unitContractInfo?.client?.email || ''}
+                          value={deviceDetail?.client?.email || ''}
                           type={'text'}
                           disabled={true}
                         />
