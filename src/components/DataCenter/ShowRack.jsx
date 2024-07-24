@@ -83,10 +83,14 @@ const ShowRack = () => {
       return selected.find((el) => el === i)
     }
     return rack_detail?.units?.map((el) => {
+      let deviceCount = 0;
+      if (el.is_busy && el.start === el.place_number) {
+        deviceCount = el.end - el.place_number + 1;
+      }
       return {
         ...el,
         is_selected: el.place_number === handle(el.place_number),
-        device_count: el.is_busy && el.start === el.place_number && el.end - el.place_number + 1,
+        device_count: deviceCount,
       }
     })
   }, [rack_detail, selectedUnits, drawer])
@@ -123,7 +127,7 @@ const ShowRack = () => {
     if (deviceCount === 4) {
       return (
         <div
-          className="absolute top-1 left-6 w-[87%] h-[149px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
+          className="absolute top-1 left-6 w-[87%] h-[130px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
         >
           {name}: {publisher}
@@ -133,7 +137,7 @@ const ShowRack = () => {
     if (deviceCount === 3) {
       return (
         <div
-          className="absolute top-[-1.5rem] left-6 w-[87%] h-[121px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
+          className="absolute top-0 left-6 w-[87%] h-[100px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
         >
           {name}: {publisher}
