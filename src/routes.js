@@ -26,7 +26,7 @@ export const routes = [
 
   { path: '/data-center', element: DataCenter },
   { path: '/data-center/:id', element: DataCenter },
-  { path: 'data-center/:id/rack/:id', element: ShowRack },
+  { path: 'data-center/:id/rack/:rackId', element: ShowRack },
 
   
   {path: '/shartnomalar/colocation/create', element: CreateColocation },

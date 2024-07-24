@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {Input, Loader} from "../index";
 import {toast} from "react-toastify";
@@ -17,6 +17,7 @@ import EmptyIcon from "../../assets/images/EmptyIcon";
 import SelectIcon from "../../assets/images/SelectIcon";
 import {BiBadgeCheck} from "react-icons/bi";
 import DeleteUnitModal from "./DeleteUnitModal";
+import RackDrawer from "./RackDrawer";
 
 const ShowRack = () => {
   const location = useLocation()
@@ -1221,7 +1222,7 @@ const ShowRack = () => {
   if (loading) return <Loader/>
 
   return (
-    <div className="flex justify-between w-full showRack md:mt-8 mt-24 p-2 md:px-4 bg-white rounded">
+    <div className="flex justify-between w-full relative md:mt-8 mt-24 p-2 md:px-4 bg-white rounded">
       <div className="flex-3 flex flex-col w-1/3">
         <div className="flex items-center justify-between w-full h-14 bg-white border rounded p-5">
           <span className="font-bold text-2xl leading-6 text-black">Unitni tanlang</span>
@@ -1278,14 +1279,14 @@ const ShowRack = () => {
         {handleShowRackInfo()}
       </div>
       {/*<Drawer anchor="right" open={drawer} onClose={clearData}>*/}
-      {/*  {drawer && (*/}
-      {/*    <RackDrawer*/}
-      {/*      onClose={clearData}*/}
-      {/*      type={rack_detail?.is_busy ? 'sold' : 'notSold'}*/}
-      {/*      rack_id={rack_detail?.id}*/}
-      {/*      devicesLength={rack_detail?.unit_count}*/}
-      {/*    />*/}
-      {/*  )}*/}
+        {drawer && (
+          <RackDrawer
+            onClose={clearData}
+            type={rack_detail?.is_busy ? 'sold' : 'notSold'}
+            rack_id={rack_detail?.id}
+            devicesLength={rack_detail?.unit_count}
+          />
+        )}
       {/*</Drawer>*/}
     </div>
   );

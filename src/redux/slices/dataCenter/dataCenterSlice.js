@@ -12,7 +12,9 @@ const initialState = {
   rack_contract_detail: null,
   deviceDetail: null,
   contractInfo: null,
-  unitContractInfo: null
+  unitContractInfo: null,
+  rackContractInfo: null,
+  updateRack: null
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -159,6 +161,22 @@ export const getContractInfo = createAsyncThunk(
   }
 )
 
+export const getRackContractInfo = createAsyncThunk(
+  "dataCenter/getRackContractInfo",
+  async (params) => {
+    try {
+      const response = await instance.get('/colocation/contract-get/rack', {params})
+      if (response?.data?.success) {
+        return response.data?.data
+      } else if (!response?.response?.data?.success) {
+        toast.error(response?.response?.data?.err_msg)
+      }
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 export const deleteDevice = createAsyncThunk(
   "dataCenter/deleteDevice",
   async (data) => {
@@ -198,6 +216,9 @@ export const patchDeviceConfig = createAsyncThunk(
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
+  reducers: {
+    clearDataCenter: () => initialState
+  },
   extraReducers: (builder) => {
     // getDataCenterList
     builder.addCase(getDataCenterList.pending, (state) => {
@@ -297,7 +318,51 @@ const dataCenterSlice = createSlice({
       state.deviceDetail = null
     })
 
+    // getRackContractDetail
+    builder.addCase(getRackContractDetail.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getRackContractDetail.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.rack_contract_detail = payload
+    })
+    builder.addCase(getRackContractDetail.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.rack_contract_detail = null
+    })
+
+    // getRackContractInfo
+    builder.addCase(getRackContractInfo.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getRackContractInfo.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.rackContractInfo = payload
+    })
+    builder.addCase(getRackContractInfo.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.rack_contract_detail = null
+    })
+
+    // createUnit
+    builder.addCase(createUnit.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(createUnit.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.updateRack = payload
+    })
+    builder.addCase(createUnit.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.updateRack = null
+    })
+
   }
 })
 
+
+export const {clearDataCenter} = dataCenterSlice.actions
 export default dataCenterSlice.reducer;
