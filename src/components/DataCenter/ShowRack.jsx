@@ -119,37 +119,45 @@ const ShowRack = () => {
     }
   }
 
-  const handleDevices = (deviceCount, number, busy, device) => {
+  const handleDevices = (deviceCount, number, busy, device, name, publisher) => {
     if (deviceCount === 4) {
       return (
         <div
-          className="absolute top-1 left-6 w-[87%] h-[149px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
+          className="absolute top-1 left-6 w-[87%] h-[149px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
-        />
+        >
+          {name}: {publisher}
+        </div>
       )
     }
     if (deviceCount === 3) {
       return (
         <div
-          className="absolute top-[-1.5rem] left-6 w-[87%] h-[121px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
+          className="absolute top-[-1.5rem] left-6 w-[87%] h-[121px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
-        />
+        >
+          {name}: {publisher}
+        </div>
       )
     }
     if (deviceCount === 2) {
       return (
         <div
-          className="absolute top-0 left-6 w-[87%] h-[65px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10"
+          className="absolute top-0 left-6 w-[87%] h-[65px] ml-5 rounded cursor-pointer bg-cover bg-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
-        />
+        >
+          {name}: {publisher}
+        </div>
       )
     }
     if (deviceCount === 1) {
       return (
         <div
-          className="w-[90%] h-7 ml-4 rounded cursor-pointer bg-cover bg-no-repeat bg-[#b6b6b6]"
+          className="w-[90%] h-7 ml-4 rounded cursor-pointer bg-cover bg-no-repeat bg-[#b6b6b6] text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
-        />
+        >
+          {name}: {publisher}
+        </div>
       )
     } else return <div className="w-[90%] h-7 ml-4 rounded bg-[#b6b6b6] border" />
   }
@@ -527,7 +535,7 @@ const ShowRack = () => {
           } else
             return (
               <div className="showRack_rackBlock-infoBody h-[750px] overflow-y-scroll rounded shadow-md mt-5 border p-4">
-                <div className="showRack_rackBlock-infoBody-head">
+                <div className="flex justify-between">
                 <span className="font-bold">
                   UNIT raqami:{' '}
                   {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
@@ -871,9 +879,9 @@ const ShowRack = () => {
       } else
         return (
           <>
-            <div className="showRack_rackBlock-infoBody">
-              <div className="showRack_rackBlock-infoBody-head">
-                <span>UNIT raqami: {deviceDetail?.unit?.start + '-' + deviceDetail?.unit?.end}</span>
+            <div className="showRack_rackBlock-infoBody mt-4">
+              <div className="flex justify-between items-center">
+                <span className="font-bold">UNIT raqami: {deviceDetail?.unit?.start + '-' + deviceDetail?.unit?.end}</span>
                 <button
                   disabled={
                     user?.userdata?.role?.name === 'direktor' ||
@@ -1252,7 +1260,7 @@ const ShowRack = () => {
                 </div>
                 {selectable
                   ? handleSelectableDevices(unitsData?.length + 1, el.place_number, el.is_busy, el.is_selected)
-                  : handleDevices(el.device_count, el.place_number, el.is_busy, el.id)}
+                  : handleDevices(el.device_count, el.place_number, el.is_busy, el.id, el?.device_general_info?.device?.name, el?.device_general_info?.device_publisher?.name)}
               </div>
             ))
           }
