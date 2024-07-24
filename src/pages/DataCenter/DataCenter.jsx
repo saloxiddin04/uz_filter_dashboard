@@ -11,11 +11,11 @@ const DataCenter = () => {
   const {id} = useParams();
   const {loading, dataCenterListDetail} = useSelector(state => state.dataCenter);
 
-  const [drawer, setDrawer] = useState(false)
-
   useEffect(() => {
     dispatch(getDataCenterList()).then((res) => {
-      navigate(`/data-center/${res?.payload[0]?.id}`);
+      if (!id) {
+        navigate(`/data-center/${res?.payload[0]?.id}`);
+      }
     })
   }, [dispatch]);
 
