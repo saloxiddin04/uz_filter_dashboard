@@ -117,7 +117,7 @@ export const addRack = createAsyncThunk(
   "dataCenter/addRack",
   async (data) => {
     try {
-      const response = await instance.post(`/colocation/add/${data.data_center_id}/rack/${data.rack_id}`, data)
+      const response = await instance.post(`/colocation/add/${data.data_center_id}/rack/${data.rack_id}`, data.data)
       return response.data
     } catch (e) {
       return e.message
