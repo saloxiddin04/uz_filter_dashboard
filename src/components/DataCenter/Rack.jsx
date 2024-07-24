@@ -43,13 +43,14 @@ const Rack = ({
           <>
             {left && <span className="max-w-[55px] text-[#b6b6b6] text-xs">№ {number}</span>}
             <div
-              className={`${isForUnit ? 'rack-block-unit relative w-[150px] h-[65px] bg-white rounded border cursor-pointer py-[10px] px-[8px]' : 'rack-block relative border w-[150px] h-[65px] bg-white rounded cursor-pointer py-[10px] px-[8px]'}`}
+              className={`${isForUnit ? 'rack-block-unit relative w-[150px] h-[65px] bg-gray-200 rounded border cursor-pointer py-[10px] px-[8px]' : 'rack-block relative border w-[150px] h-[65px] bg-white rounded cursor-pointer py-[10px] px-[8px]'}`}
               style={{
                 marginLeft: left ? 15 : 0,
                 marginRight: !left ? 15 : 0,
                 background: rack_valid_action ? 'red' : '',
               }}
-              onClick={() => navigate(`rack/${id}`, {state: {rack: id}})}
+              onClick={() => navigate(`rack/${id}`, {state: {rack: id, client}})}
+              title={isForUnit ? 'Rack faqat unit uchun' : `${client ? client?.substring(0, 20) : ''}...`}
             >
               <div className="rack-block_info flex items-center justify-between">
                 <span className="text-xs">

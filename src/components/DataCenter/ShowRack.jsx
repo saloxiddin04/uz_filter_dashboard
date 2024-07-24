@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import {useLocation, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {Input, Loader} from "../index";
+import {DetailNav, Input, Loader} from "../index";
 import {toast} from "react-toastify";
 import {
   createDevice, createUnit, deleteDevice,
@@ -16,17 +16,23 @@ import EmptyBlock from "./EmptyBlock";
 import EmptyIcon from "../../assets/images/EmptyIcon";
 import SelectIcon from "../../assets/images/SelectIcon";
 import {BiBadgeCheck} from "react-icons/bi";
-import DeleteUnitModal from "./DeleteUnitModal";
 import RackDrawer from "./RackDrawer";
 
 const ShowRack = () => {
   const location = useLocation()
   const dispatch = useDispatch()
-  const { rack } = location.state
+  const {rack, client} = location.state
 
   const {currentColor} = useStateContext();
 
-  const {loading, rack_detail, listProvider, deviceDetail, unitContractInfo, contractInfo} = useSelector(state => state.dataCenter);
+  const {
+    loading,
+    rack_detail,
+    listProvider,
+    deviceDetail,
+    unitContractInfo,
+    contractInfo
+  } = useSelector(state => state.dataCenter);
   const {user} = useSelector((state) => state.user)
 
   const [count, setCount] = useState(1)
@@ -54,7 +60,7 @@ const ShowRack = () => {
         if (selectedUnits.length < 1) {
           setAddUnit(unit)
           setCount(unit)
-          setSelectedUnits((prev) => [...prev, { unit }])
+          setSelectedUnits((prev) => [...prev, {unit}])
         } else {
           if (selectedUnits.length > 1) {
             setAddUnit((prev) => prev - 1)
@@ -110,11 +116,11 @@ const ShowRack = () => {
           if (arr.length === unitContractInfo?.unit_quota) {
             setCount(count)
             setAddUnit(count)
-            setSelectedUnits((prev) => [...prev, { unit: count }])
+            setSelectedUnits((prev) => [...prev, {unit: count}])
           } else {
             setCount(count + 1)
             setAddUnit(count + 1)
-            setSelectedUnits((prev) => [...prev, { unit: count + 1 }])
+            setSelectedUnits((prev) => [...prev, {unit: count + 1}])
           }
         } else {
           toast.error("Keyingi unit band bo'lgani uchun sotib olish mumkin emas!")
@@ -167,21 +173,32 @@ const ShowRack = () => {
           {name}: {publisher}
         </div>
       )
-    } else return <div className="w-[90%] h-7 ml-4 rounded border" />
+    } else return <div className="w-[90%] h-7 ml-4 rounded border"/>
   }
 
   const handleSelectableDevices = (deviceCount, number, busy, selected) => {
     if (deviceCount === 4) {
-      return <div className="absolute top-1 left-6 w-[90%] h-[149px] ml-4 rounded cursor-pointer bg-cover bg-no-repeat z-10" style={{ cursor: 'no-drop' }} />
+      return <div
+        className="absolute top-1 left-6 w-[90%] h-[149px] ml-4 rounded cursor-pointer bg-cover bg-no-repeat z-10"
+        style={{cursor: 'no-drop'}}
+      />
     }
     if (deviceCount === 3) {
-      return <div className="absolute top-[-1.5rem] left-6 w-[90%] h-[121px] ml-4 rounded cursor-pointer bg-cover bg-no-repeat z-10" style={{ cursor: 'no-drop' }} />
+      return <div
+        className="absolute top-[-1.5rem] left-6 w-[90%] h-[121px] ml-4 rounded cursor-pointer bg-cover bg-no-repeat z-10"
+        style={{cursor: 'no-drop'}}
+      />
     }
     if (deviceCount === 2) {
-      return <div className="absolute top-0 left-6 w-[90%] h-[65px] ml-4 rounded cursor-pointer bg-cover bg-no-repeat z-10" style={{ cursor: 'no-drop' }} />
+      return <div
+        className="absolute top-0 left-6 w-[90%] h-[65px] ml-4 rounded cursor-pointer bg-cover bg-no-repeat z-10"
+        style={{cursor: 'no-drop'}}
+      />
     }
     if (deviceCount === 1) {
-      return <div className="w-[90%] h-7 ml-4 rounded cursor-pointer bg-cover  bg-no-repeat" style={{ cursor: 'no-drop' }} />
+      return <div className="w-[90%] h-7 ml-4 rounded cursor-pointer bg-cover  bg-no-repeat"
+                  style={{cursor: 'no-drop'}}
+      />
     } else
       return (
         !busy ? (
@@ -502,14 +519,14 @@ const ShowRack = () => {
   }, [drawer])
 
   const handleShowRackInfo = () => {
-    if (loading) return <Loader />
+    if (loading) return <Loader/>
     else {
       if (unitInfo === 0) {
         if (!selectable)
           return (
             <div className="showRack_rackBlock-body h-[750px]">
               <EmptyBlock
-                icon={<EmptyIcon />}
+                icon={<EmptyIcon/>}
                 title="Yangi server qo'shish"
                 descr="Yangi server qo'shish uchun “Server qo'shish” tugmasini bosing"
                 button="+ Server qo'shish"
@@ -539,7 +556,7 @@ const ShowRack = () => {
             return (
               <div className="showRack_rackBlock-body h-[750px]">
                 <EmptyBlock
-                  icon={<SelectIcon />}
+                  icon={<SelectIcon/>}
                   title="Server joyini tanlang"
                   descr="Bo'sh joyni tanlang va malumotlarni kiriting"
                   button="Bekor qilish"
@@ -558,12 +575,14 @@ const ShowRack = () => {
             )
           } else
             return (
-              <div className="showRack_rackBlock-infoBody h-[750px] overflow-y-scroll rounded shadow-md mt-5 border p-4">
+              <div
+                className="showRack_rackBlock-infoBody h-[750px] overflow-y-scroll rounded shadow-md mt-5 border p-4"
+              >
                 <div className="flex justify-between">
-                <span className="font-bold">
-                  UNIT raqami:{' '}
-                  {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
-                </span>
+                  <span className="font-bold">
+                    UNIT raqami:{' '}
+                    {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
+                  </span>
                   <button
                     className="px-4 py-2 rounded bg-red-500 text-white"
                     disabled={
@@ -571,7 +590,7 @@ const ShowRack = () => {
                       user?.userdata?.role?.name === "direktor o'rinbosari" ||
                       user?.userdata?.role?.name === "departament boshlig'i"
                     }
-                    style={{ display: selectable ? 'none' : 'block' }}
+                    style={{display: selectable ? 'none' : 'block'}}
                     onClick={() => setModal(true)}
                   >
                     Serverni ochirish
@@ -882,7 +901,8 @@ const ShowRack = () => {
                 </div>
 
                 <div className="ml-auto w-full flex justify-start gap-4">
-                  <button className="px-4 py-2 rounded bg-red-500 text-white" onClick={handleClear}>Bekor qilish</button>
+                  <button className="px-4 py-2 rounded bg-red-500 text-white" onClick={handleClear}>Bekor qilish
+                  </button>
                   <button
                     className={`px-4 py-2 rounded text-white`}
                     style={{
@@ -903,9 +923,10 @@ const ShowRack = () => {
       } else
         return (
           <>
-            <div className="showRack_rackBlock-infoBody mt-4">
+            <div className="showRack_rackBlock-infoBody mt-4 border rounded p-4 max-h-[750px] overflow-y-scroll">
               <div className="flex justify-between items-center">
-                <span className="font-bold">UNIT raqami: {deviceDetail?.unit?.start + '-' + deviceDetail?.unit?.end}</span>
+                <span className="font-bold"
+                >UNIT raqami: {deviceDetail?.unit?.start + '-' + deviceDetail?.unit?.end}</span>
                 <button
                   disabled={
                     user?.userdata?.role?.name === 'direktor' ||
@@ -1244,83 +1265,95 @@ const ShowRack = () => {
   }
 
   return (
-    <div className="mx-4">
-      <div className="flex justify-between w-full relative md:mt-8 mt-24 p-2 md:px-4 bg-white rounded">
-        <div className="flex-3 flex flex-col w-1/3">
-          <div className="flex items-center justify-between w-full h-14 bg-white border rounded p-5">
-            <span className="font-bold text-2xl leading-6 text-black">Unitni tanlang</span>
-            <div className="flex items-center">
-          <span className="font-bold text-3xl leading-9 text-black">
-            {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
-          </span>
-              <div className="flex flex-col justify-center ml-5 showRack_unitBlock-head-count-buttons">
-                <button disabled={!selectable} onClick={increment}
-                        className="bg-white border rounded p-1 px-2 font-bold flex items-center justify-center"
-                >
-                  {/*<AddIcon />*/} +
-                </button>
+    <>
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+        <DetailNav
+          id={rack}
+          name={client}
+          status={rack_detail?.is_for_unit_service ? 'Unitlar uchun' : (rack_detail?.is_busy ? 'Sotilgan' : "Bo'sh")}
+        />
+      </div>
+      <div className="mx-4">
+        <div className="flex justify-between w-full relative md:mt-8 mt-24 p-2 md:px-4 bg-white rounded">
+          <div className="flex-3 flex flex-col w-[30%]">
+            <div className="flex items-center justify-between w-full h-14 bg-white border rounded p-5">
+              <span className="font-bold text-2xl leading-6 text-black">Unitni tanlang</span>
+              <div className="flex items-center">
+              <span className="font-bold text-3xl leading-9 text-black">
+                {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
+              </span>
+                <div className="flex flex-col justify-center ml-5 showRack_unitBlock-head-count-buttons">
+                  <button
+                    disabled={!selectable} onClick={increment}
+                    className="bg-white border rounded p-1 px-2 font-bold flex items-center justify-center"
+                  >
+                    {/*<AddIcon />*/} +
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            className="mt-5 w-full max-h-[750px] overflow-y-scroll bg-white border rounded p-5 showRack_unitBlock-body"
-          >
-            {
-              loading
-                ?
-                <Loader/>
-                :
-                unitsData?.sort((rack1, rack2) => rack1.place_number - rack2.place_number)?.map((el) => (
-                  <div className="flex items-center relative mt-2 w-full" key={el.id}>
-                    <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-lg leading-5 ${el.is_busy ? 'bg-white text-gray-800' : 'text-[#b6b6b6]'} ${el.unit_valid_action ? 'bg-red-500' : ''}`}
-                      title={el?.unit_valid_action !== null && el?.unit_valid_action?.status_code === 1 && el?.unit_valid_action?.message || ''}
-                    >
-                      {el.place_number}
+            <div
+              className="mt-5 w-full max-h-[750px] overflow-y-scroll bg-white border rounded p-5 showRack_unitBlock-body"
+            >
+              {
+                loading
+                  ?
+                  <Loader/>
+                  :
+                  unitsData?.sort((rack1, rack2) => rack1.place_number - rack2.place_number)?.map((el) => (
+                    <div className="flex items-center relative mt-2 w-full" key={el.id}>
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-lg leading-5 ${el.is_busy ? 'bg-white text-gray-800' : 'text-[#b6b6b6]'} ${el.unit_valid_action ? 'bg-red-500' : ''}`}
+                        title={el?.unit_valid_action !== null && el?.unit_valid_action?.status_code === 1 && el?.unit_valid_action?.message || ''}
+                      >
+                        {el.place_number}
+                      </div>
+                      {selectable
+                        ? handleSelectableDevices(unitsData?.length + 1, el.place_number, el.is_busy, el.is_selected)
+                        : handleDevices(el.device_count, el.place_number, el.is_busy, el.id, el?.device_general_info?.device?.name, el?.device_general_info?.device_publisher?.name)}
                     </div>
-                    {selectable
-                      ? handleSelectableDevices(unitsData?.length + 1, el.place_number, el.is_busy, el.is_selected)
-                      : handleDevices(el.device_count, el.place_number, el.is_busy, el.id, el?.device_general_info?.device?.name, el?.device_general_info?.device_publisher?.name)}
-                  </div>
-                ))
-            }
+                  ))
+              }
+            </div>
           </div>
-        </div>
-        <div className="flex-9 ml-14 w-full">
-          <div className="flex items-center justify-between h-14 px-5 bg-white border rounded showRack_rackBlock-head">
-            <div style={{width: 50}}/>
-            <span className="font-bold text-2xl leading-6 text-dark">Rack: {rack_detail?.place_number}</span>
-            {rack_detail?.is_busy ? (
-              <div
-                className="flex items-center rounded-full cursor-pointer showRack_rackBlock-head-sold"
-                onClick={() => setDrawer(true)}
-              >
-                {<BiBadgeCheck size={30} color={currentColor}/>}
-              </div>
-            ) : (
-              <button
-                className={`flex items-center rounded-full border-0 p-1 disabled:opacity-50`}
-                onClick={() => setDrawer(true)}
-                disabled={rack_detail?.is_for_unit_service || ["direktor", "direktor o'rinbosari", "departament boshlig'i"].includes(user?.userdata?.role?.name)}
-              >
-                {<BiBadgeCheck size={30} color={'#b6b6b6'}/>}
-              </button>
-            )}
+          <div className="flex-9 ml-7 w-full">
+            <div
+              className="flex items-center justify-between h-14 px-5 bg-white border rounded showRack_rackBlock-head"
+            >
+              <div style={{width: 50}}/>
+              <span className="font-bold text-2xl leading-6 text-dark">Rack: {rack_detail?.place_number}</span>
+              {rack_detail?.is_busy ? (
+                <div
+                  className="flex items-center rounded-full cursor-pointer showRack_rackBlock-head-sold"
+                  onClick={() => setDrawer(true)}
+                >
+                  {<BiBadgeCheck size={30} color={currentColor}/>}
+                </div>
+              ) : (
+                <button
+                  className={`flex items-center rounded-full border-0 p-1 disabled:opacity-50`}
+                  onClick={() => setDrawer(true)}
+                  disabled={rack_detail?.is_for_unit_service || ["direktor", "direktor o'rinbosari", "departament boshlig'i"].includes(user?.userdata?.role?.name)}
+                >
+                  {<BiBadgeCheck size={30} color={'#b6b6b6'}/>}
+                </button>
+              )}
+            </div>
+            {handleShowRackInfo()}
           </div>
-          {handleShowRackInfo()}
+          {/*<Drawer anchor="right" open={drawer} onClose={clearData}>*/}
+          {drawer && (
+            <RackDrawer
+              onClose={clearData}
+              type={rack_detail?.is_busy ? 'sold' : 'notSold'}
+              rack_id={rack_detail?.id}
+              devicesLength={rack_detail?.unit_count}
+            />
+          )}
+          {/*</Drawer>*/}
         </div>
-        {/*<Drawer anchor="right" open={drawer} onClose={clearData}>*/}
-        {drawer && (
-          <RackDrawer
-            onClose={clearData}
-            type={rack_detail?.is_busy ? 'sold' : 'notSold'}
-            rack_id={rack_detail?.id}
-            devicesLength={rack_detail?.unit_count}
-          />
-        )}
-        {/*</Drawer>*/}
       </div>
-    </div>
+    </>
   );
 
 };
