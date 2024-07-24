@@ -127,7 +127,7 @@ const ShowRack = () => {
     if (deviceCount === 4) {
       return (
         <div
-          className="absolute top-1 left-6 w-[87%] h-[130px] ml-5 rounded cursor-pointer bg-cover border border-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
+          className="absolute top-1 left-6 w-[87%] h-[132px] ml-5 rounded cursor-pointer bg-cover border border-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
           style={{background: currentColor}}
         >
