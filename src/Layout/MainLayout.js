@@ -43,7 +43,9 @@ const MainLayout = () => {
             <Navbar />
           </div>
           {themeSettings && <ThemeSettings />}
-          <Outlet />
+          <div className="pt-14">
+            <Outlet />
+          </div>
           {/*<Footer />*/}
         </div>
       </div>

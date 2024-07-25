@@ -61,7 +61,13 @@ const Navbar = () => {
   if (loading) return <Loader/>
 
   return (
-    <div className="flex justify-between items-center p-2 md:ml-6 md:mr-6 relative">
+    <div
+      className="flex justify-between items-center p-2 md:ml-6 fixed top-0 right-0 z-50"
+      style={{
+        background: currentColor,
+        width: activeMenu ? '85%' : '100%',
+      }}
+    >
       <NavButton title="Menu" customFunc={handleActiveMenu} color={'#fff'} icon={<AiOutlineMenu/>}/>
       <div className="relative flex items-center gap-5">
         <div>
