@@ -158,11 +158,8 @@ export const logOut = createAsyncThunk(
         }
       )
       dispatch(setLogout())
-      console.log(tokens)
     } catch (e) {
-      console.log("catch", tokens)
       dispatch(setLogout())
-      console.log(e.message)
     }
   }
 )
