@@ -147,7 +147,7 @@ export const logOut = createAsyncThunk(
   "auth/oneIdLogOut",
   async (tokens, {dispatch}) => {
     try {
-      const response = await axios.post(
+      await axios.post(
         APIS.logOut,
         {"refresh_token": tokens.refresh_token},
         {

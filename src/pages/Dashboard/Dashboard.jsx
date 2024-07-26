@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { useDispatch, useSelector } from "react-redux";
-import { getDashboard } from "../../redux/slices/dashboard/dashboardSlice";
-import { PieChart } from "@mui/x-charts/PieChart";
-import { Header, Loader } from "../../components";
+import {useDispatch, useSelector} from "react-redux";
+import {getDashboard} from "../../redux/slices/dashboard/dashboardSlice";
+import {PieChart} from "@mui/x-charts/PieChart";
+import {Header, Loader} from "../../components";
 import chroma from 'chroma-js'
 import {getSidebar} from "../../redux/slices/sections/sectionSlice";
 import {LineChart} from "@mui/x-charts";
@@ -12,7 +12,7 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const divRef = useRef(null);
 
-  const { dashboard, loading } = useSelector(state => state.dashboard);
+  const {dashboard, loading} = useSelector(state => state.dashboard);
 
   const [divWidth, setDivWidth] = useState(null);
   const [monthContract, setMonthContract] = useState([])
@@ -69,28 +69,36 @@ const Dashboard = () => {
 
   // --------------------------------------- //
   const dataUserCount = [
-    { label: 'Fizik', value: parseFloat(dashboard?.user_info?.physic_users), color: colors[0] },
-    { label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_users), color: colors[3] }
+    {label: 'Fizik', value: parseFloat(dashboard?.user_info?.physic_users), color: colors[0]},
+    {label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_users), color: colors[3]}
   ];
 
   const dataUserContracts = [
-    { label: 'Fizik (shartnomalar)', value: parseFloat(dashboard?.user_info?.physic_contracts), color: colors[1] },
-    { label: 'Yuridik (shartnomalar)', value: parseFloat(dashboard?.user_info?.juridic_contracts), color: colors[2] }
+    {label: 'Fizik (shartnomalar)', value: parseFloat(dashboard?.user_info?.physic_contracts), color: colors[1]},
+    {label: 'Yuridik (shartnomalar)', value: parseFloat(dashboard?.user_info?.juridic_contracts), color: colors[2]}
   ];
 
   const dataUserContractsSum = [
-    { label: 'Fizik', value: parseFloat(dashboard?.user_info?.physic_sum), color: colors[0] },
-    { label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_sum), color: colors[1] }
+    {label: 'Fizik', value: parseFloat(dashboard?.user_info?.physic_sum), color: colors[0]},
+    {label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_sum), color: colors[1]}
   ];
 
   const dataUserContractsCount = [
-    { label: 'Fizik', value: parseFloat(dashboard?.user_info?.physic_contracts), color: colors[0] },
-    { label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_contracts), color: colors[1] }
+    {label: 'Fizik', value: parseFloat(dashboard?.user_info?.physic_contracts), color: colors[0]},
+    {label: 'Yuridik', value: parseFloat(dashboard?.user_info?.juridic_contracts), color: colors[1]}
   ];
 
   const dataApplicationsCount = [
-    { label: 'Yangi', value: parseFloat(dashboard?.application_short_info?.total - dashboard?.application_short_info?.contracted_application_count), color: colors[2] },
-    { label: 'Shartnoma yuborilgan', value: parseFloat(dashboard?.application_short_info?.contracted_application_count), color: colors[3] }
+    {
+      label: 'Yangi',
+      value: parseFloat(dashboard?.application_short_info?.total - dashboard?.application_short_info?.contracted_application_count),
+      color: colors[2]
+    },
+    {
+      label: 'Shartnoma yuborilgan',
+      value: parseFloat(dashboard?.application_short_info?.contracted_application_count),
+      color: colors[3]
+    }
   ];
 
   const xAxisData = monthApplication.map(data => data.date);
@@ -99,7 +107,7 @@ const Dashboard = () => {
     monthContract.map(data => data.value)
   ]
 
-  if (loading) return <Loader />
+  if (loading) return <Loader/>
 
   return (
     <div className={'m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded'}>
@@ -327,8 +335,8 @@ const Dashboard = () => {
                     },
                   ]}
                   series={[
-                    { label: "Arizalar", data: seriesData[0] },
-                    { label: "Shartnomalar", data: seriesData[1] },
+                    {label: "Arizalar", data: seriesData[0]},
+                    {label: "Shartnomalar", data: seriesData[1]},
                   ]}
                   width={divWidth || 1000}
                   height={400}

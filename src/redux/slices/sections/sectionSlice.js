@@ -3,7 +3,7 @@ import {api_url} from "../../../config";
 import {toast} from "react-toastify";
 import instance from "../../../API";
 
-const sidebarStorage = localStorage.getItem('sidebar') ? JSON.parse(localStorage.getItem('sidebar') || 'null') : null
+const sidebarStorage = localStorage.getItem('sidebar') ? JSON.parse(localStorage.getItem('sidebar') || '') : null
 
 const initialState = {
   sidebar: sidebarStorage,

@@ -29,6 +29,9 @@ const rootReducer = (state, action) => {
   if (action.type === 'auth/oneIdLogOut/fulfilled') {
     state = undefined;
   }
+  if (action.type === 'auth/oneIdLogOut/rejected') {
+    state = undefined;
+  }
   return appReducer(state, action);
 };
 
