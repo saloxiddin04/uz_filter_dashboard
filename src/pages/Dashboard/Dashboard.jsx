@@ -39,7 +39,7 @@ const Dashboard = () => {
       const width = divRef.current.offsetWidth;
       setDivWidth(width);
     }
-  }, [dispatch]);
+  }, []);
 
   const keysCount = Object.keys(dashboard ? dashboard?.all_contract_short_info : []);
   const dataCount = keysCount.map((key) => ({

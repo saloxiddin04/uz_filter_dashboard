@@ -20,3 +20,6 @@ export {default as CreateExpertise} from './CreateContracts/Expertise/CreateExpe
 export {default as CreateCertification} from './CreateContracts/Certification/CreateCertification'
 
 export {default as DataCenter} from './DataCenter/DataCenter'
+
+export {default as Registry} from './Registry/Registry'
+export {default as CreateRegistry} from './Registry/CreateRegistry'

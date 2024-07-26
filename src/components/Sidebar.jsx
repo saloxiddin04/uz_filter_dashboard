@@ -30,6 +30,7 @@ const Sidebar = () => {
   const children = filterBySlug();
 
   const slugs = ['vps', 'colocation', 'e-xat', 'expertise', 'tte_certification'];
+  const slugsRegistry = ['vps', 'colocation'];
 
   if (loading) return <Loader/>
 
@@ -75,6 +76,27 @@ const Sidebar = () => {
             )}
             {pathname.indexOf('/shartnomalar') === 0 ? (
               children && children.filter(item => slugs.includes(item?.slug))?.map((item) => {
+                const newPath = `${pathname.split('/')[1]}/${item.slug}`;
+                return (
+                  <div key={item.slug}>
+                    <NavLink
+                      to={newPath}
+                      key={item.slug}
+                      onClick={() => {
+                        localStorage.setItem("currentPage", '1');
+                        handleCloseSideBar();
+                      }}
+                      style={({isActive}) => ({
+                        backgroundColor: isActive ? currentColor : '',
+                      })}
+                      className={({isActive}) => (isActive ? activeLink : normalLink)}
+                    >
+                      <span className="capitalize">{item.name}</span>
+                    </NavLink>
+                  </div>
+                )
+              })) : pathname.indexOf('/registry') === 0 ? (
+              children && children.filter(item => slugsRegistry.includes(item?.slug))?.map((item) => {
                 const newPath = `${pathname.split('/')[1]}/${item.slug}`;
                 return (
                   <div key={item.slug}>

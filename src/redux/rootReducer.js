@@ -10,6 +10,7 @@ import createVpsSlice from './slices/contractCreate/Vps/VpsSlices';
 import createExpertiseSlice from './slices/contractCreate/Expertise/expertiseSlices';
 import createCertificationSlice from './slices/contractCreate/Certification/CertificationSlice';
 import dataCenterSlice from './slices/dataCenter/dataCenterSlice';
+import registrySlice from "./slices/registry/registrySlice";
 
 const appReducer = combineReducers({
   user: authSlice,
@@ -22,7 +23,8 @@ const appReducer = combineReducers({
   createColocation: createColocationSlices,
   createVps: createVpsSlice,
   createExpertise: createExpertiseSlice,
-  createCertification: createCertificationSlice
+  createCertification: createCertificationSlice,
+  registry: registrySlice,
 });
 
 const rootReducer = (state, action) => {
