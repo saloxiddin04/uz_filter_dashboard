@@ -139,7 +139,6 @@ const Registry = () => {
                 className={`px-4 py-2 rounded border text-center`}
                 style={{borderColor: currentColor}}
                 onClick={() => dispatch(getRegistries({id: filteredId?.id}))}
-                // disabled={!month || !year}
               >
                 <ArrowPathIcon className="size-6" fill={currentColor} />
               </button>

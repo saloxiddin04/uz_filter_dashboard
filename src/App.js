@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import {BrowserRouter, Routes, Route, Navigate, useLocation} from 'react-router-dom';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import './App.css';
-import './index.css';
 
 import { useStateContext } from './contexts/ContextProvider';
 import Loader from './components/Loader';
