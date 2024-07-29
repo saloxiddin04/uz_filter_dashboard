@@ -36,6 +36,18 @@ export const getRegistries = createAsyncThunk(
   }
 )
 
+export const getRegistryDetail = createAsyncThunk(
+  "registry/getRegistryDetail",
+  async (id) => {
+    try {
+      const response = await instance.get(`/registry-book/registry-book/${id}`)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const RegistrySlice = createSlice({
   name: "registry",
   initialState,
@@ -65,6 +77,20 @@ const RegistrySlice = createSlice({
       state.error = payload
       state.loading = false
       state.registries = null
+    })
+
+    // getRegistryDetail
+    builder.addCase(getRegistryDetail.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getRegistryDetail.fulfilled, (state, {payload}) => {
+      state.register_detail = payload
+      state.loading = false
+    })
+    builder.addCase(getRegistryDetail.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.register_detail = null
     })
   }
 })

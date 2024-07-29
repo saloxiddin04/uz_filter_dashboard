@@ -22,4 +22,5 @@ export {default as CreateCertification} from './CreateContracts/Certification/Cr
 export {default as DataCenter} from './DataCenter/DataCenter'
 
 export {default as Registry} from './Registry/Registry'
+export {default as RegistryDetail} from './Registry/RegistryDetail'
 export {default as CreateRegistry} from './Registry/CreateRegistry'

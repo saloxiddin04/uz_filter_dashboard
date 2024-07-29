@@ -12,7 +12,8 @@ import {
   CreateExpertise,
   CreateCertification,
   DataCenter,
-  Registry, CreateRegistry
+  Registry, CreateRegistry,
+  RegistryDetail
 } from './pages';
 import ShowRack from "./components/DataCenter/ShowRack";
 
@@ -42,5 +43,6 @@ export const routes = [
 
   {path: '/registry', element: Registry },
   {path: '/registry/:slug', element: Registry },
+  {path: '/registry/:slug/:id', element: RegistryDetail },
   {path: '/registry/:slug/create', element: CreateRegistry },
 ]
