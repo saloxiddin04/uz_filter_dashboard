@@ -63,13 +63,16 @@ const RegistryDetail = () => {
 
       await instance.post(`/registry-book/confirm-registry/${id}`, formData, {
         headers: {'Content-Type': 'multipart/form-data'}
+      }).then(() => {
+        toast.success('Muvofaqqiyatli tasdiqlandi')
+        setOpenTab(0)
+        dispatch(getRegistryDetail(id))
       })
     } catch (e) {
       toast.error('Xatolik')
       console.log(e)
     }
   }
-
 
   const handleValidate = () => {
     if (
@@ -90,7 +93,7 @@ const RegistryDetail = () => {
     else return false
   }
 
-  console.log(id,  slug)
+  const filteredUser = register_detail?.registry_confirm_participants_data?.find(el => el?.participant_user?.type === 'Fizik' ? el?.participant_user?.pin_or_tin === user?.pin :  el?.participant_user?.pin_or_tin === user?.tin)
 
   useEffect(() => {
     if (id) {
@@ -243,70 +246,73 @@ const RegistryDetail = () => {
       case 3:
         return (
           <>
-            {console.log(register_detail?.registry_confirm_participants_data?.filter(el => el?.participant_user?.type === 'Fizik' ? el?.participant_user?.pin_or_tin === user?.pin :  el?.participant_user?.pin_or_tin === user?.tin))}
-            <div className="w-full">
-            <div>
-              <label
-                htmlFor="conclusion"
-                className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
-              >
-                Xulosa
-              </label>
-              <select
-                name="conclusion"
-                id="conclusion"
-                className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-                onChange={(e) => setSelectedFile({...selectedFile, conclusion: e.target.value})}
-              >
-                <option value="2">Tanlang...</option>
-                <option value="1">Reestr tasdiqlash maqsadga muvofiq</option>
-                <option value="0">Reestr tasdiqlash maqsadga muvofiq emas</option>
-              </select>
-            </div>
-            {selectedFile?.conclusion === '0' && (
-              <div className={'my-4'}>
-                <label
-                  htmlFor="comment"
-                  className={'block text-gray-700 text-sm font-bold mb-2 ml-3'}
-                >
-                  Izoh
-                </label>
-                <textarea
-                  name="comment"
-                  id="comment"
-                  cols="10"
-                  rows="3"
-                  className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border'}
-                  onChange={(e) => setSelectedFile({...selectedFile, comment: e.target.value})}
-                />
+            {!filteredUser?.is_confirmed !== true ? (
+              <div className="w-full">
+                <div>
+                  <label
+                    htmlFor="conclusion"
+                    className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+                  >
+                    Xulosa
+                  </label>
+                  <select
+                    name="conclusion"
+                    id="conclusion"
+                    className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                    onChange={(e) => setSelectedFile({...selectedFile, conclusion: e.target.value})}
+                  >
+                    <option value="2">Tanlang...</option>
+                    <option value="1">Reestr tasdiqlash maqsadga muvofiq</option>
+                    <option value="0">Reestr tasdiqlash maqsadga muvofiq emas</option>
+                  </select>
+                </div>
+                {selectedFile?.conclusion === '0' && (
+                  <div className={'my-4'}>
+                    <label
+                      htmlFor="comment"
+                      className={'block text-gray-700 text-sm font-bold mb-2 ml-3'}
+                    >
+                      Izoh
+                    </label>
+                    <textarea
+                      name="comment"
+                      id="comment"
+                      cols="10"
+                      rows="3"
+                      className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border'}
+                      onChange={(e) => setSelectedFile({...selectedFile, comment: e.target.value})}
+                    />
+                  </div>
+                )}
+                <div className={'flex flex-col mt-4'}>
+                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="document">
+                    Hujjat
+                  </label>
+                  <input
+                    onChange={(e) => setFormFile(e.target.files[0])}
+                    name="document"
+                    id="document"
+                    type="file"
+                    className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                </div>
+                <div className="w-full flex items-center justify-end mt-4">
+                  <button
+                    className={`px-4 py-2 rounded text-white ${(selectedFile.conclusion === '1' ? handleValidate() : handleValidateReject()) ? 'opacity-25' : ''}`}
+                    style={{
+                      backgroundColor: currentColor,
+                      border: `1px solid ${currentColor}`
+                    }}
+                    disabled={(selectedFile.conclusion === '1' ? handleValidate() : handleValidateReject())}
+                    onClick={reject}
+                  >
+                    Tasdiqlash
+                  </button>
+                </div>
               </div>
+            ) : (
+              <h1 className="text-center">Siz xulosa berib bo'lgansiz!</h1>
             )}
-            <div className={'flex flex-col mt-4'}>
-              <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="document">
-                Hujjat
-              </label>
-              <input
-                onChange={(e) => setFormFile(e.target.files[0])}
-                name="document"
-                id="document"
-                type="file"
-                className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-              />
-            </div>
-            <div className="w-full flex items-center justify-end mt-4">
-              <button
-                className={`px-4 py-2 rounded text-white ${(selectedFile.conclusion === '1' ? handleValidate() : handleValidateReject()) ? 'opacity-25' : ''}`}
-                style={{
-                  backgroundColor: currentColor,
-                  border: `1px solid ${currentColor}`
-                }}
-                disabled={(selectedFile.conclusion === '1' ? handleValidate() : handleValidateReject())}
-                onClick={reject}
-              >
-                Tasdiqlash
-              </button>
-            </div>
-          </div>
           </>
         )
       default:
