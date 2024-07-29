@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, NavLink, useLocation} from 'react-router-dom';
 import {MdOutlineCancel} from 'react-icons/md';
-import {TooltipComponent} from '@syncfusion/ej2-react-popups';
+// import {TooltipComponent} from '@syncfusion/ej2-react-popups';
 
 import {useStateContext} from '../contexts/ContextProvider';
 import {useSelector} from "react-redux";
@@ -45,7 +45,7 @@ const Sidebar = () => {
             >
               <Logo/>
             </Link>
-            <TooltipComponent content="Menu" position="BottomCenter">
+            {/*<TooltipComponent content="Menu" position="BottomCenter">*/}
               <button
                 type="button"
                 onClick={() => setActiveMenu(!activeMenu)}
@@ -54,7 +54,7 @@ const Sidebar = () => {
               >
                 <MdOutlineCancel/>
               </button>
-            </TooltipComponent>
+            {/*</TooltipComponent>*/}
           </div>
           <div className="pl-3 mt-5">
             {children.length === 0 && (

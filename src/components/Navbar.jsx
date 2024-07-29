@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Link, NavLink, useLocation, useNavigate, useNavigation} from 'react-router-dom';
 import {AiOutlineMenu} from 'react-icons/ai';
 import {MdKeyboardArrowDown} from 'react-icons/md';
-import {TooltipComponent} from '@syncfusion/ej2-react-popups';
+// import {TooltipComponent} from '@syncfusion/ej2-react-popups';
 
 import {useStateContext} from '../contexts/ContextProvider';
 
@@ -12,7 +12,7 @@ import {Loader} from "./index";
 
 
 const NavButton = ({title, customFunc, icon, color, dotColor}) => (
-  <TooltipComponent content={title} position="BottomCenter">
+  // <TooltipComponent content={title} position="BottomCenter">
     <button
       type="button"
       onClick={() => customFunc()}
@@ -25,7 +25,7 @@ const NavButton = ({title, customFunc, icon, color, dotColor}) => (
       />
       {icon}
     </button>
-  </TooltipComponent>
+  // </TooltipComponent>
 );
 
 const Navbar = () => {
@@ -104,7 +104,7 @@ const Navbar = () => {
         ))}
       </div>
       <div className="flex">
-        <TooltipComponent content="Profile" position="BottomCenter">
+        {/*<TooltipComponent content="Profile" position="BottomCenter">*/}
           <div
             className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray hover:text-gray-900 rounded-lg userProfile"
             onClick={() => handleClick('userProfile')}
@@ -128,7 +128,7 @@ const Navbar = () => {
             </span>
             <MdKeyboardArrowDown className="text-gray-400 text-14"/>
           </div>
-        </TooltipComponent>
+        {/*</TooltipComponent>*/}
 
         {isClicked.userProfile && (<UserProfile />)}
       </div>

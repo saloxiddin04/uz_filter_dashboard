@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar, Sidebar, Footer, ThemeSettings } from '../components';
-import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+// import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { FiSettings } from 'react-icons/fi';
 import { useStateContext } from '../contexts/ContextProvider';
 
@@ -12,7 +12,7 @@ const MainLayout = () => {
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
       <div className="flex relative dark:bg-main-dark-bg">
         <div className="fixed right-4 bottom-4" style={{ zIndex: '1000' }}>
-          <TooltipComponent content="Settings" position="Top">
+          {/*<TooltipComponent content="Settings" position="Top">*/}
             <button
               type="button"
               onClick={() => setThemeSettings(true)}
@@ -21,7 +21,7 @@ const MainLayout = () => {
             >
               <FiSettings />
             </button>
-          </TooltipComponent>
+          {/*</TooltipComponent>*/}
         </div>
         {activeMenu ? (
           <div className="w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
