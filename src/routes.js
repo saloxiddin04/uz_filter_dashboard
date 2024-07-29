@@ -13,7 +13,7 @@ import {
   CreateCertification,
   DataCenter,
   Registry, CreateRegistry,
-  RegistryDetail
+  RegistryDetail, Xizmatlar
 } from './pages';
 import ShowRack from "./components/DataCenter/ShowRack";
 
@@ -22,6 +22,7 @@ export const routes = [
 
   { path: '/dashboard', element: Dashboard },
   { path: '/profile', element: Profile },
+  { path: '/xizmatlar', element: Xizmatlar },
 
   { path: '/shartnomalar', element: Contracts },
   { path: '/shartnomalar/:slug', element: Contracts },

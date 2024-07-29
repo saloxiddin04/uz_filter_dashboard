@@ -72,6 +72,19 @@ const Sidebar = () => {
                 >
                   <span className="capitalize">Statistika</span>
                 </NavLink>
+                <NavLink
+                  to={`/xizmatlar`}
+                  onClick={() => {
+                    localStorage.setItem("currentPage", '1');
+                    handleCloseSideBar();
+                  }}
+                  style={({isActive}) => ({
+                    backgroundColor: isActive ? currentColor : '',
+                  })}
+                  className={({isActive}) => (isActive ? activeLink : normalLink)}
+                >
+                  <span className="capitalize">Xizmatlar</span>
+                </NavLink>
               </div>
             )}
             {pathname.indexOf('/shartnomalar') === 0 ? (

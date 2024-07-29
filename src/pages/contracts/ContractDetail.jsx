@@ -13,7 +13,6 @@ import FizUserContractDetail from "./FizUserContractDetail";
 import {BiSearch} from "react-icons/bi";
 import {HooksCommission} from "../../components/eSign/eSignConfig";
 import {toast} from "react-toastify";
-import {clearStatesColocation} from "../../redux/slices/contractCreate/Colocation/ColocationSlices";
 
 const tabs = [
   {

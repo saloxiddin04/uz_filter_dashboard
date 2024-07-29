@@ -6,6 +6,8 @@ export {default as Profile} from './profile/Profile';
 
 export {default as NotFound} from './PageNotFound';
 
+export {default as Xizmatlar} from './Xizmatlar/Xizmatlar';
+
 
 export {default as Contracts} from './contracts/Contracts'
 export {default as ContractDetail} from './contracts/ContractDetail'
