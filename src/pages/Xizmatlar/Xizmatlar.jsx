@@ -1,18 +1,30 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {Header, Input} from "../../components";
+import {Header, Input, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {getServices} from "../../redux/slices/registry/registrySlice";
 import JoditEditor from "jodit-react";
 import {toast} from "react-toastify";
 import instance from "../../API";
 
+const tabs = [
+	{
+		title: "Ma'lumotlar",
+		active: true
+	},
+	{
+		title: "Video qo'llanma",
+		active: false
+	}
+];
+
 const Xizmatlar = () => {
 	const dispatch = useDispatch()
 	const {currentColor} = useStateContext();
 	
 	const {services} = useSelector(({registry}) => registry)
-	
+
+	const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 	const [modal, setModal] = useState(false)
 	
 	const [service, setService] = useState(localStorage.getItem('service') || '')
@@ -64,7 +76,152 @@ const Xizmatlar = () => {
 			toast.error(e.message)
 		}
 	}
-	
+
+	const displayStep = (step) => {
+		switch (step) {
+			case 0:
+				return (
+					<>
+						<div className="w-full flex flex-col gap-4">
+							<div>
+								<Input
+									label={'Sarlavha (uz) *'}
+									value={name_uz}
+									onChange={(e) => setNameUz(e.target.value)}
+									className={'focus:border-blue-400'}
+									required={true}
+								/>
+							</div>
+							<div>
+								<Input
+									label={'Sarlavha (ru)'}
+									value={name_ru}
+									onChange={(e) => setNameRu(e.target.value)}
+									className={'focus:border-blue-400'}
+								/>
+							</div>
+							<div>
+								<Input
+									label={'Sarlavha (en)'}
+									value={name_en}
+									onChange={(e) => setNameEn(e.target.value)}
+									className={'focus:border-blue-400'}
+								/>
+							</div>
+							<div className={'flex flex-col'}>
+								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="document">
+									Icon
+								</label>
+								<input
+									onChange={(e) => setIcon(e.target.files[0])}
+									name="document"
+									id="document"
+									type="file"
+									className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+								/>
+							</div>
+							<div className={'flex flex-col'}>
+								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">
+									Fayl
+								</label>
+								<input
+									onChange={(e) => setFile(e.target.files[0])}
+									name="file"
+									id="file"
+									type="file"
+									className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+								/>
+							</div>
+							<div className={'flex flex-col'}>
+								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
+									Izoh (uz) *
+								</label>
+								<JoditEditor value={description_uz} onChange={(e) => setDescriptionUz(e)}/>
+							</div>
+							<div className={'flex flex-col'}>
+								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
+									Izoh (ru)
+								</label>
+								<JoditEditor value={description_ru} onChange={(e) => setDescriptionRu(e)}/>
+							</div>
+							<div className={'flex flex-col'}>
+								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
+									Izoh (en)
+								</label>
+								<JoditEditor value={description_en} onChange={(e) => setDescriptionEn(e)}/>
+							</div>
+							<div className="flex items-center justify-end gap-4">
+								<button
+									className="px-4 py-2 rounded"
+									style={{
+										border: `1px solid ${currentColor}`,
+										color: currentColor
+									}}
+									onClick={closeModal}
+								>
+									Bekor qilish
+								</button>
+								<button
+									className="px-4 py-2 rounded text-white disabled:opacity-25"
+									style={{
+										backgroundColor: `${currentColor}`,
+										border: `1px solid ${currentColor}`
+									}}
+									disabled={handleValidate()}
+									onClick={createContent}
+								>
+									Saqlash
+								</button>
+							</div>
+						</div>
+					</>
+				)
+			case 1:
+				return (
+					<>
+						<div className={'flex flex-col'}>
+							<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">
+								Video
+							</label>
+							<input
+								onChange={(e) => setFile(e.target.files)}
+								name="file"
+								id="file"
+								type="file"
+								multiple={true}
+								className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+							/>
+						</div>
+						<div className="flex items-center justify-end gap-4 mt-4">
+							<button
+								className="px-4 py-2 rounded"
+								style={{
+									border: `1px solid ${currentColor}`,
+									color: currentColor
+								}}
+								onClick={closeModal}
+							>
+								Bekor qilish
+							</button>
+							<button
+								className="px-4 py-2 rounded text-white disabled:opacity-25"
+								style={{
+									backgroundColor: `${currentColor}`,
+									border: `1px solid ${currentColor}`
+								}}
+								disabled={handleValidate()}
+								onClick={createContent}
+							>
+								Saqlash
+							</button>
+						</div>
+					</>
+				)
+			default:
+				return null
+		}
+	}
+
 	return (
 		<div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
 			<div className={'flex items-center justify-between'}>
@@ -104,108 +261,24 @@ const Xizmatlar = () => {
 				</div>
 				{modal && (
 					<div
-						className="fixed top-0 left-0 w-full h-screen bg-[rgba(0,0,0,0.25)] z-50 flex items-center justify-center">
+						className="fixed top-0 left-0 w-full h-screen bg-[rgba(0,0,0,0.25)] z-50 flex items-center justify-center"
+					>
 						<div className="bg-white w-9/12 max-h-[90%] overflow-x-scroll rounded p-4">
-							<div className="w-full text-end">
+							<div className="w-full flex justify-between items-center mb-4">
+								<TabsRender
+									tabs={tabs}
+									color={currentColor}
+									openTab={openTab}
+									setOpenTab={setOpenTab}
+								/>
 								<button
-									className="bg-red-500 rounded px-4 py-2 text-white text-2xl"
+									className="bg-red-500 rounded px-2 py-1 text-white text-xl"
 									onClick={closeModal}
 								>
 									X
 								</button>
 							</div>
-							<div className="w-full flex flex-col gap-4">
-								<div>
-									<Input
-										label={'Sarlavha (uz) *'}
-										value={name_uz}
-										onChange={(e) => setNameUz(e.target.value)}
-										className={'focus:border-blue-400'}
-										required={true}
-									/>
-								</div>
-								<div>
-									<Input
-										label={'Sarlavha (ru)'}
-										value={name_ru}
-										onChange={(e) => setNameRu(e.target.value)}
-										className={'focus:border-blue-400'}
-									/>
-								</div>
-								<div>
-									<Input
-										label={'Sarlavha (en)'}
-										value={name_en}
-										onChange={(e) => setNameEn(e.target.value)}
-										className={'focus:border-blue-400'}
-									/>
-								</div>
-								<div className={'flex flex-col'}>
-									<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="document">
-										Icon
-									</label>
-									<input
-										onChange={(e) => setIcon(e.target.files[0])}
-										name="document"
-										id="document"
-										type="file"
-										className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-									/>
-								</div>
-								<div className={'flex flex-col'}>
-									<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">
-										Fayl
-									</label>
-									<input
-										onChange={(e) => setFile(e.target.files[0])}
-										name="file"
-										id="file"
-										type="file"
-										className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-									/>
-								</div>
-								<div className={'flex flex-col'}>
-									<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
-										Izoh (uz) *
-									</label>
-									<JoditEditor value={description_uz} onChange={(e) => setDescriptionUz(e)} />
-								</div>
-								<div className={'flex flex-col'}>
-									<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
-										Izoh (ru)
-									</label>
-									<JoditEditor value={description_ru} onChange={(e) => setDescriptionRu(e)} />
-								</div>
-								<div className={'flex flex-col'}>
-									<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
-										Izoh (en)
-									</label>
-									<JoditEditor value={description_en} onChange={(e) => setDescriptionEn(e)} />
-								</div>
-								<div className="flex items-center justify-end gap-4">
-									<button
-										className="px-4 py-2 rounded"
-										style={{
-											border: `1px solid ${currentColor}`,
-											color: currentColor
-										}}
-										onClick={closeModal}
-									>
-										Bekor qilish
-									</button>
-									<button
-										className="px-4 py-2 rounded text-white disabled:opacity-25"
-										style={{
-											backgroundColor: `${currentColor}`,
-											border: `1px solid ${currentColor}`
-										}}
-										disabled={handleValidate()}
-										onClick={createContent}
-									>
-										Saqlash
-									</button>
-								</div>
-							</div>
+							{displayStep(openTab)}
 						</div>
 					</div>
 				)}
