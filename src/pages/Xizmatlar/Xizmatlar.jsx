@@ -59,6 +59,9 @@ const Xizmatlar = () => {
   const [videoListDetail, setVideoListDetail] = useState(null)
 
   const [service, setService] = useState(localStorage.getItem('service') || '')
+
+  const [service_detail, setServiceDetail] = useState(null)
+
   const [name_uz, setNameUz] = useState('')
   const [name_ru, setNameRu] = useState('')
   const [name_en, setNameEn] = useState('')
@@ -86,9 +89,10 @@ const Xizmatlar = () => {
 
   useEffect(() => {
     if (service) {
-      fetchList().then((res) => setList(res))
+      const filter = services?.find(el => el?.id === Number(service))
+      setServiceDetail(filter)
     }
-  }, [service])
+  }, [dispatch, service, services])
 
   useEffect(() => {
     if (mainOpenTab === 1) {
@@ -96,7 +100,7 @@ const Xizmatlar = () => {
     } else if (mainOpenTab === 2) {
       fetchVideo().then((res) => setVideoList(res))
     }
-  }, [mainOpenTab]);
+  }, [mainOpenTab, service]);
 
   useEffect(() => {
     if (id) {
@@ -127,7 +131,6 @@ const Xizmatlar = () => {
       setVideoChoice(filter?.video_choice)
       setModal(true)
       setOpenTab(1)
-      console.log(filter)
     }
   }, [video_id]);
 
@@ -216,10 +219,10 @@ const Xizmatlar = () => {
     return !name_uz || !name_ru || !name_en || !description_uz || !description_ru || !description_en;
   }
 
-	const validateChoiceVideo = () => {
-		if (video_file && video_doc) return true
-		return !video_file && !video_doc;
-	}
+  const validateChoiceVideo = () => {
+    if (video_file && video_doc) return true
+    return !video_file && !video_doc;
+  }
 
   const handleValidateVideo = () => {
     return !video_name_uz || !video_name_ru || !video_name_en || !video_choice || validateChoiceVideo()
@@ -371,8 +374,6 @@ const Xizmatlar = () => {
       return e.message
     }
   }
-
-  console.log(typeof video_file)
 
   const displayStep = (step) => {
     switch (step) {
@@ -587,7 +588,50 @@ const Xizmatlar = () => {
       case 0:
         return (
           <>
-
+            <table className="w-full mb-8 border">
+              <tbody>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-wrap border-b-1'}
+                >
+                  <th className="text-start w-2/4 border-r-1 px-2 py-2">Belgi</th>
+                  <td className="flex justify-center px-2 py-2">
+                    <img className="size-12" src={service_detail?.image} alt="image"/>
+                  </td>
+                </tr>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-wrap border-b-1'}
+                >
+                  <th className="text-start w-2/4 border-r-1 px-2 py-2">Izoh</th>
+                  <td className="text-center px-2 py-2">
+                    {service_detail?.description}
+                  </td>
+                </tr>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-wrap border-b-1'}
+                >
+                  <th className="text-start w-2/4 border-r-1 px-2 py-2">Xizmat ko'rsatish muddati (kun)</th>
+                  <td className="text-center px-2 py-2">
+                    {service_detail?.period}
+                  </td>
+                </tr>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-wrap border-b-1'}
+                >
+                  <th className="text-start w-2/4 border-r-1 px-2 py-2">Foydalanuvchilar</th>
+                  <td className="text-center px-2 py-2">
+                    {service_detail?.user_type}
+                  </td>
+                </tr>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-wrap border-b-1'}
+                >
+                  <th className="text-start w-2/4 border-r-1 px-2 py-2">Bo'lim nomi</th>
+                  <td className="text-center px-2 py-2">
+                    {service_detail?.group?.full_name} <span className="text-sm">({service_detail?.group?.comment})</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </>
         )
       case 1:
@@ -763,18 +807,22 @@ const Xizmatlar = () => {
           </select>
         </div>
         <div className="w-full">
-          <TabsRender
-            tabs={mainTabs}
-            color={currentColor}
-            openTab={mainOpenTab}
-            setOpenTab={setMainOpenTab}
-          />
+          {service && (
+            <TabsRender
+              tabs={mainTabs}
+              color={currentColor}
+              openTab={mainOpenTab}
+              setOpenTab={setMainOpenTab}
+            />
+          )}
           {
-            loading
-              ?
-              <Loader/>
-              :
-              mainDisplay(mainOpenTab)
+            service && (
+              loading
+                ?
+                <Loader/>
+                :
+                mainDisplay(mainOpenTab)
+            )
           }
         </div>
         {modal && (
