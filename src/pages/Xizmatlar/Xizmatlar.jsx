@@ -272,7 +272,7 @@ const Xizmatlar = () => {
 									setOpenTab={setOpenTab}
 								/>
 								<button
-									className="bg-red-500 rounded px-2 py-1 text-white text-xl"
+									className="bg-red-500 rounded px-3 py-1 text-white text-xl"
 									onClick={closeModal}
 								>
 									X
