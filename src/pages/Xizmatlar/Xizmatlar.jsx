@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Header, Input, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
@@ -10,6 +10,7 @@ import Loader from "../../components/Loader";
 import {AiOutlineCloudDownload} from "react-icons/ai";
 import {PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {Link} from "react-router-dom";
+import {current} from "@reduxjs/toolkit";
 
 const tabs = [
 	{
@@ -50,6 +51,13 @@ const Xizmatlar = () => {
 
 	const [fileName, setFileName] = useState('')
 	const [iconName, setIconName] = useState('')
+
+	const [video_name_uz, setVideoNameUz] = useState('')
+	const [video_name_ru, setVideoNameRu] = useState('')
+	const [video_name_en, setVideoNameEn] = useState('')
+	const [video_choice, setVideoChoice] = useState('')
+	const [video_doc, setVideoDoc] = useState('')
+	const [video_file, setVideoFile] = useState(null)
 
 	useEffect(() => {
 		dispatch(getServices())
@@ -118,12 +126,27 @@ const Xizmatlar = () => {
 		setFile(null)
 		setId(null)
 		setListDetail(null)
+		setVideoNameUz('')
+		setVideoNameRu('')
+		setVideoNameEn('')
+		setVideoChoice('')
+		setVideoDoc('')
+		setVideoFile(null)
 	}
 	
 	const handleValidate = () => {
 		return !name_uz || !name_ru || !name_en || !description_uz || !description_ru || !description_en;
 	}
-	
+
+	const validateChoiceVideo = () => {
+		if (video_file && video_doc) return true
+		return !video_file && !video_doc;
+	}
+
+	const handleValidateVideo = () => {
+		return !video_name_uz || !video_name_ru || !video_name_en || !video_choice || validateChoiceVideo()
+	}
+
 	const createContent = async () => {
 		setLoading(true)
 		const formData = new FormData()
@@ -306,19 +329,79 @@ const Xizmatlar = () => {
 				)
 			case 1:
 				return (
-					<>
-						<div className={'flex flex-col'}>
-							<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">
-								Video
+					<div className="flex flex-col gap-4">
+						<div className={'w-full'}>
+							<label
+								htmlFor="service"
+								className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+							>
+								Video turi *
 							</label>
-							<input
-								onChange={(e) => setFile(e.target.files)}
-								name="file"
-								id="file"
-								type="file"
-								multiple={true}
-								className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+							<select
+								name="client"
+								id="service"
+								className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+								value={video_choice}
+								onChange={(e) => setVideoChoice(e.target.value)}
+							>
+								<option value="" disabled={video_choice}>Tanlang...</option>
+								<option value="1">Video qo'llanma</option>
+								<option value="2">Video marketing</option>
+							</select>
+						</div>
+						<div>
+							<Input
+								label={'Sarlavha (uz) *'}
+								value={video_name_uz}
+								onChange={(e) => setVideoNameUz(e.target.value)}
+								className={'focus:border-blue-400'}
 							/>
+						</div>
+						<div>
+							<Input
+								label={'Sarlavha (ru) *'}
+								value={video_name_ru}
+								onChange={(e) => setVideoNameRu(e.target.value)}
+								className={'focus:border-blue-400'}
+							/>
+						</div>
+						<div>
+							<Input
+								label={'Sarlavha (en) *'}
+								value={video_name_en}
+								onChange={(e) => setVideoNameEn(e.target.value)}
+								className={'focus:border-blue-400'}
+							/>
+						</div>
+						<div>
+							<Input
+								label={'Video URL'}
+								value={video_doc}
+								onChange={(e) => setVideoDoc(e.target.value)}
+								className={'focus:border-blue-400'}
+							/>
+						</div>
+						<div className={'flex justify-between items-end'}>
+							<div className="flex flex-col w-[95%]">
+								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">
+									Video fayl
+								</label>
+								<input
+									onChange={(e) => setVideoFile(e.target.files)}
+									name="file"
+									id="file"
+									type="file"
+									className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+								/>
+							</div>
+							<button
+								onClick={() => {
+									setVideoFile(null)
+								}}
+								className="py-2 px-4 rounded border border-red-400 font-bold text-red-400 mb-1 hover:bg-red-400 hover:text-white transition"
+							>
+								X
+							</button>
 						</div>
 						<div className="flex items-center justify-end gap-4 mt-4">
 							<button
@@ -337,13 +420,13 @@ const Xizmatlar = () => {
 									backgroundColor: `${currentColor}`,
 									border: `1px solid ${currentColor}`
 								}}
-								disabled={handleValidate()}
+								disabled={handleValidateVideo()}
 								onClick={createContent}
 							>
 								{loading ? 'Yuklanmoqda...' : 'Saqlash'}
 							</button>
 						</div>
-					</>
+					</div>
 				)
 			default:
 				return null
