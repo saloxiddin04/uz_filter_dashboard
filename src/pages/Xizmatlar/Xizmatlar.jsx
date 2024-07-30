@@ -33,8 +33,11 @@ const Xizmatlar = () => {
 
 	const [loading, setLoading] = useState(false)
 
+	const [id, setId] = useState(null)
+
 	const [list, setList] = useState(null)
-	
+	const [listDetail, setListDetail] = useState(null)
+
 	const [service, setService] = useState(localStorage.getItem('service') || '')
 	const [name_uz, setNameUz] = useState('')
 	const [name_ru, setNameRu] = useState('')
@@ -44,7 +47,10 @@ const Xizmatlar = () => {
 	const [description_en, setDescriptionEn] = useState('')
 	const [icon, setIcon] = useState(null)
 	const [file, setFile] = useState(null)
-	
+
+	const [fileName, setFileName] = useState('')
+	const [iconName, setIconName] = useState('')
+
 	useEffect(() => {
 		dispatch(getServices())
 	}, []);
@@ -55,13 +61,45 @@ const Xizmatlar = () => {
 		}
 	}, [service])
 
+	useEffect(() => {
+		if (id) {
+			const filter = list?.find(el => el?.id === id)
+			setListDetail(filter)
+			setNameUz(filter?.name_uz)
+			setNameRu(filter?.name_ru)
+			setNameEn(filter?.name_en)
+			setDescriptionUz(filter?.description_uz)
+			setDescriptionRu(filter?.description_ru)
+			setDescriptionEn(filter?.description_en)
+			setIconName(filter?.icon)
+			setFileName(filter?.file)
+			setModal(true)
+		}
+	}, [id]);
+
 	const fetchList = async () => {
 		setLoading(true)
 		try {
-			const response = await instance.get(`/service/${service}/add-list-create`)
+			const response = await instance.get(`/service/${service}/add-list`)
 			setList(response.data)
 			setLoading(false)
 			return response.data
+		} catch (e) {
+			setLoading(false)
+			return e.message
+		}
+	}
+
+	const deleteItem = async (id) => {
+		setLoading(true)
+		try {
+			await instance.delete(`/service/delete/${id}/add-info`).then((res) => {
+				if (res.status === 204) {
+					setLoading(false)
+					toast.success('Muvofaqqiyatli o\'chirildi')
+					fetchList()
+				}
+			})
 		} catch (e) {
 			setLoading(false)
 			return e.message
@@ -78,6 +116,8 @@ const Xizmatlar = () => {
 		setDescriptionEn('')
 		setIcon(null)
 		setFile(null)
+		setId(null)
+		setListDetail(null)
 	}
 	
 	const handleValidate = () => {
@@ -93,7 +133,9 @@ const Xizmatlar = () => {
 		formData.append('description_uz', description_uz)
 		formData.append('description_ru', description_ru)
 		formData.append('description_en', description_en)
-		formData.append('file', file)
+		if (file) {
+			formData.append('file', file)
+		}
 		formData.append('icon', icon)
 		
 		try {
@@ -103,6 +145,51 @@ const Xizmatlar = () => {
 				if (res.status === 201) {
 					setLoading(false)
 					toast.success('Muvofaqqiyatli yaratildi')
+					closeModal()
+					fetchList()
+				}
+			})
+		} catch (e) {
+			setLoading(false)
+			toast.error(e.message)
+		}
+	}
+
+	const updateContent = async () => {
+		setLoading(true)
+		const formData = new FormData()
+		if (listDetail?.name_uz !== name_uz) {
+			formData.append('name_uz', name_uz)
+		}
+		if (listDetail?.name_ru !== name_ru) {
+			formData.append('name_ru', name_ru)
+		}
+		if (listDetail?.name_en !== name_en) {
+			formData.append('name_en', name_en)
+		}
+		if (listDetail?.description_uz !== description_uz) {
+			formData.append('description_uz', description_uz)
+		}
+		if (listDetail?.description_ru !== description_ru) {
+			formData.append('description_ru', description_ru)
+		}
+		if (listDetail?.description_en !== description_en) {
+			formData.append('description_en', description_en)
+		}
+		if (file) {
+			formData.append('file', file)
+		}
+		if (icon) {
+			formData.append('icon', icon)
+		}
+
+		try {
+			await instance.patch(`/service/update/${listDetail?.id}/add-info`, formData, {
+				headers: { 'Content-type': 'multipart/form-data' }
+			}).then((res) => {
+				if (res.status === 200) {
+					setLoading(false)
+					toast.success('Muvofaqqiyatli yangilandi')
 					closeModal()
 					fetchList()
 				}
@@ -156,6 +243,7 @@ const Xizmatlar = () => {
 									accept="image/png"
 									className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 								/>
+								<Link to={iconName} target="_blank" className="block underline text-blue-400 text-sm font-bold mb-1 ml-3">{id && iconName}</Link>
 							</div>
 							<div className={'flex flex-col'}>
 								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">
@@ -168,6 +256,7 @@ const Xizmatlar = () => {
 									type="file"
 									className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 								/>
+								<Link to={fileName} target="_blank" className="block underline text-blue-400 text-sm font-bold mb-1 ml-3">{id && fileName}</Link>
 							</div>
 							<div className={'flex flex-col'}>
 								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
@@ -205,7 +294,7 @@ const Xizmatlar = () => {
 										border: `1px solid ${currentColor}`
 									}}
 									disabled={handleValidate()}
-									onClick={createContent}
+									onClick={id ? updateContent : createContent}
 								>
 									{loading ? 'Yuklanmoqda...' : 'Saqlash'}
 								</button>
@@ -308,7 +397,9 @@ const Xizmatlar = () => {
 								>
 								<tr>
 									<th scope="col" className="px-3 py-3"></th>
-									<th scope="col" className="px-4 py-3">Sarlavha</th>
+									<th scope="col" className="px-4 py-3">Sarlavha (uz)</th>
+									<th scope="col" className="px-4 py-3">Sarlavha (ru)</th>
+									<th scope="col" className="px-4 py-3">Sarlavha (en)</th>
 									<th scope="col" className="px-4 py-3">Boshqarish</th>
 								</tr>
 								</thead>
@@ -322,11 +413,18 @@ const Xizmatlar = () => {
 											{index + 1}
 										</td>
 										<td scope="row" className="px-6 py-4">
-											{item?.name.length >= 30 ? `${item?.name?.slice(0, 30)}...` : item?.name}
+											{item?.name_uz?.length >= 30 ? `${item?.name_uz?.slice(0, 30)}...` : item?.name_uz}
+										</td>
+										<td scope="row" className="px-6 py-4">
+											{item?.name_ru?.length >= 30 ? `${item?.name_ru?.slice(0, 30)}...` : item?.name_ru}
+										</td>
+										<td scope="row" className="px-6 py-4">
+											{item?.name_en?.length >= 30 ? `${item?.name_en?.slice(0, 30)}...` : item?.name_en}
 										</td>
 										<td scope="row" className="px-6 py-2 flex items-center justify-center">
 											<button
 												className={`px-2 py-1 rounded border border-yellow-400 text-center mr-4 mb-1`}
+												onClick={() => setId(item?.id)}
 											>
 												<PencilIcon className="size-5" fill={'rgb(250 204 21)'}/>
 											</button>
@@ -341,6 +439,7 @@ const Xizmatlar = () => {
 											</Link>
 											<button
 												className={`px-2 py-1 rounded border text-center mb-1 bg-red-400`}
+												onClick={() => deleteItem(item?.id)}
 											>
 												<TrashIcon
 													className={`size-5 dark:text-blue-500 hover:underline cursor-pointer mx-auto`}
