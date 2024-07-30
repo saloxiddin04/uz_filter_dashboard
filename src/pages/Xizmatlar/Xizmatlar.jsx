@@ -121,7 +121,7 @@ const Xizmatlar = () => {
 	}
 	
 	const handleValidate = () => {
-		return !name_uz || !name_ru || !name_en || !description_uz || !description_ru || !description_en || !icon;
+		return !name_uz || !name_ru || !name_en || !description_uz || !description_ru || !description_en;
 	}
 	
 	const createContent = async () => {
@@ -136,8 +136,10 @@ const Xizmatlar = () => {
 		if (file) {
 			formData.append('file', file)
 		}
-		formData.append('icon', icon)
-		
+		if (icon) {
+			formData.append('icon', icon)
+		}
+
 		try {
 			await instance.post(`/service/${service}/add-list-create`, formData, {
 				headers: { 'Content-type': 'multipart/form-data' }
