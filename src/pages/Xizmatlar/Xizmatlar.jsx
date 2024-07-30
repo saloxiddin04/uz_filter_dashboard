@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Header, Input, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
@@ -6,6 +6,10 @@ import {getServices} from "../../redux/slices/registry/registrySlice";
 import JoditEditor from "jodit-react";
 import {toast} from "react-toastify";
 import instance from "../../API";
+import Loader from "../../components/Loader";
+import {AiOutlineCloudDownload} from "react-icons/ai";
+import {PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {Link} from "react-router-dom";
 
 const tabs = [
 	{
@@ -26,6 +30,10 @@ const Xizmatlar = () => {
 
 	const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 	const [modal, setModal] = useState(false)
+
+	const [loading, setLoading] = useState(false)
+
+	const [list, setList] = useState(null)
 	
 	const [service, setService] = useState(localStorage.getItem('service') || '')
 	const [name_uz, setNameUz] = useState('')
@@ -40,6 +48,25 @@ const Xizmatlar = () => {
 	useEffect(() => {
 		dispatch(getServices())
 	}, []);
+
+	useEffect(() => {
+		if (service) {
+			fetchList().then((res) => setList(res))
+		}
+	}, [service])
+
+	const fetchList = async () => {
+		setLoading(true)
+		try {
+			const response = await instance.get(`/service/${service}/add-list-create`)
+			setList(response.data)
+			setLoading(false)
+			return response.data
+		} catch (e) {
+			setLoading(false)
+			return e.message
+		}
+	}
 	
 	const closeModal = () => {
 		setModal(!modal)
@@ -54,25 +81,34 @@ const Xizmatlar = () => {
 	}
 	
 	const handleValidate = () => {
-		return !name_uz || !description_uz || !icon;
+		return !name_uz || !name_ru || !name_en || !description_uz || !description_ru || !description_en || !icon;
 	}
 	
 	const createContent = async () => {
+		setLoading(true)
 		const formData = new FormData()
 		formData.append('name_uz', name_uz)
 		formData.append('name_ru', name_ru)
 		formData.append('name_en', name_en)
 		formData.append('description_uz', description_uz)
 		formData.append('description_ru', description_ru)
-		formData.append('description_uz', description_en)
+		formData.append('description_en', description_en)
 		formData.append('file', file)
 		formData.append('icon', icon)
 		
 		try {
-			await instance.post('api', formData, {
+			await instance.post(`/service/${service}/add-list-create`, formData, {
 				headers: { 'Content-type': 'multipart/form-data' }
+			}).then((res) => {
+				if (res.status === 201) {
+					setLoading(false)
+					toast.success('Muvofaqqiyatli yaratildi')
+					closeModal()
+					fetchList()
+				}
 			})
 		} catch (e) {
+			setLoading(false)
 			toast.error(e.message)
 		}
 	}
@@ -94,7 +130,7 @@ const Xizmatlar = () => {
 							</div>
 							<div>
 								<Input
-									label={'Sarlavha (ru)'}
+									label={'Sarlavha (ru) *'}
 									value={name_ru}
 									onChange={(e) => setNameRu(e.target.value)}
 									className={'focus:border-blue-400'}
@@ -102,7 +138,7 @@ const Xizmatlar = () => {
 							</div>
 							<div>
 								<Input
-									label={'Sarlavha (en)'}
+									label={'Sarlavha (en) *'}
 									value={name_en}
 									onChange={(e) => setNameEn(e.target.value)}
 									className={'focus:border-blue-400'}
@@ -117,6 +153,7 @@ const Xizmatlar = () => {
 									name="document"
 									id="document"
 									type="file"
+									accept="image/png"
 									className="rounded shadow w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 								/>
 							</div>
@@ -140,13 +177,13 @@ const Xizmatlar = () => {
 							</div>
 							<div className={'flex flex-col'}>
 								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
-									Izoh (ru)
+									Izoh (ru) *
 								</label>
 								<JoditEditor value={description_ru} onChange={(e) => setDescriptionRu(e)}/>
 							</div>
 							<div className={'flex flex-col'}>
 								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
-									Izoh (en)
+									Izoh (en) *
 								</label>
 								<JoditEditor value={description_en} onChange={(e) => setDescriptionEn(e)}/>
 							</div>
@@ -170,7 +207,7 @@ const Xizmatlar = () => {
 									disabled={handleValidate()}
 									onClick={createContent}
 								>
-									Saqlash
+									{loading ? 'Yuklanmoqda...' : 'Saqlash'}
 								</button>
 							</div>
 						</div>
@@ -212,7 +249,7 @@ const Xizmatlar = () => {
 								disabled={handleValidate()}
 								onClick={createContent}
 							>
-								Saqlash
+								{loading ? 'Yuklanmoqda...' : 'Saqlash'}
 							</button>
 						</div>
 					</>
@@ -258,6 +295,64 @@ const Xizmatlar = () => {
 							<option value={item?.id} key={index}>{item?.name}</option>
 						))}
 					</select>
+				</div>
+				<div className="w-full">
+					{
+						loading
+							?
+							<Loader/>
+							:
+							<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 mt-4">
+								<thead
+									className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+								>
+								<tr>
+									<th scope="col" className="px-3 py-3"></th>
+									<th scope="col" className="px-4 py-3">Sarlavha</th>
+									<th scope="col" className="px-4 py-3">Boshqarish</th>
+								</tr>
+								</thead>
+								<tbody>
+								{list && list?.map((item, index) => (
+									<tr
+										key={item?.id}
+										className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
+									>
+										<td scope="row" className="px-6 py-4 font-medium whitespace-nowrap">
+											{index + 1}
+										</td>
+										<td scope="row" className="px-6 py-4">
+											{item?.name.length >= 30 ? `${item?.name?.slice(0, 30)}...` : item?.name}
+										</td>
+										<td scope="row" className="px-6 py-2 flex items-center justify-center">
+											<button
+												className={`px-2 py-1 rounded border border-yellow-400 text-center mr-4 mb-1`}
+											>
+												<PencilIcon className="size-5" fill={'rgb(250 204 21)'}/>
+											</button>
+											<Link
+												to={item?.file}
+												download={true}
+												target="_blank"
+												className={`px-2 py-1 rounded border text-center mr-4 mb-1`}
+												style={{background: currentColor, borderColor: currentColor}}
+											>
+												<AiOutlineCloudDownload className="size-5" fill={'#fff'}/>
+											</Link>
+											<button
+												className={`px-2 py-1 rounded border text-center mb-1 bg-red-400`}
+											>
+												<TrashIcon
+													className={`size-5 dark:text-blue-500 hover:underline cursor-pointer mx-auto`}
+													fill="#fff"
+												/>
+											</button>
+										</td>
+									</tr>
+								))}
+								</tbody>
+							</table>
+					}
 				</div>
 				{modal && (
 					<div
