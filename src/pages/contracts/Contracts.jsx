@@ -48,7 +48,7 @@ const Contracts = () => {
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
       <div className={'flex items-center justify-between'}>
         <Header category="Sahifa" title="Shartnomalar"/>
-        {(user?.userdata?.role?.name === 'admin' || user?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" || user?.is_pinned_user) && (
+        {(user?.userdata?.role?.name === 'admin' || user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" || user?.is_pinned_user) && (
           <button
             className={'px-4 py-2 rounded text-white mb-10'}
             style={{backgroundColor: currentColor}}
