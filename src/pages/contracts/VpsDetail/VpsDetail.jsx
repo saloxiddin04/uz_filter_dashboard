@@ -12,7 +12,6 @@ import FizUserContractDetail from "../FizUserContractDetail";
 import SignatureContract from "../SignatureContract";
 import Participants from "../Participants";
 import Monitoring from "../Monitoring";
-import ColocationUpload from "./ColocationUpload";
 
 const tabs = [
   {
@@ -34,20 +33,27 @@ const tabs = [
   {
     title: "Xulosa berish",
     active: false
-  },
-  {
-    title: "Fayl yuklash",
-    active: false
-  },
+  }
 ];
 
-const ColocationDetail = () => {
+const VpsDetail = () => {
   const {id, slug} = useParams();
   const {currentColor} = useStateContext();
   const {contractDetail} = useSelector(state => state.contracts);
-  const {user} = useSelector(state => state.user)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
+
+  const reducedObject = contractDetail?.configurations?.reduce((accumulator, item) => {
+    Object.entries(item).forEach(([key, value]) => {
+      if (typeof value === 'number') {
+        accumulator[key] = (accumulator[key] || 0) + value
+      }
+    })
+    return accumulator
+  }, {})
+
+  const uniqueStorageTypes = new Set(contractDetail?.configurations?.map((item) => item.system_storage))
+  const filteredStorageTypes = Array.from(uniqueStorageTypes)
 
   return (
     <>
@@ -74,7 +80,8 @@ const ColocationDetail = () => {
             currentColor,
             slug,
             setOpenTab,
-            user
+            reducedObject,
+            filteredStorageTypes
           )
         }
       </div>
@@ -88,7 +95,8 @@ const renderDetail = (
   currentColor,
   slug,
   setOpenTab,
-  user
+  reducedObject,
+  filteredStorageTypes
 ) => {
   switch (value) {
     case 0:
@@ -103,19 +111,22 @@ const renderDetail = (
               <td className={'text-center px-2 py-2'}>{data?.contract?.contract_number}</td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma sanasi</th>
               <td className={'text-center px-2 py-2'}>{moment(data?.contract?.contract_date).format('DD.MM.YYYY')}</td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma holati</th>
               <td className={'text-center px-2 py-2'}>{data?.contract?.contract_status?.name
                 ? data?.contract?.contract_status?.name
                 : data?.contract?.contract_status}</td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Amal qilish muddati</th>
               <td className={'text-center px-2 py-2'}>{data?.contract?.expiration_date == null
                 ? moment(data?.contract?.contract_date)
@@ -126,28 +137,103 @@ const renderDetail = (
                 )}</td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
+              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>CPU</th>
+              <td className={'text-center px-2 py-2'}>
+                {reducedObject?.cpu}
+              </td>
+            </tr>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
+              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>RAM</th>
+              <td className={'text-center px-2 py-2'}>
+                {reducedObject?.ram}
+              </td>
+            </tr>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
+              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Internet</th>
+              <td className={'text-center px-2 py-2'}>
+                {reducedObject?.internet}
+              </td>
+            </tr>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
+              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>TasIx</th>
+              <td className={'text-center px-2 py-2'}>
+                {reducedObject?.tasix}
+              </td>
+            </tr>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
+              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Xotira</th>
+              <td className={'text-center px-2 py-2'}>
+                {reducedObject?.system_storage_disk} GB
+              </td>
+            </tr>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
+              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>IMUT</th>
+              <td className={'text-center px-2 py-2'}>
+                {reducedObject?.imut ? reducedObject?.imut : '-'}
+              </td>
+            </tr>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
+              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Xotira turi</th>
+              <td className={'text-center px-2 py-2'}>
+                {filteredStorageTypes &&
+                  filteredStorageTypes?.map((item, index) => (
+                    <div key={index}>{item}</div>
+                  ))
+                }
+              </td>
+            </tr>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
+              <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Konfiguratsiya soni</th>
+              <td className={'text-center px-2 py-2'}>
+                {data?.configurations?.length}
+              </td>
+            </tr>
+            <tr
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>To'lov miqdori</th>
               <td
-                className={'text-center px-2 py-2'}>{data?.contract?.contract_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
+                className={'text-center px-2 py-2'}
+              >{data?.contract?.contract_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
               </td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>To'landi</th>
               <td
-                className={'text-center px-2 py-2'}>{data?.contract?.payed_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
+                className={'text-center px-2 py-2'}
+              >{data?.contract?.payed_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
               </td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Qarzdorlik</th>
               <td
-                className={'text-center px-2 py-2'}>{data?.contract?.arrearage?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
+                className={'text-center px-2 py-2'}
+              >{data?.contract?.arrearage?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
               </td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+            >
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Fayl yuklab olish</th>
               <td className={'text-center px-2 py-2'}>
                 <AiOutlineCloudDownload
@@ -189,7 +275,7 @@ const renderDetail = (
     case 2:
       return (
         <>
-          <Participants />
+          <Participants/>
         </>
       )
     case 3:
@@ -206,14 +292,10 @@ const renderDetail = (
       return (
         <SignatureContract setOpenTab={setOpenTab} />
       )
-    case 5:
-      return (
-        user?.is_pinned_user ? <ColocationUpload /> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
-      )
     default:
       return null
   }
 
 }
 
-export default ColocationDetail;
+export default VpsDetail;

@@ -12,7 +12,6 @@ import FizUserContractDetail from "../FizUserContractDetail";
 import SignatureContract from "../SignatureContract";
 import Participants from "../Participants";
 import Monitoring from "../Monitoring";
-import ColocationUpload from "./ColocationUpload";
 
 const tabs = [
   {
@@ -28,24 +27,15 @@ const tabs = [
     active: false
   },
   {
-    title: "Billing",
-    active: false
-  },
-  {
     title: "Xulosa berish",
-    active: false
-  },
-  {
-    title: "Fayl yuklash",
     active: false
   },
 ];
 
-const ColocationDetail = () => {
+const ExpertiseDetail = () => {
   const {id, slug} = useParams();
   const {currentColor} = useStateContext();
   const {contractDetail} = useSelector(state => state.contracts);
-  const {user} = useSelector(state => state.user)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
@@ -74,7 +64,6 @@ const ColocationDetail = () => {
             currentColor,
             slug,
             setOpenTab,
-            user
           )
         }
       </div>
@@ -88,7 +77,6 @@ const renderDetail = (
   currentColor,
   slug,
   setOpenTab,
-  user
 ) => {
   switch (value) {
     case 0:
@@ -194,21 +182,7 @@ const renderDetail = (
       )
     case 3:
       return (
-        <>
-          {(data?.contract?.contract_status === "Aktiv" || data?.contract?.contract_status === "Yakunlangan" || data?.contract?.contract_status === "Qo'shimcha shartnoma mavjud") ? (
-            <Monitoring/>
-          ) : (
-            <h1 className="text-center">Shartnoma statusi <span className="font-bold">"Aktiv"</span> yoki <span className="font-bold">"Yakunlangan"</span> <span className="font-bold">"Qo'shimcha shartnoma mavjud"</span> emas</h1>
-          )}
-        </>
-      )
-    case 4:
-      return (
         <SignatureContract setOpenTab={setOpenTab} />
-      )
-    case 5:
-      return (
-        user?.is_pinned_user ? <ColocationUpload /> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
       )
     default:
       return null
@@ -216,4 +190,4 @@ const renderDetail = (
 
 }
 
-export default ColocationDetail;
+export default ExpertiseDetail;
