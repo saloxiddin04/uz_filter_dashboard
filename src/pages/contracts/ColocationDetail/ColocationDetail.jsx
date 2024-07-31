@@ -13,6 +13,7 @@ import SignatureContract from "../SignatureContract";
 import Participants from "../Participants";
 import {BiSearch} from "react-icons/bi";
 import Monitoring from "../Monitoring";
+import ColocationUpload from "./ColocationUpload";
 
 const tabs = [
   {
@@ -45,6 +46,7 @@ const ColocationDetail = () => {
   const {id, slug} = useParams();
   const {currentColor} = useStateContext();
   const {contractDetail} = useSelector(state => state.contracts);
+  const {user} = useSelector(state => state.user)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
@@ -72,7 +74,8 @@ const ColocationDetail = () => {
             contractDetail,
             currentColor,
             slug,
-            setOpenTab
+            setOpenTab,
+            user
           )
         }
       </div>
@@ -85,7 +88,8 @@ const renderDetail = (
   data,
   currentColor,
   slug,
-  setOpenTab
+  setOpenTab,
+  user
 ) => {
   switch (value) {
     case 0:
@@ -198,6 +202,10 @@ const renderDetail = (
     case 4:
       return (
         <SignatureContract setOpenTab={setOpenTab} />
+      )
+    case 5:
+      return (
+        user?.is_pinned_user ? <ColocationUpload /> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
       )
     default:
       return null
