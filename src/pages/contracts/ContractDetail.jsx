@@ -13,6 +13,7 @@ import FizUserContractDetail from "./FizUserContractDetail";
 import {BiSearch} from "react-icons/bi";
 import {HooksCommission} from "../../components/eSign/eSignConfig";
 import {toast} from "react-toastify";
+import {elGR} from "@mui/material/locale";
 
 const tabs = [
   {
@@ -567,8 +568,8 @@ const renderDetail = (
             </tr>
             </thead>
             <tbody>
-            {contractDetailBalance?.detail && contractDetailBalance?.detail.map((item) => (
-              <tr className={'hover:bg-gray-100 hover:dark:bg-gray-800'} key={item.id}>
+            {contractDetailBalance?.detail && contractDetailBalance?.detail.map((item, index) => (
+              <tr className={'hover:bg-gray-100 hover:dark:bg-gray-800'} key={index}>
                 <td className={'px-3 py-4 border-b-1'}>{item?.month}</td>
                 <td className={'px-3 py-4 border-b-1'}>{item?.amount} so’m</td>
                 <td className={'px-3 py-4 border-b-1'}>{item?.pay_amount} so’m</td>
