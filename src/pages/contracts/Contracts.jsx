@@ -17,6 +17,7 @@ const Contracts = () => {
 
   const {sidebar} = useSelector(state => state.sections)
   const {contracts, loading} = useSelector(state => state.contracts)
+  const {user} = useSelector((state) => state.user)
   
   const currentPage = parseInt(localStorage.getItem("currentPage")) || undefined
 
@@ -47,13 +48,15 @@ const Contracts = () => {
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
       <div className={'flex items-center justify-between'}>
         <Header category="Sahifa" title="Shartnomalar"/>
-        <button
-          className={'px-4 py-2 rounded text-white mb-10'}
-          style={{backgroundColor: currentColor}}
-          onClick={() => navigate(`/shartnomalar/${slug}/create`, {state: {slug, path: 'shartnomalar'}})}
-        >
-          Shartnoma yaratish
-        </button>
+        {(user?.userdata?.role?.name === 'admin' || user?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" || user?.is_pinned_user) && (
+          <button
+            className={'px-4 py-2 rounded text-white mb-10'}
+            style={{backgroundColor: currentColor}}
+            onClick={() => navigate(`/shartnomalar/${slug}/create`, {state: {slug, path: 'shartnomalar'}})}
+          >
+            Shartnoma yaratish
+          </button>
+        )}
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded">
         {
@@ -62,7 +65,7 @@ const Contracts = () => {
             <Loader/>
             :
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <thead
+            <thead
                 className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
               >
               <tr>
@@ -80,7 +83,7 @@ const Contracts = () => {
               </tr>
               </thead>
               <tbody>
-              {contracts?.result?.all?.length !== 0 && contracts?.result?.all?.map((item, index) => (
+              {contracts?.result?.length !== 0 && contracts?.result?.map((item, index) => (
                 <tr
                   key={item?.id}
                   className={'hover:bg-gray-100 hover:dark:bg-gray-800'}

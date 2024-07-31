@@ -33,7 +33,8 @@ const sectionSlice = createSlice({
     ) => {
       state.sections = payload
       localStorage.setItem('sidebar', JSON.stringify(payload))
-    }
+    },
+    clearSidebar: () => initialState
   },
   extraReducers: (builder) => {
     builder.addCase(getSidebar.pending, (state, _) => {
@@ -50,6 +51,6 @@ const sectionSlice = createSlice({
   }
 })
 
-export const {setSidebar} = sectionSlice.actions
+export const {setSidebar, clearSidebar} = sectionSlice.actions
 
 export default sectionSlice.reducer

@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {APIS} from "../../../config";
 import axios from "axios";
 import {toast} from "react-toastify";
+import {clearSidebar} from "../sections/sectionSlice";
 
 const user = JSON.parse(localStorage.getItem("user") ? localStorage.getItem("user") : null)
 
@@ -158,8 +159,10 @@ export const logOut = createAsyncThunk(
         }
       )
       dispatch(setLogout())
+      dispatch(clearSidebar())
     } catch (e) {
       dispatch(setLogout())
+      dispatch(clearSidebar())
     }
   }
 )
