@@ -10,7 +10,7 @@ import Logo from "../assets/images/logo";
 
 const Sidebar = () => {
   const {loading, sidebar} = useSelector(state => state.sections)
-  const {currentColor, activeMenu, setActiveMenu, screenSize} = useStateContext();
+  const {currentColor, activeMenu, setActiveMenu, screenSize, setPage, setCurrentPage} = useStateContext();
   const {pathname} = useLocation();
 
   const handleCloseSideBar = () => {
@@ -62,6 +62,8 @@ const Sidebar = () => {
                 <NavLink
                   to={`/dashboard`}
                   onClick={() => {
+                    setPage(1)
+                    setCurrentPage(1)
                     localStorage.setItem("currentPage", '1');
                     handleCloseSideBar();
                   }}
@@ -75,7 +77,9 @@ const Sidebar = () => {
                 <NavLink
                   to={`/xizmatlar`}
                   onClick={() => {
-                    localStorage.setItem("currentPage", '1');
+                    setPage(1)
+                    setCurrentPage(1)
+                    localStorage.setItem("currentPage", 1);
                     handleCloseSideBar();
                   }}
                   style={({isActive}) => ({
@@ -96,7 +100,9 @@ const Sidebar = () => {
                       to={newPath}
                       key={item.slug}
                       onClick={() => {
-                        localStorage.setItem("currentPage", '1');
+                        setPage(1)
+                        setCurrentPage(1)
+                        localStorage.setItem("currentPage", 1);
                         handleCloseSideBar();
                       }}
                       style={({isActive}) => ({
@@ -117,7 +123,9 @@ const Sidebar = () => {
                       to={newPath}
                       key={item.slug}
                       onClick={() => {
-                        localStorage.setItem("currentPage", '1');
+                        setPage(1)
+                        setCurrentPage(1)
+                        localStorage.setItem("currentPage", 1);
                         handleCloseSideBar();
                       }}
                       style={({isActive}) => ({
@@ -138,7 +146,9 @@ const Sidebar = () => {
                       to={newPath}
                       key={item.slug}
                       onClick={() => {
-                        localStorage.setItem("currentPage", '1');
+                        setPage(1)
+                        setCurrentPage(1)
+                        localStorage.setItem("currentPage", 1);
                         handleCloseSideBar();
                       }}
                       style={({isActive}) => ({

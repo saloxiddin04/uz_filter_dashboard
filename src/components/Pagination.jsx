@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useStateContext } from "../contexts/ContextProvider";
+import {useLocation} from "react-router-dom";
 
 const Pagination = ({ totalItems, itemsPerPage, onPageChange }) => {
-  const { currentColor } = useStateContext();
-  const [currentPage, setCurrentPage] = useState(
-    parseInt(localStorage.getItem("currentPage")) || 1
-  );
+  const {pathname} = useLocation()
+  const { currentColor, currentPage, setCurrentPage, setPage } = useStateContext();
+  // const [currentPage, setCurrentPage] = useState(
+  //   localStorage.getItem("currentPage") ? parseInt(localStorage.getItem("currentPage")) : 1
+  // );
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const maxVisiblePages = 8;
 
@@ -14,9 +16,15 @@ const Pagination = ({ totalItems, itemsPerPage, onPageChange }) => {
     localStorage.setItem("currentPage", currentPage.toString());
   }, [currentPage]);
 
+  // useEffect(() => {
+  //   localStorage.setItem("currentPage", 1)
+  //   setCurrentPage(1)
+  // }, [pathname, onPageChange]);
+
   const handlePageChange = (page) => {
-    setCurrentPage(page)
+    setPage(page)
     onPageChange(page)
+    localStorage.setItem("currentPage", page);
   };
 
   const renderPaginationItems = () => {
