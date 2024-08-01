@@ -32,7 +32,7 @@ const Navbar = () => {
   const {user} = useSelector((state) => state.user)
   const {sidebar, loading} = useSelector(state => state.sections)
 
-  const {currentColor, activeMenu, setActiveMenu, handleClick, setScreenSize, screenSize, isClicked} = useStateContext();
+  const {currentColor, activeMenu, setActiveMenu, handleClick, setScreenSize, screenSize, isClicked, setPage} = useStateContext();
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -74,6 +74,7 @@ const Navbar = () => {
           <NavLink
             to={`/dashboard`}
             onClick={() => {
+              setPage(1)
               localStorage.setItem("currentPage", '1');
               // handleCloseSideBar();
             }}
@@ -91,6 +92,7 @@ const Navbar = () => {
               to={`/${item.slug}`}
               key={item.slug}
               onClick={() => {
+                setPage(1)
                 localStorage.setItem("currentPage", '1');
               }}
               style={({isActive}) => ({
