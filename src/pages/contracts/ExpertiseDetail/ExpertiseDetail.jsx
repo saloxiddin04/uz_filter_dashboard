@@ -12,6 +12,7 @@ import FizUserContractDetail from "../FizUserContractDetail";
 import SignatureContract from "../SignatureContract";
 import Participants from "../Participants";
 import Monitoring from "../Monitoring";
+import ExpertiseUpload from "./ExpertiseUpload";
 
 const tabs = [
   {
@@ -30,12 +31,18 @@ const tabs = [
     title: "Xulosa berish",
     active: false
   },
+  {
+    title: "Fayl biriktirish",
+    active: false
+  },
 ];
 
 const ExpertiseDetail = () => {
   const {id, slug} = useParams();
   const {currentColor} = useStateContext();
   const {contractDetail} = useSelector(state => state.contracts);
+
+  const {user} = useSelector(state => state.user)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
@@ -64,6 +71,7 @@ const ExpertiseDetail = () => {
             currentColor,
             slug,
             setOpenTab,
+            user
           )
         }
       </div>
@@ -77,6 +85,7 @@ const renderDetail = (
   currentColor,
   slug,
   setOpenTab,
+  user
 ) => {
   switch (value) {
     case 0:
@@ -183,6 +192,10 @@ const renderDetail = (
     case 3:
       return (
         <SignatureContract setOpenTab={setOpenTab} />
+      )
+    case 4:
+      return (
+        user?.is_pinned_user ? <ExpertiseUpload /> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
       )
     default:
       return null

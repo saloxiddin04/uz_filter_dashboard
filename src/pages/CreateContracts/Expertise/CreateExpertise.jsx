@@ -602,7 +602,7 @@ const CreateExpertise = () => {
                         Jami (so'm)
                       </label>
                       <input
-                        value={calculate?.total_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+                        value={calculate?.total_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') || ''}
                         disabled={true}
                         id="cash"
                         type="text"
