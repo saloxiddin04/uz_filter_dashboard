@@ -1,6 +1,8 @@
 import React from "react";
+import {useLocation} from "react-router-dom";
 
 const Tabs = ({ color, tabs, openTab, setOpenTab }) => {
+  const {pathname} = useLocation()
   return (
     <>
       <div className="flex flex-wrap">
@@ -23,6 +25,9 @@ const Tabs = ({ color, tabs, openTab, setOpenTab }) => {
                   onClick={e => {
                     e.preventDefault();
                     setOpenTab(idx);
+                    if (pathname === '/application') {
+                      localStorage.setItem('tabIndex', idx)
+                    }
                   }}
                   data-toggle="tab"
                   href={`#link${idx}`}

@@ -6,6 +6,8 @@ const initialState = {
   loading: false,
   applications: null,
   applicationDetail: null,
+  contactUs: null,
+  contactUsDetail: null,
   error: null
 }
 
@@ -26,6 +28,30 @@ export const getApplicationDetail = createAsyncThunk(
   async (id) => {
     try {
       const response = await instance.get(`${api_url}/main/application/detail/${id}/`)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const getContactUs = createAsyncThunk(
+  "application/getContactUs",
+  async (params) => {
+    try {
+      const response = await instance.get('/main/contact-us/list', {params})
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const getContactUsDetail = createAsyncThunk(
+  'applications/getContactUsDetail',
+  async (id) => {
+    try {
+      const response = await instance.get(`/main/contact-us/detail/${id}`)
       return response.data
     } catch (e) {
       return e.message
@@ -62,6 +88,34 @@ const applicationSlice = createSlice({
       state.error = payload
       state.loading = false
       state.applicationDetail = null
+    })
+
+    // get contact us
+    builder.addCase(getContactUs.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getContactUs.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.contactUs = payload
+    })
+    builder.addCase(getContactUs.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.contactUs = null
+    })
+
+    // get contact us detail
+    builder.addCase(getContactUsDetail.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getContactUsDetail.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.contactUsDetail = payload
+    })
+    builder.addCase(getContactUsDetail.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.contactUsDetail = null
     })
   }
 })
