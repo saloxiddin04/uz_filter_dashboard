@@ -1,6 +1,5 @@
 import React from 'react';
-import { FiCreditCard } from 'react-icons/fi';
-import { BsCurrencyDollar, BsShield } from 'react-icons/bs';
+import { BsCurrencyDollar } from 'react-icons/bs';
 
 export const themeColors = [
   {
@@ -38,18 +37,64 @@ export const userProfileData = [
     iconBg: '#E5FAFB',
     to: '/profile'
   },
-  // {
-  //   icon: <BsShield />,
-  //   title: 'My Inbox',
-  //   desc: 'Messages & Emails',
-  //   iconColor: 'rgb(0, 194, 146)',
-  //   iconBg: 'rgb(235, 250, 242)',
-  // },
-  // {
-  //   icon: <FiCreditCard />,
-  //   title: 'My Tasks',
-  //   desc: 'To-do and Daily Tasks',
-  //   iconColor: 'rgb(255, 244, 229)',
-  //   iconBg: 'rgb(254, 201, 15)',
-  // },
 ];
+
+export const colocationStatus = [
+  { title: "Yangi", value: 1 },
+  { title: "To'lov kutilmoqda", value: 2 },
+  { title: "Aktiv", value: 3 },
+  { title: "Rad etilgan", value: 4 },
+  { title: "Bekor qilingan", value: 5 },
+  { title: "Yakunlangan", value: 6 },
+  { title: "Qo'shimcha shartnoma mavjud", value: 7 },
+  { title: "Shartnomani to'xtatish kutilmoqda", value: 8 },
+  { title: "Shartnomani raqami bron qilingan", value: 9 },
+  { title: "Mijoz imzolashi kutilmoqda", value: 10 },
+]
+
+export const e_xat = [
+  { title: "Yangi", value: 1 },
+  { title: "To'lov kutilmoqda", value: 2 },
+  { title: "Aktiv", value: 3 },
+  { title: "Rad etilgan", value: 4 },
+  { title: "Bekor qilingan", value: 5 },
+  { title: "Yakunlangan", value: 6 },
+  { title: "Qo'shimcha shartnoma mavjud", value: 7 },
+  { title: "Shartnomani to'xtatish kutilmoqda", value: 8 },
+  { title: "Shartnomani raqami bron qilingan", value: 9 },
+]
+
+export const tte_certification = [
+  { title: "Yangi", value: 1 },
+  { title: "To'lov kutilmoqda", value: 2 },
+  { title: "Aktiv", value: 3 },
+  { title: "Rad etilgan", value: 4 },
+  { title: "Bekor qilingan", value: 5 },
+  { title: "Yakunlangan", value: 6 },
+  { title: "Mijoz imzolashi kutilmoqda", value: 7 },
+  { title: "Shartnomani raqami bron qilingan", value: 9 },
+]
+
+export const expertiseStatus = [
+  { title: "Yangi", value: 1 },
+  { title: "Mijoz imzolashi kutilmoqda", value: 2 },
+  { title: "To'lov kutilmoqda", value: 3 },
+  { title: "Aktiv", value: 4 },
+  { title: "Rad etilgan", value: 5 },
+  { title: "Bekor qilingan", value: 6 },
+  { title: "Yakunlangan", value: 7 },
+  { title: "Shartnomani raqami bron qilingan", value: 8 },
+]
+
+
+export const vpsStatus = [
+  { title: "Yangi", value: 1 },
+  { title: "To'lov kutilmoqda", value: 2 },
+  { title: "Aktiv", value: 3 },
+  { title: "Rad etilgan", value: 4 },
+  { title: "Bekor qilingan", value: 5 },
+  { title: "Yakunlangan", value: 6 },
+  { title: "Qo'shimcha shartnoma mavjud", value: 7 },
+  { title: "Shartnomani to'xtatish kutilmoqda", value: 8 },
+  { title: "Mijoz imzolashi kutilmoqda", value: 10 }
+]

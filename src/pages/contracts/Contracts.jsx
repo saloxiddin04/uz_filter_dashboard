@@ -8,7 +8,7 @@ import moment from "moment/moment";
 import {ArrowPathIcon, EyeIcon, FunnelIcon} from "@heroicons/react/16/solid";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {BiSearch} from "react-icons/bi";
-import {getRegistries} from "../../redux/slices/registry/registrySlice";
+import {colocationStatus, e_xat, expertiseStatus, tte_certification, vpsStatus} from "../../data/dummy";
 
 const Contracts = () => {
   const dispatch = useDispatch()
@@ -103,33 +103,31 @@ const Contracts = () => {
                   id="mounting_type"
                 >
                   <option value={undefined} disabled={contract_status}>Tanlang</option>
-                  <option value={1} key="1">
-                    Yangi
-                  </option>
-                  <option value={2} key="2">
-                    To'lov kutilmoqda
-                  </option>
-                  <option value={3} key="3">
-                    Aktiv
-                  </option>
-                  <option value={4} key="4">
-                    Rad etilgan
-                  </option>
-                  <option value={5} key="5">
-                    Bekor qilingan
-                  </option>
-                  <option value={6} key="6">
-                    Yakunlangan
-                  </option>
-                  <option value={7} key="7">
-                    Qoshimcha shartnoma mavjud
-                  </option>
-                  <option value={8} key="8">
-                    Shartnoma toxtatish kutilmoqda
-                  </option>
-                  <option value={9} key="9">
-                    Shartnoma raqami bron qilingan
-                  </option>
+                  {slug === 'e-xat' && (
+                    e_xat?.map((item, index) => (
+                      <option value={item.value} key={index}>{item.title}</option>
+                    ))
+                  )}
+                  {slug === 'tte_certification' && (
+                    tte_certification?.map((item, index) => (
+                      <option value={item.value} key={index}>{item.title}</option>
+                    ))
+                  )}
+                  {slug === 'vps' && (
+                    vpsStatus?.map((item, index) => (
+                      <option value={item.value} key={index}>{item.title}</option>
+                    ))
+                  )}
+                  {slug === 'expertise' && (
+                    expertiseStatus?.map((item, index) => (
+                      <option value={item.value} key={index}>{item.title}</option>
+                    ))
+                  )}
+                  {slug === 'colocation' && (
+                    colocationStatus?.map((item, index) => (
+                      <option value={item.value} key={index}>{item.title}</option>
+                    ))
+                  )}
                 </select>
               </div>
               <div className={'flex w-[35%] gap-2 items-center'}>
