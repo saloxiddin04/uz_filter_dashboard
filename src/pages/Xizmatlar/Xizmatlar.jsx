@@ -501,6 +501,7 @@ const Xizmatlar = () => {
                 <option value="" disabled={video_choice}>Tanlang...</option>
                 <option value="1">Video qo'llanma</option>
                 <option value="2">Video marketing</option>
+                <option value="3">Reklama</option>
               </select>
             </div>
             <div>
