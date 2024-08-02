@@ -59,6 +59,18 @@ export const savePkcs = createAsyncThunk(
   }
 )
 
+export const getFilteredContracts = createAsyncThunk(
+  "contracts/getFilteredContracts",
+  async (data) => {
+    try {
+      const response = await instance.post(`/${data.slug}/filter-contracts?page_size=${data?.page === undefined ? 1 : data?.page}`, data.body)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const contractSlice = createSlice({
   name: 'contracts',
   initialState,
@@ -109,6 +121,20 @@ const contractSlice = createSlice({
     builder.addCase(savePkcs.rejected, (state, {payload}) => {
       state.error = payload
       state.loading = false
+    })
+
+    // getFilteredContracts
+    builder.addCase(getFilteredContracts.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getFilteredContracts.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.contracts = payload
+    })
+    builder.addCase(getFilteredContracts.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.contracts = null
     })
   }
 })

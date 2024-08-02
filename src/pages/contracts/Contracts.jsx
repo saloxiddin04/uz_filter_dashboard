@@ -1,30 +1,30 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Header, Pagination} from '../../components';
-import {getContracts} from "../../redux/slices/contracts/contractsSlice";
+import {getContracts, getFilteredContracts} from "../../redux/slices/contracts/contractsSlice";
 import Loader from "../../components/Loader";
 import {useStateContext} from "../../contexts/ContextProvider";
 import moment from "moment/moment";
-import {EyeIcon, FunnelIcon} from "@heroicons/react/16/solid";
+import {ArrowPathIcon, EyeIcon, FunnelIcon} from "@heroicons/react/16/solid";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {BiSearch} from "react-icons/bi";
+import {getRegistries} from "../../redux/slices/registry/registrySlice";
 
 const Contracts = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {slug} = useParams();
   const {pathname} = useLocation();
-  const {currentColor} = useStateContext();
+  const {currentColor, setPage, currentPage} = useStateContext();
 
   const {sidebar} = useSelector(state => state.sections)
   const {contracts, loading} = useSelector(state => state.contracts)
   const {user} = useSelector((state) => state.user)
 
-  const [handleFilter, setFilter] = useState(true)
+  const [handleFilter, setFilter] = useState(false)
   const [contract_number, setContractNumber] = useState(undefined)
   const [contract_status, setContractStatus] = useState(undefined)
   const [tin_or_pin, setTin] = useState(undefined)
-  
-  const currentPage = parseInt(localStorage.getItem("currentPage")) || undefined
 
   function filterBySlug() {
     const matchedPermission = sidebar?.permissions.find(permission => `${permission.slug}` === pathname.split('/')[1]);
@@ -46,9 +46,32 @@ const Contracts = () => {
   }, [dispatch, slug]);
   
   const handlePageChange = (page) => {
-    dispatch(getContracts({page, slug}))
+    if (contract_number || contract_status || tin_or_pin) {
+      const body = {
+        tin_or_pin,
+        contract_status: Number(contract_status),
+        contract_number
+      }
+      dispatch(getFilteredContracts({slug, page, body}))
+    } else {
+      dispatch(getContracts({page, slug}))
+    }
   }
-  
+
+  const postFilteredContracts = () => {
+    const body = {
+      tin_or_pin,
+      contract_status: Number(contract_status),
+      contract_number
+    }
+    if (currentPage > 1) {
+      setPage(1)
+      dispatch(getFilteredContracts({slug, page: 1, body}))
+    } else {
+      dispatch(getFilteredContracts({slug, page: currentPage, body}))
+    }
+  }
+
   return (
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
       <div className={'flex items-start justify-between'}>
@@ -62,7 +85,7 @@ const Contracts = () => {
                 </label>
                 <input
                   value={contract_number || ""}
-                  onChange={(e) => setContractNumber(e.target.value)}
+                  onChange={(e) => setContractNumber(e.target.value.toUpperCase())}
                   name="amount"
                   id="amount"
                   type="text"
@@ -109,26 +132,57 @@ const Contracts = () => {
                   </option>
                 </select>
               </div>
-              <div className={'flex flex-col w-[35%]'}>
-                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-                  JShShIR/STIR
-                </label>
-                <input
-                  value={tin_or_pin || ""}
-                  onChange={(e) => setTin(e.target.value)}
-                  name="amount"
-                  id="amount"
-                  type="text"
-                  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                />
+              <div className={'flex w-[35%] gap-2 items-center'}>
+                <div className="flex flex-col w-full">
+                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                    JShShIR/STIR
+                  </label>
+                  <input
+                    value={tin_or_pin || ""}
+                    onChange={(e) => {
+                      const re = /^[0-9\b]+$/;
+                      if (e.target.value === '' || re.test(e.target.value)) {
+                        setTin(e.target.value)
+                      }
+                    }}
+                    name="amount"
+                    id="amount"
+                    type="text"
+                    className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                </div>
+                <button
+                  className="rounded px-4 py-1 mt-5"
+                  style={{border: `1px solid ${currentColor}`}}
+                  onClick={postFilteredContracts}
+                >
+                  <BiSearch className="size-6" color={currentColor} />
+                </button>
               </div>
             </div>
           </>
         )}
         <div className="flex items-center gap-6 mb-8 pt-5">
-          <button title="filter" onClick={() => setFilter(true)}>
-            <FunnelIcon className="size-6" color={currentColor}/>
-          </button>
+          {handleFilter ? (
+            <button
+              className={`px-2 py-1 rounded border text-center`}
+              style={{borderColor: currentColor}}
+              onClick={() => {
+                setPage(1)
+                setFilter(false)
+                setContractNumber(undefined)
+                setContractStatus(undefined)
+                setTin(undefined)
+                dispatch(getContracts({page: 1, slug}))
+              }}
+            >
+              <ArrowPathIcon className="size-6" fill={currentColor}/>
+            </button>
+          ) : (
+            <button title="filter" onClick={() => setFilter(true)}>
+              <FunnelIcon className="size-6" color={currentColor}/>
+            </button>
+          )}
           {(user?.userdata?.role?.name === 'admin' || user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" || user?.is_pinned_user) && (
             <button
               className={'px-4 py-2 rounded text-white'}
