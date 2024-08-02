@@ -102,7 +102,7 @@ const Contracts = () => {
                   name="mounting_type"
                   id="mounting_type"
                 >
-                  <option value={undefined}>Tanlang</option>
+                  <option value={undefined} disabled={contract_status}>Tanlang</option>
                   <option value={1} key="1">
                     Yangi
                   </option>
