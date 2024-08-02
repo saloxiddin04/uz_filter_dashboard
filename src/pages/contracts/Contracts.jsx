@@ -152,9 +152,10 @@ const Contracts = () => {
                   />
                 </div>
                 <button
-                  className="rounded px-4 py-1 mt-5"
+                  className="rounded px-4 py-1 mt-5 disabled:opacity-25"
                   style={{border: `1px solid ${currentColor}`}}
                   onClick={postFilteredContracts}
+                  disabled={!contract_status && !contract_number && !tin_or_pin}
                 >
                   <BiSearch className="size-6" color={currentColor} />
                 </button>
