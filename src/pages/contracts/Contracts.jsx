@@ -5,10 +5,12 @@ import {getContracts, getFilteredContracts} from "../../redux/slices/contracts/c
 import Loader from "../../components/Loader";
 import {useStateContext} from "../../contexts/ContextProvider";
 import moment from "moment/moment";
-import {ArrowPathIcon, EyeIcon, FunnelIcon} from "@heroicons/react/16/solid";
+import {ArrowPathIcon, EyeIcon, FolderIcon, FunnelIcon} from "@heroicons/react/16/solid";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {BiSearch} from "react-icons/bi";
 import {colocationStatus, e_xat, expertiseStatus, tte_certification, vpsStatus} from "../../data/dummy";
+import instance from "../../API";
+import {toast} from "react-toastify";
 
 const Contracts = () => {
   const dispatch = useDispatch()
@@ -72,13 +74,35 @@ const Contracts = () => {
     }
   }
 
+  const downloadExcel = async () => {
+    try {
+      await instance.post(`/${slug}/excel`, {}, {
+        headers: { "Content-type": "blob" },
+        responseType: "arraybuffer"
+      }).then((res) => {
+        if (res.status === 200) {
+          const fileURL = URL.createObjectURL(new Blob([res.data]));
+          const link = document.createElement("a");
+          link.href = fileURL;
+          link.setAttribute("download", `${slug}.xls`);
+          document.body.appendChild(link);
+          link.click();
+        } else {
+          toast.error('Xatolik')
+        }
+      })
+    } catch (e) {
+      return e.message
+    }
+  }
+
   return (
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
       <div className={'flex items-start justify-between'}>
         <Header category="Sahifa" title="Shartnomalar"/>
         {handleFilter && (
           <>
-            <div className="flex gap-4 items-center w-[70%]">
+            <div className="flex gap-4 items-center w-[65%]">
               <div className={'flex flex-col w-[35%]'}>
                 <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
                   Shartnoma raqami
@@ -182,6 +206,9 @@ const Contracts = () => {
               <FunnelIcon className="size-6" color={currentColor}/>
             </button>
           )}
+          <button title="Excel" disabled={slug !== 'e-xat'} onClick={downloadExcel} className="rounded px-3 py-1 disabled:opacity-25" style={{border: `1px solid ${currentColor}`}}>
+            <FolderIcon className="size-6" fill={currentColor} />
+          </button>
           {(user?.userdata?.role?.name === 'admin' || user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" || user?.is_pinned_user) && (
             <button
               className={'px-4 py-2 rounded text-white'}
