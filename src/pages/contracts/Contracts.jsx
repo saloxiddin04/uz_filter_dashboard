@@ -1,11 +1,11 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Header, Pagination} from '../../components';
 import {getContracts} from "../../redux/slices/contracts/contractsSlice";
 import Loader from "../../components/Loader";
 import {useStateContext} from "../../contexts/ContextProvider";
 import moment from "moment/moment";
-import {EyeIcon} from "@heroicons/react/16/solid";
+import {EyeIcon, FunnelIcon} from "@heroicons/react/16/solid";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 const Contracts = () => {
@@ -18,6 +18,11 @@ const Contracts = () => {
   const {sidebar} = useSelector(state => state.sections)
   const {contracts, loading} = useSelector(state => state.contracts)
   const {user} = useSelector((state) => state.user)
+
+  const [handleFilter, setFilter] = useState(true)
+  const [contract_number, setContractNumber] = useState(undefined)
+  const [contract_status, setContractStatus] = useState(undefined)
+  const [tin_or_pin, setTin] = useState(undefined)
   
   const currentPage = parseInt(localStorage.getItem("currentPage")) || undefined
 
@@ -46,17 +51,94 @@ const Contracts = () => {
   
   return (
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
-      <div className={'flex items-center justify-between'}>
+      <div className={'flex items-start justify-between'}>
         <Header category="Sahifa" title="Shartnomalar"/>
-        {(user?.userdata?.role?.name === 'admin' || user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" || user?.is_pinned_user) && (
-          <button
-            className={'px-4 py-2 rounded text-white mb-10'}
-            style={{backgroundColor: currentColor}}
-            onClick={() => navigate(`/shartnomalar/${slug}/create`, {state: {slug, path: 'shartnomalar'}})}
-          >
-            Shartnoma yaratish
-          </button>
+        {handleFilter && (
+          <>
+            <div className="flex gap-4 items-center w-[70%]">
+              <div className={'flex flex-col w-[35%]'}>
+                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                  Shartnoma raqami
+                </label>
+                <input
+                  value={contract_number || ""}
+                  onChange={(e) => setContractNumber(e.target.value)}
+                  name="amount"
+                  id="amount"
+                  type="text"
+                  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                />
+              </div>
+              <div className={'flex flex-col w-[35%]'}>
+                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="mounting_type">Shartnoma
+                  status</label>
+                <select
+                  className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                  value={contract_status || ''}
+                  onChange={(e) => setContractStatus(e.target.value)}
+                  name="mounting_type"
+                  id="mounting_type"
+                >
+                  <option value={undefined}>Tanlang</option>
+                  <option value={1} key="1">
+                    Yangi
+                  </option>
+                  <option value={2} key="2">
+                    To'lov kutilmoqda
+                  </option>
+                  <option value={3} key="3">
+                    Aktiv
+                  </option>
+                  <option value={4} key="4">
+                    Rad etilgan
+                  </option>
+                  <option value={5} key="5">
+                    Bekor qilingan
+                  </option>
+                  <option value={6} key="6">
+                    Yakunlangan
+                  </option>
+                  <option value={7} key="7">
+                    Qoshimcha shartnoma mavjud
+                  </option>
+                  <option value={8} key="8">
+                    Shartnoma toxtatish kutilmoqda
+                  </option>
+                  <option value={9} key="9">
+                    Shartnoma raqami bron qilingan
+                  </option>
+                </select>
+              </div>
+              <div className={'flex flex-col w-[35%]'}>
+                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                  JShShIR/STIR
+                </label>
+                <input
+                  value={tin_or_pin || ""}
+                  onChange={(e) => setTin(e.target.value)}
+                  name="amount"
+                  id="amount"
+                  type="text"
+                  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                />
+              </div>
+            </div>
+          </>
         )}
+        <div className="flex items-center gap-6 mb-8 pt-5">
+          <button title="filter" onClick={() => setFilter(true)}>
+            <FunnelIcon className="size-6" color={currentColor}/>
+          </button>
+          {(user?.userdata?.role?.name === 'admin' || user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" || user?.is_pinned_user) && (
+            <button
+              className={'px-4 py-2 rounded text-white'}
+              style={{backgroundColor: currentColor}}
+              onClick={() => navigate(`/shartnomalar/${slug}/create`, {state: {slug, path: 'shartnomalar'}})}
+            >
+              Shartnoma yaratish
+            </button>
+          )}
+        </div>
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded">
         {
