@@ -1,5 +1,4 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {toast} from "react-toastify";
 import instance from "../../../API";
 
 const initialState = {
@@ -48,9 +47,63 @@ export const getRegistryDetail = createAsyncThunk(
   }
 )
 
+export const getEmployeeUsers = createAsyncThunk(
+  "registry/getEmployeeUsers",
+  async () => {
+    try {
+      const response = await instance.get('/accounts/employee-users')
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const getContractsForRegistry = createAsyncThunk(
+  "registry/getContractsForRegistry",
+  async (data) => {
+    try {
+      const response = await instance.post('/registry-book/registry', data)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const postEmployees = createAsyncThunk(
+  "registry/postEmployees",
+  async (data) => {
+    try {
+      const response = await instance.post('/accounts/employee-users', data)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const postRegistry = createAsyncThunk(
+  "registry/postRegistry",
+  async (data) => {
+    try {
+      const response = await instance.post('/registry-book/create-registry', data)
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const RegistrySlice = createSlice({
   name: "registry",
   initialState,
+  reducers: {
+    clearRegistryStates: () => initialState,
+    clearEmployees: (state) => {
+      state.employees = null
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(getServices.pending, (state) => {
       state.loading = true
@@ -92,7 +145,64 @@ const RegistrySlice = createSlice({
       state.loading = false
       state.register_detail = null
     })
+
+    // getEmployeeUsers
+    builder.addCase(getEmployeeUsers.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getEmployeeUsers.fulfilled, (state, {payload}) => {
+      state.employee = payload
+      state.loading = false
+    })
+    builder.addCase(getEmployeeUsers.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.employee = null
+    })
+
+    // getContractsForRegistry
+    builder.addCase(getContractsForRegistry.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getContractsForRegistry.fulfilled, (state, {payload}) => {
+      state.contracts = payload
+      state.loading = false
+    })
+    builder.addCase(getContractsForRegistry.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.contracts = null
+    })
+
+    // postEmployees
+    builder.addCase(postEmployees.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(postEmployees.fulfilled, (state, {payload}) => {
+      state.employees = payload
+      state.loading = false
+    })
+    builder.addCase(postEmployees.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.employees = null
+    })
+
+    // postRegistry
+    builder.addCase(postRegistry.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(postRegistry.fulfilled, (state, {payload}) => {
+      state.registries = payload
+      state.loading = false
+    })
+    builder.addCase(postRegistry.rejected, (state, {payload}) => {
+      state.error = payload
+      state.loading = false
+      state.registries = null
+    })
   }
 })
 
+export const {clearRegistryStates, clearEmployees} = RegistrySlice.actions
 export default RegistrySlice.reducer

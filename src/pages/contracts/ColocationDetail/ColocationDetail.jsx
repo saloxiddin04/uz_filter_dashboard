@@ -195,7 +195,7 @@ const renderDetail = (
     case 3:
       return (
         <>
-          {(data?.contract?.contract_status === "Aktiv" || data?.contract?.contract_status === "Yakunlangan" || data?.contract?.contract_status === "Qo'shimcha shartnoma mavjud") ? (
+          {(data?.contract?.contract_status === "Aktiv" || data?.contract?.contract_status === "To'lov kutilmoqda" || data?.contract?.contract_status === "Yakunlangan" || data?.contract?.contract_status === "Qo'shimcha shartnoma mavjud") ? (
             <Monitoring/>
           ) : (
             <h1 className="text-center">Shartnoma statusi <span className="font-bold">"Aktiv"</span> yoki <span className="font-bold">"Yakunlangan"</span> <span className="font-bold">"Qo'shimcha shartnoma mavjud"</span> emas</h1>
