@@ -86,8 +86,8 @@ const Navbar = () => {
             <span className="capitalize">Statistika</span>
           </NavLink>
         </div>
-        {sidebar?.permissions && sidebar?.permissions?.map((item) => (
-          <div key={item.slug}>
+        {sidebar?.permissions && sidebar?.permissions?.map((item, index) => (
+          <div key={index}>
             <NavLink
               to={`/${item.slug}`}
               key={item.slug}

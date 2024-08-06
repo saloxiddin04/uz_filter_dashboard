@@ -246,7 +246,7 @@ const RegistryDetail = () => {
       case 3:
         return (
           <>
-            {!filteredUser?.is_confirmed !== true ? (
+            {filteredUser && !filteredUser?.is_confirmed ? (
               <div className="w-full">
                 <div>
                   <label
