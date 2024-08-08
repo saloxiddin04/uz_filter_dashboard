@@ -14,7 +14,9 @@ const initialState = {
   contractInfo: null,
   unitContractInfo: null,
   rackContractInfo: null,
-  updateRack: null
+  updateRack: null,
+  admissionLetter: null,
+  admissionEmployee: null
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -213,6 +215,30 @@ export const patchDeviceConfig = createAsyncThunk(
   }
 )
 
+export const getAdmissionLetters = createAsyncThunk(
+  "dataCenter/getAdmissionLetters",
+  async () => {
+    try {
+      const response = await instance.get('/dispatcher/employee-letter')
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
+export const getAdmissionEmployee = createAsyncThunk(
+  "dataCenter/getAdmissionEmployee",
+  async () => {
+    try {
+      const response = await instance.get('/dispatcher/employee')
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -358,6 +384,34 @@ const dataCenterSlice = createSlice({
       state.loading = false
       state.error = payload
       state.updateRack = null
+    })
+
+    // getAdmissionLetters
+    builder.addCase(getAdmissionLetters.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getAdmissionLetters.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.admissionLetter = payload
+    })
+    builder.addCase(getAdmissionLetters.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.admissionLetter = null
+    })
+
+    // getAdmissionEmployee
+    builder.addCase(getAdmissionEmployee.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getAdmissionEmployee.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.admissionEmployee = payload
+    })
+    builder.addCase(getAdmissionEmployee.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.admissionEmployee = null
     })
 
   }

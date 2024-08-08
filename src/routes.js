@@ -13,7 +13,7 @@ import {
   CreateCertification,
   DataCenter,
   Registry, CreateRegistry,
-  RegistryDetail, Xizmatlar
+  RegistryDetail, Xizmatlar, AdmissionDataCenter
 } from './pages';
 import ShowRack from "./components/DataCenter/ShowRack";
 
@@ -35,6 +35,7 @@ export const routes = [
   { path: '/data-center', element: DataCenter },
   { path: '/data-center/:id', element: DataCenter },
   { path: 'data-center/:id/rack/:rackId', element: ShowRack },
+  { path: '/data-center/data-center-admission', element: AdmissionDataCenter },
 
   {path: '/shartnomalar/colocation/create', element: CreateColocation },
   {path: '/shartnomalar/vps/create', element: CreateVps },
