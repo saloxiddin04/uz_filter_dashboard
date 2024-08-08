@@ -15,6 +15,10 @@ const tabs = [
   {
     title: "Xodimlar",
     active: false
+  },
+  {
+    title: "Ruxsatnoma yaratish",
+    active: false
   }
 ]
 
@@ -30,7 +34,7 @@ const AdmissionDataCenter = () => {
   useEffect(() => {
     if (openTab === 0) {
       dispatch(getAdmissionLetters())
-    } else {
+    } else if (openTab === 1) {
       dispatch(getAdmissionEmployee())
     }
   }, [openTab]);
@@ -205,12 +209,229 @@ const AdmissionDataCenter = () => {
             </table>
           </>
         )
+      case 2:
+        return (
+          <>
+            <div className="flex items-end gap-4">
+              <div className={'w-2/5'}>
+                <Input
+                  label={'Shartnoma raqami'}
+                  placeholder={'Shartnoma raqami'}
+                  type={'text'}
+                />
+              </div>
+              <button
+                className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
+                style={{border: `1px solid ${currentColor}`}}
+              >
+                <BiSearch className="size-6" color={currentColor}/>
+              </button>
+            </div>
+            <div className="flex justify-between flex-wrap gap-4 my-4">
+              <div className={'w-[49%]'}>
+                <Input
+                  label={'Tashkilot nomi'}
+                  placeholder={'Tashkilot nomi'}
+                  type={'text'}
+                  disabled={true}
+                />
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={'STIR/JShShIR'}
+                  placeholder={'STIR/JShShIR'}
+                  type={'text'}
+                  disabled={true}
+                />
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={'Xat raqami'}
+                  placeholder={'Xat raqami'}
+                  type={'text'}
+                />
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={'Xat sanasi'}
+                  placeholder={'Xat sanasi'}
+                  type={'date'}
+                />
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={"Xat bo'yicha mutahassislar soni"}
+                  placeholder={"Xat bo'yicha mutahassislar soni"}
+                  type={'text'}
+                />
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={"Xat biriktirish"}
+                  placeholder={"Xat biriktirish"}
+                  type={'file'}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between flex-wrap p-4 gap-4 mb-4 rounded border border-dashed">
+              <div className="w-8/12 flex items-end gap-4">
+                <div className={'w-full flex items-end gap-4'}>
+                  <div className={'w-2/5'}>
+                    <Input
+                      label={'Passport malumotlari'}
+                      placeholder={'Passport seriyasi va raqami'}
+                      type={'text'}
+                    />
+                  </div>
+                  <div className={'w-3/5'}>
+                    <Input
+                      label={''}
+                      placeholder={'JShIShIR'}
+                      onChange={(e) => {
+                        const re = /^[0-9\b]+$/;
+                        if (e.target.value === '' || re.test(e.target.value)) {
+                          // setPinfl(e.target.value.slice(0, 14));
+                        }
+                      }}
+                      type={'text'}
+                    />
+                  </div>
+                </div>
+                <button
+                  className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
+                  style={{border: `1px solid ${currentColor}`}}
+                >
+                  <BiSearch className="size-6" color={currentColor}/>
+                </button>
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={"Ism"}
+                  placeholder={"Ism"}
+                  type={'text'}
+                  disabled={true}
+                />
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={"Familiya"}
+                  placeholder={"Familiya"}
+                  type={'text'}
+                  disabled={true}
+                />
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={"Otasining ismi"}
+                  placeholder={"Otasining ismi"}
+                  type={'text'}
+                  disabled={true}
+                />
+              </div>
+              <div className={'w-[49%]'}>
+                <Input
+                  label={"Yashash joyi"}
+                  placeholder={"Yashash joyi"}
+                  type={'text'}
+                  disabled={true}
+                />
+              </div>
+              <div className={'w-[49%] flex flex-col'}>
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                  htmlFor="device_name"
+                >
+                  Ruxsatnoma turi
+                </label>
+                <div className="flex items-center border rounded py-1.5 px-2">
+                  <input
+                    name='device_name'
+                    id='device_name'
+                    type="checkbox"
+                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                    htmlFor="device_name"
+                  >
+                    Qurilmalarni olib kirish/chiqish
+                  </label>
+                </div>
+                <div className="flex items-center border rounded py-1.5 px-2 my-1">
+                  <input
+                    name='device_name'
+                    id='device_name'
+                    type="checkbox"
+                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                    htmlFor="device_name"
+                  >
+                    Faqat kirish
+                  </label>
+                </div>
+                <div className="flex items-center border rounded py-1.5 px-2">
+                  <input
+                    name='device_name'
+                    id='device_name'
+                    type="checkbox"
+                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                    htmlFor="device_name"
+                  >
+                    Ekskursiya
+                  </label>
+                </div>
+              </div>
+              <div className={'w-[49%] flex flex-col'}>
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                  htmlFor="device_name"
+                >
+                  Ruxsatnoma vaqti
+                </label>
+                <div className="flex items-center border rounded py-1.5 px-2">
+                  <input
+                    name='device_name'
+                    id='device_name'
+                    type="checkbox"
+                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                    htmlFor="device_name"
+                  >
+                    Kecha-Kunduz
+                  </label>
+                </div>
+                <div className="flex items-center border rounded py-1.5 px-2 my-1">
+                  <input
+                    name='device_name'
+                    id='device_name'
+                    type="checkbox"
+                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                    htmlFor="device_name"
+                  >
+                    9:00 - 18:00
+                  </label>
+                </div>
+              </div>
+            </div>
+          </>
+        )
       default:
         return null
     }
   }
 
-  if (loading) return <Loader />
+  if (loading) return <Loader/>
 
   return (
     <>
