@@ -99,7 +99,7 @@ const renderApplications = (tab, applications, handlePageChange, loading, curren
                   <tbody>
                   {applications?.result?.length !== 0 && applications?.result?.map((item, index) => (
                     <tr
-                      key={item?.pk}
+                      key={index}
                       className={'hover:bg-gray-100 hover:dark:bg-gray-800'}
                     >
                       <td scope="row" className="px-6 py-4 font-medium whitespace-nowrap border-b-1">
@@ -173,7 +173,7 @@ const renderApplications = (tab, applications, handlePageChange, loading, curren
                   <tbody>
                   {contactUs?.result?.length !== 0 && contactUs?.result?.map((item, index) => (
                     <tr
-                      key={item?.id}
+                      key={index}
                       className={'hover:bg-gray-100 hover:dark:bg-gray-800'}
                     >
                       <td scope="row" className="px-6 py-4 font-medium whitespace-nowrap border-b-1">
@@ -204,7 +204,7 @@ const renderApplications = (tab, applications, handlePageChange, loading, curren
                         <EyeIcon
                           style={{color: currentColor}}
                           className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto`}
-                          onClick={() => navigate(`/application/${item.id}`)}
+                          onClick={() => navigate(`/application/${item.pk}`)}
                         />
                       </td>
                     </tr>
