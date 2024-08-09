@@ -5,7 +5,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
-import {getAdmissionEmployee, getAdmissionLetters} from "../../redux/slices/dataCenter/dataCenterSlice";
+import {
+  getAdmissionEmployee,
+  getAdmissionLetters,
+  getDataCenterList
+} from "../../redux/slices/dataCenter/dataCenterSlice";
 
 const tabs = [
   {
@@ -27,17 +31,58 @@ const AdmissionDataCenter = () => {
   const navigate = useNavigate()
 
   const {currentColor} = useStateContext();
-  const {admissionLetter, admissionEmployee, loading} = useSelector((state) => state.dataCenter)
+  const {admissionLetter, admissionEmployee, loading, dataCenterList} = useSelector((state) => state.dataCenter)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
+
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const [employees, setEmployees] = useState([
+    {pin: null, admission_type: null, admission_time: null, data_center: []}
+  ])
 
   useEffect(() => {
     if (openTab === 0) {
       dispatch(getAdmissionLetters())
     } else if (openTab === 1) {
       dispatch(getAdmissionEmployee())
+    } else {
+      dispatch(getDataCenterList())
     }
   }, [openTab]);
+
+  const handleAddEmployee = () => {
+    const employee = [...employees, {
+      pin: null, admission_type: null, admission_time: null, data_center: []
+    }]
+    setEmployees(employee)
+  }
+
+  const handleDeleteEmployee = (i) => {
+    const value = [...employees]
+    value.splice(i, 1)
+    setEmployees(value)
+  }
+
+  const changeEmployee = (e, i) => {
+    const {name, value} = e.target;
+    const updatedEmployee = [...employees];
+    updatedEmployee[i] = {
+      ...updatedEmployee[i],
+      [name]: value
+    };
+    setEmployees(updatedEmployee)
+  }
+
+  console.log(employees)
+
+  const handleOptionClick = (option) => {
+    if (selectedOptions.includes(option)) {
+      setSelectedOptions(selectedOptions.filter((selected) => selected !== option));
+    } else {
+      setSelectedOptions([...selectedOptions, option]);
+    }
+  };
 
   const displayStep = (step) => {
     switch (step) {
@@ -274,155 +319,202 @@ const AdmissionDataCenter = () => {
               </div>
             </div>
 
-            <div className="flex justify-between flex-wrap p-4 gap-4 mb-4 rounded border border-dashed">
-              <div className="w-8/12 flex items-end gap-4">
-                <div className={'w-full flex items-end gap-4'}>
-                  <div className={'w-2/5'}>
-                    <Input
-                      label={'Passport malumotlari'}
-                      placeholder={'Passport seriyasi va raqami'}
-                      type={'text'}
-                    />
+            {employees?.map((item, index) => (
+              <div key={index} className="flex justify-between flex-wrap p-4 gap-4 mb-4 rounded border border-dashed">
+                <div className="w-full flex items-end gap-4 justify-between">
+                  <div className={'w-8/12 flex items-end gap-4'}>
+                    <div className={'w-9/12'}>
+                      <Input
+                        label={'Passport malumotlari'}
+                        placeholder={'Passport seriyasi va raqami'}
+                        type={'text'}
+                      />
+                    </div>
+                    <div className={'w-10/12'}>
+                      <Input
+                        label={''}
+                        placeholder={'JShIShIR'}
+                        onChange={(e) => {
+                          const re = /^[0-9\b]+$/;
+                          if (e.target.value === '' || re.test(e.target.value)) {
+                            // setPinfl(e.target.value.slice(0, 14));
+                          }
+                        }}
+                        type={'text'}
+                      />
+                    </div>
+                    <button
+                      className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
+                      style={{border: `1px solid ${currentColor}`}}
+                    >
+                      <BiSearch className="size-6" color={currentColor}/>
+                    </button>
                   </div>
-                  <div className={'w-3/5'}>
-                    <Input
-                      label={''}
-                      placeholder={'JShIShIR'}
-                      onChange={(e) => {
-                        const re = /^[0-9\b]+$/;
-                        if (e.target.value === '' || re.test(e.target.value)) {
-                          // setPinfl(e.target.value.slice(0, 14));
-                        }
-                      }}
-                      type={'text'}
+                  <button disabled={employees.length === 1} onClick={() => handleDeleteEmployee(index)}
+                          className="disabled:opacity-25 rounded px-4 py-1.5 mt-5 border border-red-500 disabled:opacity-25"
+                  >
+                    <TrashIcon className="size-6" color={'rgb(239 68 68)'}/>
+                  </button>
+                </div>
+                <div className={'w-[49%]'}>
+                  <Input
+                    label={"Ism"}
+                    placeholder={"Ism"}
+                    type={'text'}
+                    disabled={true}
+                  />
+                </div>
+                <div className={'w-[49%]'}>
+                  <Input
+                    label={"Familiya"}
+                    placeholder={"Familiya"}
+                    type={'text'}
+                    disabled={true}
+                  />
+                </div>
+                <div className={'w-[49%]'}>
+                  <Input
+                    label={"Otasining ismi"}
+                    placeholder={"Otasining ismi"}
+                    type={'text'}
+                    disabled={true}
+                  />
+                </div>
+                <div className={'w-[49%]'}>
+                  <Input
+                    label={"Yashash joyi"}
+                    placeholder={"Yashash joyi"}
+                    type={'text'}
+                    disabled={true}
+                  />
+                </div>
+                <div className={'w-[49%] flex flex-col'}>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                    htmlFor="device_name"
+                  >
+                    Ruxsatnoma turi
+                  </label>
+                  <div className="flex items-center border rounded py-1.5 px-2">
+
+                    <div className="flex flex-wrap gap-2">
+                      <div
+                        name="admission_type"
+                        className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+                        style={{
+                          background: item?.admission_type === 0 ? currentColor : ''
+                        }}
+                        onClick={() => changeEmployee({target: {value: 0, name: 'admission_type'}}, index)}
+                      >
+                        Qurilmalarni olib kirish/chiqish
+                      </div>
+                    </div>
+
+                    {/*<input*/}
+                    {/*  name='device_name'*/}
+                    {/*  id='device_name'*/}
+                    {/*  type="checkbox"*/}
+                    {/*  className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"*/}
+                    {/*/>*/}
+                    {/*<label*/}
+                    {/*  className="block text-gray-700 text-sm font-bold mb-1 ml-3"*/}
+                    {/*  htmlFor="device_name"*/}
+                    {/*>*/}
+                    {/*  Qurilmalarni olib kirish/chiqish*/}
+                    {/*</label>*/}
+                  </div>
+                  <div className="flex items-center border rounded py-1.5 px-2 my-1">
+                    <input
+                      name='device_name'
+                      id='device_name'
+                      type="checkbox"
+                      className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
                     />
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                      htmlFor="device_name"
+                    >
+                      Faqat kirish
+                    </label>
+                  </div>
+                  <div className="flex items-center border rounded py-1.5 px-2">
+                    <input
+                      name='device_name'
+                      id='device_name'
+                      type="checkbox"
+                      className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                    />
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                      htmlFor="device_name"
+                    >
+                      Ekskursiya
+                    </label>
                   </div>
                 </div>
-                <button
-                  className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
-                  style={{border: `1px solid ${currentColor}`}}
-                >
-                  <BiSearch className="size-6" color={currentColor}/>
-                </button>
-              </div>
-              <div className={'w-[49%]'}>
-                <Input
-                  label={"Ism"}
-                  placeholder={"Ism"}
-                  type={'text'}
-                  disabled={true}
-                />
-              </div>
-              <div className={'w-[49%]'}>
-                <Input
-                  label={"Familiya"}
-                  placeholder={"Familiya"}
-                  type={'text'}
-                  disabled={true}
-                />
-              </div>
-              <div className={'w-[49%]'}>
-                <Input
-                  label={"Otasining ismi"}
-                  placeholder={"Otasining ismi"}
-                  type={'text'}
-                  disabled={true}
-                />
-              </div>
-              <div className={'w-[49%]'}>
-                <Input
-                  label={"Yashash joyi"}
-                  placeholder={"Yashash joyi"}
-                  type={'text'}
-                  disabled={true}
-                />
-              </div>
-              <div className={'w-[49%] flex flex-col'}>
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                  htmlFor="device_name"
-                >
-                  Ruxsatnoma turi
-                </label>
-                <div className="flex items-center border rounded py-1.5 px-2">
-                  <input
-                    name='device_name'
-                    id='device_name'
-                    type="checkbox"
-                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                  />
+                <div className={'w-[49%] flex flex-col'}>
                   <label
                     className="block text-gray-700 text-sm font-bold mb-1 ml-3"
                     htmlFor="device_name"
                   >
-                    Qurilmalarni olib kirish/chiqish
+                    Ruxsatnoma vaqti
                   </label>
-                </div>
-                <div className="flex items-center border rounded py-1.5 px-2 my-1">
-                  <input
-                    name='device_name'
-                    id='device_name'
-                    type="checkbox"
-                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                  />
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                    htmlFor="device_name"
-                  >
-                    Faqat kirish
-                  </label>
-                </div>
-                <div className="flex items-center border rounded py-1.5 px-2">
-                  <input
-                    name='device_name'
-                    id='device_name'
-                    type="checkbox"
-                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                  />
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                    htmlFor="device_name"
-                  >
-                    Ekskursiya
-                  </label>
-                </div>
-              </div>
-              <div className={'w-[49%] flex flex-col'}>
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                  htmlFor="device_name"
-                >
-                  Ruxsatnoma vaqti
-                </label>
-                <div className="flex items-center border rounded py-1.5 px-2">
-                  <input
-                    name='device_name'
-                    id='device_name'
-                    type="checkbox"
-                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                  />
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                    htmlFor="device_name"
-                  >
-                    Kecha-Kunduz
-                  </label>
-                </div>
-                <div className="flex items-center border rounded py-1.5 px-2 my-1">
-                  <input
-                    name='device_name'
-                    id='device_name'
-                    type="checkbox"
-                    className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                  />
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                    htmlFor="device_name"
-                  >
-                    9:00 - 18:00
-                  </label>
+                  <div className="flex items-center border rounded py-1.5 px-2">
+                    <input
+                      name='device_name'
+                      id='device_name'
+                      type="checkbox"
+                      className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                    />
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                      htmlFor="device_name"
+                    >
+                      Kecha-Kunduz
+                    </label>
+                  </div>
+                  <div className="flex items-center border rounded py-1.5 px-2 my-1">
+                    <input
+                      name='device_name'
+                      id='device_name'
+                      type="checkbox"
+                      className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                    />
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                      htmlFor="device_name"
+                    >
+                      9:00 - 18:00
+                    </label>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {dataCenterList && dataCenterList?.map((option) => (
+                      <div
+                        key={option?.id}
+                        className={`px-4 py-2 border rounded cursor-pointer 
+                        ${selectedOptions.includes(option?.id) ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                      `}
+                        style={{
+                          background: selectedOptions.includes(option?.id) ? currentColor : ''
+                        }}
+                        onClick={() => handleOptionClick(option?.id)}
+                      >
+                        {option?.name}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+            ))}
+            <div className="flex justify-center">
+              <button onClick={handleAddEmployee} className="px-4 py-2 text-white rounded"
+                      style={{background: currentColor}}
+              >
+                Qo'shish
+              </button>
             </div>
           </>
         )

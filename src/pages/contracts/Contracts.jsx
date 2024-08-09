@@ -206,7 +206,7 @@ const Contracts = () => {
               <FunnelIcon className="size-6" color={currentColor}/>
             </button>
           )}
-          <button title="Excel" disabled={slug !== 'e-xat'} onClick={downloadExcel} className="rounded px-3 py-1 disabled:opacity-25" style={{border: `1px solid ${currentColor}`}}>
+          <button title="Excel" onClick={downloadExcel} className="rounded px-3 py-1 disabled:opacity-25" style={{border: `1px solid ${currentColor}`}}>
             <FolderIcon className="size-6" fill={currentColor} />
           </button>
           {(user?.userdata?.role?.name === 'admin' || user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" || user?.is_pinned_user) && (
