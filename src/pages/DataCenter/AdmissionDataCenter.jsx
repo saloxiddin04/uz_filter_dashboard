@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Header, Input, Loader, TabsRender} from "../../components";
+import {Input, Loader, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
@@ -67,22 +67,22 @@ const AdmissionDataCenter = () => {
   const changeEmployee = (e, i) => {
     const {name, value} = e.target;
     const updatedEmployee = [...employees];
-    updatedEmployee[i] = {
-      ...updatedEmployee[i],
-      [name]: value
-    };
+    if (name === 'data_center') {
+      const dataCenter = updatedEmployee[i]?.data_center || [];
+
+      if (dataCenter.includes(value)) {
+        updatedEmployee[i].data_center = dataCenter.filter((selected) => selected !== value);
+      } else {
+        updatedEmployee[i].data_center = [...dataCenter, value];
+      }
+    } else {
+      updatedEmployee[i] = {
+        ...updatedEmployee[i],
+        [name]: value,
+      };
+    }
     setEmployees(updatedEmployee)
   }
-
-  console.log(employees)
-
-  const handleOptionClick = (option) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((selected) => selected !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
-  };
 
   const displayStep = (step) => {
     switch (step) {
@@ -395,63 +395,40 @@ const AdmissionDataCenter = () => {
                   >
                     Ruxsatnoma turi
                   </label>
-                  <div className="flex items-center border rounded py-1.5 px-2">
-
-                    <div className="flex flex-wrap gap-2">
-                      <div
-                        name="admission_type"
-                        className={`px-4 py-2 border rounded cursor-pointer 
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`px-4 py-2 border rounded cursor-pointer 
                           ${item?.admission_type === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
                         `}
-                        style={{
-                          background: item?.admission_type === 0 ? currentColor : ''
-                        }}
-                        onClick={() => changeEmployee({target: {value: 0, name: 'admission_type'}}, index)}
-                      >
-                        Qurilmalarni olib kirish/chiqish
-                      </div>
+                      style={{
+                        background: item?.admission_type === 0 ? currentColor : ''
+                      }}
+                      onClick={() => changeEmployee({target: {value: 0, name: 'admission_type'}}, index)}
+                    >
+                      Qurilmalarni olib kirish/chiqish
                     </div>
-
-                    {/*<input*/}
-                    {/*  name='device_name'*/}
-                    {/*  id='device_name'*/}
-                    {/*  type="checkbox"*/}
-                    {/*  className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"*/}
-                    {/*/>*/}
-                    {/*<label*/}
-                    {/*  className="block text-gray-700 text-sm font-bold mb-1 ml-3"*/}
-                    {/*  htmlFor="device_name"*/}
-                    {/*>*/}
-                    {/*  Qurilmalarni olib kirish/chiqish*/}
-                    {/*</label>*/}
-                  </div>
-                  <div className="flex items-center border rounded py-1.5 px-2 my-1">
-                    <input
-                      name='device_name'
-                      id='device_name'
-                      type="checkbox"
-                      className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                    />
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                      htmlFor="device_name"
+                    <div
+                      className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 1 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+                      style={{
+                        background: item?.admission_type === 1 ? currentColor : ''
+                      }}
+                      onClick={() => changeEmployee({target: {value: 1, name: 'admission_type'}}, index)}
                     >
                       Faqat kirish
-                    </label>
-                  </div>
-                  <div className="flex items-center border rounded py-1.5 px-2">
-                    <input
-                      name='device_name'
-                      id='device_name'
-                      type="checkbox"
-                      className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                    />
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                      htmlFor="device_name"
+                    </div>
+                    <div
+                      className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 2 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+                      style={{
+                        background: item?.admission_type === 2 ? currentColor : ''
+                      }}
+                      onClick={() => changeEmployee({target: {value: 2, name: 'admission_type'}}, index)}
                     >
                       Ekskursiya
-                    </label>
+                    </div>
                   </div>
                 </div>
                 <div className={'w-[49%] flex flex-col'}>
@@ -461,46 +438,49 @@ const AdmissionDataCenter = () => {
                   >
                     Ruxsatnoma vaqti
                   </label>
-                  <div className="flex items-center border rounded py-1.5 px-2">
-                    <input
-                      name='device_name'
-                      id='device_name'
-                      type="checkbox"
-                      className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                    />
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                      htmlFor="device_name"
-                    >
-                      Kecha-Kunduz
-                    </label>
-                  </div>
-                  <div className="flex items-center border rounded py-1.5 px-2 my-1">
-                    <input
-                      name='device_name'
-                      id='device_name'
-                      type="checkbox"
-                      className="rounded text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                    />
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-1 ml-3"
-                      htmlFor="device_name"
+                  <div className="flex items-center gap-2 py-1.5 px-2">
+                    <div
+                      className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_time === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+                      style={{
+                        background: item?.admission_time === 0 ? currentColor : ''
+                      }}
+                      onClick={() => changeEmployee({target: {value: 0, name: 'admission_time'}}, index)}
                     >
                       9:00 - 18:00
-                    </label>
+                    </div>
+                    <div
+                      className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_time === 1 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+                      style={{
+                        background: item?.admission_time === 1 ? currentColor : ''
+                      }}
+                      onClick={() => changeEmployee({target: {value: 1, name: 'admission_time'}}, index)}
+                    >
+                      Kecha-kunduz
+                    </div>
                   </div>
-
+                </div>
+                <div className={'w-[49%] flex flex-col'}>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                    htmlFor="device_name"
+                  >
+                    Data markaz
+                  </label>
                   <div className="flex flex-wrap gap-2">
                     {dataCenterList && dataCenterList?.map((option) => (
                       <div
                         key={option?.id}
                         className={`px-4 py-2 border rounded cursor-pointer 
-                        ${selectedOptions.includes(option?.id) ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        ${item?.data_center.includes(option?.id) ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
                       `}
                         style={{
-                          background: selectedOptions.includes(option?.id) ? currentColor : ''
+                          background: item?.data_center.includes(option?.id) ? currentColor : ''
                         }}
-                        onClick={() => handleOptionClick(option?.id)}
+                        onClick={() => changeEmployee({target: {value: option?.id, name: "data_center"}}, index)}
                       >
                         {option?.name}
                       </div>
