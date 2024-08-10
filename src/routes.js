@@ -16,9 +16,11 @@ import {
   RegistryDetail, Xizmatlar, AdmissionDataCenter
 } from './pages';
 import ShowRack from "./components/DataCenter/ShowRack";
+import Code from "./redux/slices/auth/Code";
 
 export const routes = [
   { path: '*', element: NotFound },
+  { path: '/code', element: Code },
 
   { path: '/dashboard', element: Dashboard },
   { path: '/profile', element: Profile },

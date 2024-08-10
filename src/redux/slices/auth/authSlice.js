@@ -25,7 +25,7 @@ export const oneIdLogin = createAsyncThunk(
         {},
         {
           headers: {
-            "x-path": "http://localhost:3000",
+            "x-path": window.location.href,
             "x-auth": `${code}`
           }
         }
