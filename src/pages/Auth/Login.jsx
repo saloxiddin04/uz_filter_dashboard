@@ -5,7 +5,7 @@ import AuthLogo from "../../assets/images/AuthLogo";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {toast} from "react-toastify";
-import {APIS} from "../../config";
+import {api_url, APIS} from "../../config";
 import {
   oneIdGetUserDetail,
   refreshToken,
@@ -34,6 +34,8 @@ const Login = () => {
 
   const [pin_or_tin, setPinOrTin] = useState('')
   const [password, setPassword] = useState('')
+  
+  console.log(window.location.href)
 
   useEffect(() => {
     if (openTab === 1) {
@@ -42,25 +44,27 @@ const Login = () => {
   }, [openTab]);
 
   const login = async () => {
-    try {
-      const response = await instance.post(APIS.customLogin, {pin_or_tin, password})
-      instance.defaults.headers.common = { Authorization: `Bearer ${response?.data?.access}` }
-      if (response?.data?.success) {
-        dispatch(setAccessToken(response?.data?.access))
-        dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))
-        if (response?.data?.role !== 'mijoz') {
-          await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
-            dispatch(setUser(res))
-            navigate('/dashboard')
-          })
-        } else {
-          setPinOrTin('')
-          setPassword('')
-        }
-      }
-    } catch (e) {
-      toast.error(e.message)
-    }
+    window.location.href =
+      `${api_url}/api/oauth/oneid-login?path=` + window.location.origin
+    // try {
+    //   const response = await instance.post(APIS.customLogin, {pin_or_tin, password})
+    //   instance.defaults.headers.common = { Authorization: `Bearer ${response?.data?.access}` }
+    //   if (response?.data?.success) {
+    //     dispatch(setAccessToken(response?.data?.access))
+    //     dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))
+    //     if (response?.data?.role !== 'mijoz') {
+    //       await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
+    //         dispatch(setUser(res))
+    //         navigate('/dashboard')
+    //       })
+    //     } else {
+    //       setPinOrTin('')
+    //       setPassword('')
+    //     }
+    //   }
+    // } catch (e) {
+    //   toast.error(e.message)
+    // }
   }
 
   const loginEri = async () => {
@@ -98,7 +102,7 @@ const Login = () => {
                 className={'bg-blue-600 rounded mt-2 mx-auto text-center'}
                 width={'24'}
                 onClick={login}
-                disabled={password === '' || password.length <= 7 || pin_or_tin === ''}
+                // disabled={password === '' || password.length <= 7 || pin_or_tin === ''}
               />
             </div>
           </>
