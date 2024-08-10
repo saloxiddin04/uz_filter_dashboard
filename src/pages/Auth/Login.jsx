@@ -45,7 +45,7 @@ const Login = () => {
 
   const login = async () => {
     window.location.href =
-      `${api_url}/api/oauth/oneid-login?path=` + 'http://dcid.unicon.uz:3001'
+      `${api_url}/api/oauth/oneid-login?path=` + window.location.origin
     // try {
     //   const response = await instance.post(APIS.customLogin, {pin_or_tin, password})
     //   instance.defaults.headers.common = { Authorization: `Bearer ${response?.data?.access}` }
