@@ -79,22 +79,22 @@ const Login = () => {
       case 0:
         return (
           <>
-            <div className={'mb-2'}>
-              <Input
-                type={'text'}
-                placeholder={'PINFL'}
-                value={pin_or_tin || ''}
-                onChange={(e) => setPinOrTin(e.target.value)}
-              />
-            </div>
-            <div>
-              <Input
-                type={'password'}
-                placeholder={'Parol'}
-                value={password || ''}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            {/*<div className={'mb-2'}>*/}
+            {/*  <Input*/}
+            {/*    type={'text'}*/}
+            {/*    placeholder={'PINFL'}*/}
+            {/*    value={pin_or_tin || ''}*/}
+            {/*    onChange={(e) => setPinOrTin(e.target.value)}*/}
+            {/*  />*/}
+            {/*</div>*/}
+            {/*<div>*/}
+            {/*  <Input*/}
+            {/*    type={'password'}*/}
+            {/*    placeholder={'Parol'}*/}
+            {/*    value={password || ''}*/}
+            {/*    onChange={(e) => setPassword(e.target.value)}*/}
+            {/*  />*/}
+            {/*</div>*/}
             <div className={'w-full flex justify-center'}>
               <Button
                 text={'Kirish'}

@@ -16,19 +16,6 @@ const initialState = {
   refresh_token: localStorage.getItem('refresh_token'),
 }
 
-export const oneIdRedirect = createAsyncThunk(
-  "auth/OneIdRedirect",
-  async () => {
-    try {
-      window.location.replace(
-        `${APIS.getOneIdLogin}/api/oauth/oneid-login?path=http://localhost:3000`
-      )
-    } catch (e) {
-      console.log(e)
-    }
-  }
-)
-
 export const oneIdLogin = createAsyncThunk(
   "auth/oneIdLogin",
   async (code) => {

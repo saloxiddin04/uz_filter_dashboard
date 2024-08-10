@@ -11,6 +11,7 @@ import {
   setRefresh
 } from "./authSlice";
 import {toast} from "react-toastify";
+import {Loader} from "../../../components";
 
 function Code() {
   const dispatch = useDispatch()
@@ -57,7 +58,7 @@ function Code() {
 
   return (
     <div>
-      Loading
+      <Loader />
     </div>
   );
 }
