@@ -16,7 +16,7 @@ import {HooksCommission} from "../../components/eSign/eSignConfig";
 
 const tabs = [
   {
-    title: 'PINFL',
+    title: 'One id',
     active: true
   },
   {
