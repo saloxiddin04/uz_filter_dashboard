@@ -10,8 +10,6 @@ const ProtectedRoutes = () => {
 	useEffect(() => {
 		if (pathname === '/code') {
 			<Code/>;
-		} else {
-			user ? <Outlet/> : <Navigate to="/login"/>;
 		}
 	}, [pathname]);
 	
