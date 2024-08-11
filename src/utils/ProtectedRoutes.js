@@ -5,9 +5,10 @@ import {useSelector} from 'react-redux';
 const ProtectedRoutes = () => {
 	const user = useSelector((state) => state.user.user);
 	// const user = true;
-	// if (window.location.pathname !== '/code') {
-	// 	return user ? <Outlet/> : <Navigate to="/login"/>;
-	// }
+	if (window.location.pathname === '/code') {
+		return null
+	}
+	return user ? <Outlet/> : <Navigate to="/login"/>;
 };
 
 export default ProtectedRoutes;

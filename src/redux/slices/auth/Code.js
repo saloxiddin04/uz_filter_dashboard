@@ -28,9 +28,7 @@ function Code() {
         await dispatch(setAccess(res.payload.data.access))
         await dispatch(setRefresh(res.payload.data.refresh))
         let res2 = await dispatch(oneIdGetUserDetail(res?.payload?.data?.access))
-        console.log("res2", res2)
         dispatch(setUser({payload: res2?.payload}))
-        localStorage.setItem("user", JSON.stringify(res2?.payload))
       }
     } catch (e) {
       console.log(e)
