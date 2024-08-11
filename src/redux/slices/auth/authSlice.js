@@ -48,7 +48,7 @@ export const oneIdGetUser = createAsyncThunk(
   "auth/oneIdGetUser",
   async (access_token) => {
     try {
-      const response = await axios.post(
+      return await axios.post(
         APIS.getUser,
         {"is_client": 1},
         {
@@ -57,12 +57,12 @@ export const oneIdGetUser = createAsyncThunk(
           }
         },
       )
-      if (response.data?.role === 'Mijoz') {
-        return response.data
-      } else {
-        window.location.href = '/dashboard'
-        return response.data
-      }
+      // if (response.data?.role === 'Mijoz') {
+      //   return response.data
+      // } else {
+      //   window.location.href = '/dashboard'
+      //   return response.data
+      // }
       
     } catch (e) {
       console.log(e)
