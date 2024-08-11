@@ -8,16 +8,9 @@ const ProtectedRoutes = () => {
 	const {pathname} = useLocation();
 	
 	useEffect(() => {
-		if (pathname === '/code') {
-			<Code/>;
-		}
 	}, [pathname]);
 	
-	if (pathname === '/code') {
-		return <Code/>;
-	} else {
-		return user ? <Outlet/> : <Navigate to="/login"/>;
-	}
+	return user ? <Outlet/> : <Navigate to="/login"/>;
 	
 };
 
