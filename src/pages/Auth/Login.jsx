@@ -35,7 +35,7 @@ const Login = () => {
   const [pin_or_tin, setPinOrTin] = useState('')
   const [password, setPassword] = useState('')
   
-  console.log(window.location.href)
+  console.log(window.location.pathname)
 
   useEffect(() => {
     if (openTab === 1) {
