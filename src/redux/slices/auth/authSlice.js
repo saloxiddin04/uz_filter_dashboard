@@ -48,7 +48,7 @@ export const oneIdGetUser = createAsyncThunk(
   "auth/oneIdGetUser",
   async (access_token) => {
     try {
-      return await axios.post(
+      const response = await axios.post(
         APIS.getUser,
         {"is_client": 1},
         {
@@ -57,6 +57,13 @@ export const oneIdGetUser = createAsyncThunk(
           }
         },
       )
+      if (response.data?.role === 'Mijoz') {
+        return response.data
+      } else {
+        window.location.href = '/dashboard'
+        return response.data
+      }
+      
     } catch (e) {
       console.log(e)
     }
@@ -186,6 +193,7 @@ const authSlice = createSlice({
       state, action
     ) => {
       state.user = action.payload?.payload
+      console.log(action)
       localStorage.setItem('user', JSON.stringify(action.payload?.payload))
     },
     setLogout: (state) => {
