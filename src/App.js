@@ -10,6 +10,7 @@ import ProtectedRoutes from './utils/ProtectedRoutes';
 import {Login, NotFound} from './pages';
 import Code from './redux/slices/auth/Code';
 import {routes} from "./routes";
+import TwoFactor from "./pages/Auth/TwoFactor";
 
 const App = () => {
   const { setCurrentColor, setCurrentMode, currentMode } = useStateContext();
@@ -46,6 +47,7 @@ const App = () => {
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/code" element={<Code />} />
+            <Route path="/two-factor" element={<TwoFactor />} />
             {/*<Route path="/" element={<Navigate to="login" replace />} />*/}
           </Route>
         </Routes>
