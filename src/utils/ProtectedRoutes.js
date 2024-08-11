@@ -8,10 +8,11 @@ const ProtectedRoutes = () => {
 	const {pathname} = useLocation();
 	
 	if (pathname === '/code') {
-		return <Code />;
+		return <Code/>;
+	} else {
+		return user ? <Outlet/> : <Navigate to="/login"/>;
 	}
 	
-	return user ? <Outlet/> : <Navigate to="/login"/>;
 };
 
 export default ProtectedRoutes;
