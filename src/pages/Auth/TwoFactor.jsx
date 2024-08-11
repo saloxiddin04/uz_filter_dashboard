@@ -39,6 +39,7 @@ const TwoFactor = () => {
 				} else {
 					toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
 					dispatch(setLogout())
+					navigate('/login')
 					setPassword('')
 				}
 			}

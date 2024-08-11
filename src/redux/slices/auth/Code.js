@@ -32,6 +32,7 @@ function Code() {
         if (res2?.payload?.userdata?.role?.name === 'mijoz') {
           toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
           dispatch(setLogout())
+          navigate('/login')
         } else {
           navigate('/dashboard')
           window.location.reload()

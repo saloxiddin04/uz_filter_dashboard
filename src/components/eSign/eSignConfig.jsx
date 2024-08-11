@@ -268,6 +268,7 @@ export function HooksCommission() {
               if (res?.payload?.userdata?.role?.name === 'mijoz') {
                 toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
                 await dispatch(setLogout())
+                navigate('/login')
               } else {
                 await dispatch(setUser(res))
                 await dispatch(setAccessToken(response?.data?.access))
