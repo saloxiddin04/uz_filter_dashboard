@@ -199,14 +199,14 @@ const authSlice = createSlice({
       localStorage.setItem('user', JSON.stringify(action.payload?.payload))
     },
     setLogout: (state) => {
-      state.user = null
-      state.loading = false
-      state.error = null
-      state.oneIdCode = null
-      state.access = null
-      state.access_token = null
-      state.refresh_token = null
-      localStorage.clear()
+      // state.user = null
+      // state.loading = false
+      // state.error = null
+      // state.oneIdCode = null
+      // state.access = null
+      // state.access_token = null
+      // state.refresh_token = null
+      // localStorage.clear()
     }
   },
   // extraReducers: (builder) => {
