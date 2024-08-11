@@ -4,13 +4,13 @@ import {useSelector} from 'react-redux';
 import Code from "../redux/slices/auth/Code";
 
 const ProtectedRoutes = () => {
-	const {user} = useSelector((state) => state.user);
+	const {user, one_id} = useSelector((state) => state.user);
 	const {pathname} = useLocation();
 	
 	useEffect(() => {
 	}, [pathname]);
 	
-	return user ? <Outlet/> : <Navigate to="/login"/>;
+	return !one_id && (user ? <Outlet/> : <Navigate to="/login"/>);
 	
 };
 

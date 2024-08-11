@@ -7,7 +7,7 @@ import {
   oneIdLogin,
   setAccess,
   setAccessToken,
-  setCode, setLogout,
+  setCode, setLogout, setOneId,
   setRefresh, setUser
 } from "./authSlice";
 import {toast} from "react-toastify";
@@ -54,6 +54,7 @@ function Code() {
 
 
   useEffect(() => {
+    dispatch(setOneId(true))
     if (code) {
       dispatch(setCode(code))
       login().then()

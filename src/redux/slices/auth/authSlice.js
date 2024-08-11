@@ -9,6 +9,7 @@ const user = JSON.parse(localStorage.getItem("user") ? localStorage.getItem("use
 const initialState = {
   user,
   loading: false,
+  one_id: false,
   error: null,
   oneIdCode: localStorage.getItem('oneIdCode') || '',
   access: localStorage.getItem('access'),
@@ -165,6 +166,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setOneId: (state, {payload}) => {state.one_id = payload},
     setCode: (
       state, action
     ) => {
@@ -238,7 +240,8 @@ export const {
   setAccessToken,
   setRefresh,
   setLogout,
-  setUser
+  setUser,
+  setOneId
 } = authSlice.actions
 
 export default authSlice.reducer
