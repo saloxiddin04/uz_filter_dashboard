@@ -3,7 +3,14 @@ import {Button, Input} from "../../components";
 import AuthLogo from "../../assets/images/AuthLogo";
 import {toast} from "react-toastify";
 import instance from "../../API";
-import {oneIdGetUserDetail, refreshToken, setAccessToken, setLogout, setUser} from "../../redux/slices/auth/authSlice";
+import {
+	oneIdGetUserDetail,
+	refreshToken,
+	setAccess,
+	setAccessToken,
+	setLogout,
+	setUser
+} from "../../redux/slices/auth/authSlice";
 import {useDispatch} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
@@ -21,6 +28,7 @@ const TwoFactor = () => {
 			};
 			const response = await instance.post('/accounts/confirm-auth', {password}, {headers})
 			if (response.data?.success) {
+				await dispatch(setAccess(response?.data?.access))
 				dispatch(setAccessToken(response?.data?.access))
 				dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))
 				if (response?.data?.role !== 'mijoz') {
