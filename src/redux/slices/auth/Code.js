@@ -19,6 +19,7 @@ function Code() {
   const {search} = useLocation()
   const code = search.substring(search.lastIndexOf('code=') + 5).split('&', 1)[0]
   
+  console.log(search)
   console.log(code)
   const getUser = async (tok) => {
     try {
