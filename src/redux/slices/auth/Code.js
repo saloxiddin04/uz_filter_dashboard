@@ -26,15 +26,15 @@ function Code() {
       if (res?.payload?.data) {
         // await dispatch(setAccess(res.payload.data.access))
         // await dispatch(setRefresh(res.payload.data.refresh))
-        let res2 = await dispatch(oneIdGetUserDetail(res?.payload?.data?.access))
-        dispatch(setUser({payload: res2?.payload}))
-        if (res2?.payload?.userdata?.role?.name === 'Mijoz') {
-          toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
-          dispatch(setLogout())
-        } else {
-          navigate('/dashboard')
-          window.location.reload()
-        }
+        // let res2 = await dispatch(oneIdGetUserDetail(res?.payload?.data?.access))
+        // dispatch(setUser({payload: res2?.payload}))
+        // if (res2?.payload?.userdata?.role?.name === 'Mijoz') {
+        //   toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+        //   dispatch(setLogout())
+        // } else {
+        //   navigate('/dashboard')
+        //   window.location.reload()
+        // }
       }
     } catch (e) {
       console.log(e)
