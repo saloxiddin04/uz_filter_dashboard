@@ -18,7 +18,8 @@ function Code() {
   const navigate = useNavigate()
   const {search} = useLocation()
   const code = search.substring(search.lastIndexOf('code=') + 5).split('&', 1)[0]
-
+  
+  console.log(code)
   const getUser = async (tok) => {
     try {
       let res = await dispatch(oneIdGetUser(tok))
