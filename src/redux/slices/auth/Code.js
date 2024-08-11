@@ -16,11 +16,11 @@ import {Loader} from "../../../components";
 function Code() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const {search} = useLocation()
+  const {search, pathname} = useLocation()
   const code = search.substring(search.lastIndexOf('code=') + 5).split('&', 1)[0]
   
-  console.log(search)
-  console.log(code)
+  console.log(pathname)
+  
   const getUser = async (tok) => {
     try {
       let res = await dispatch(oneIdGetUser(tok))
