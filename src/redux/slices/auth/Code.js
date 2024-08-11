@@ -34,7 +34,7 @@ function Code() {
           dispatch(setLogout())
         } else {
           navigate('/dashboard')
-          // window.location.reload()
+          window.location.reload()
         }
       } else {
         navigate('/two-factor')
