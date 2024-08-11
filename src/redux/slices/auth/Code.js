@@ -8,7 +8,7 @@ import {
   setAccess,
   setAccessToken,
   setCode,
-  setRefresh
+  setRefresh, setUser
 } from "./authSlice";
 import {toast} from "react-toastify";
 import {Loader} from "../../../components";
@@ -29,7 +29,8 @@ function Code() {
         await dispatch(setRefresh(res.payload.data.refresh))
         let res2 = await dispatch(oneIdGetUserDetail(res?.payload?.data?.access))
         console.log("res2", res2)
-        localStorage.setItem("user", JSON.stringify(res2?.payload?.data))
+        dispatch(setUser(res2?.payload))
+        // localStorage.setItem("user", JSON.stringify(res2?.payload))
       }
     } catch (e) {
       console.log(e)
