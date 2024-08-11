@@ -4,6 +4,8 @@ import {toast} from "react-toastify";
 
 const access_token = localStorage.getItem("access") || "";
 
+console.log(access_token)
+
 const instance = axios.create({
   baseURL: api_url,
   headers: {

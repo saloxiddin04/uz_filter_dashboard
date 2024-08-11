@@ -147,8 +147,8 @@ export const logOut = createAsyncThunk(
         {"refresh_token": tokens.refresh_token},
         {
           headers: {
-            'Authorization': `Bearer ${tokens.access_token}`,
-            'x-authentication': tokens.access
+            'Authorization': `Bearer ${tokens.access}`,
+            'x-authentication': tokens.access_token
           }
         }
       )
