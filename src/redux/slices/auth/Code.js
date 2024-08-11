@@ -22,9 +22,10 @@ function Code() {
   const getUser = async (tok) => {
     try {
       let res = await dispatch(oneIdGetUser(tok))
+      console.log("res", res)
       if (res?.payload?.data) {
-        await dispatch(setAccess(res.payload.data.access))
-        await dispatch(setRefresh(res.payload.data.refresh))
+        // await dispatch(setAccess(res.payload.data.access))
+        // await dispatch(setRefresh(res.payload.data.refresh))
         let res2 = await dispatch(oneIdGetUserDetail(res?.payload?.data?.access))
         dispatch(setUser({payload: res2?.payload}))
         if (res2?.payload?.userdata?.role?.name === 'Mijoz') {
