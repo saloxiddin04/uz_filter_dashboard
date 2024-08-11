@@ -54,7 +54,7 @@ const TwoFactor = () => {
 						className={'bg-blue-600 rounded mt-2 mx-auto text-center'}
 						width={'24'}
 						onClick={postTwoFactor}
-						disabled={password === '' || password.length <= 7 || pin_or_tin === ''}
+						disabled={password === '' || password.length <= 7}
 					/>
 				</div>
 				<div className={'flex justify-center mt-5 border-t-white border-t pt-2'}>
