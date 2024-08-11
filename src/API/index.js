@@ -34,9 +34,9 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (access_token && error.response.status === 401) {
-      // window.location.href = '/login'
-      // localStorage.clear()
-      // window.location.reload()
+      window.location.href = '/login'
+      localStorage.clear()
+      window.location.reload()
     }
     toast.error(error.message)
     return Promise.reject(error);

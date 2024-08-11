@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {Outlet, Navigate, useLocation} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import Code from "../redux/slices/auth/Code";
 
 const ProtectedRoutes = () => {
 	const {user, one_id} = useSelector((state) => state.user);
