@@ -34,6 +34,7 @@ function Code() {
           dispatch(setLogout())
         } else {
           navigate('/dashboard')
+          window.location.reload()
         }
       }
     } catch (e) {
