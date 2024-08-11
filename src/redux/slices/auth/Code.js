@@ -19,8 +19,6 @@ function Code() {
   const {search, pathname} = useLocation()
   const code = search.substring(search.lastIndexOf('code=') + 5).split('&', 1)[0]
   
-  console.log(pathname)
-  
   const getUser = async (tok) => {
     try {
       let res = await dispatch(oneIdGetUser(tok))
