@@ -4,6 +4,7 @@ import AuthLogo from "../../assets/images/AuthLogo";
 import {toast} from "react-toastify";
 import instance from "../../API";
 import {
+	logOut,
 	oneIdGetUserDetail,
 	refreshToken,
 	setAccess,
@@ -11,13 +12,15 @@ import {
 	setLogout,
 	setUser
 } from "../../redux/slices/auth/authSlice";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
 const TwoFactor = () => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const [password, setPassword] = useState('')
+	
+	const {access_token, refresh_token, access} = useSelector((state) => state.user);
 	
 	const res = JSON.parse(localStorage.getItem('res') ? localStorage.getItem('res') : '[]' || '[]')
 
@@ -38,6 +41,7 @@ const TwoFactor = () => {
 					})
 				} else {
 					toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+					await dispatch(logOut({access, access_token, refresh_token}))
 					dispatch(setLogout())
 					navigate('/login')
 					setPassword('')

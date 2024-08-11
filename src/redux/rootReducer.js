@@ -30,11 +30,11 @@ const appReducer = combineReducers({
 const rootReducer = (state, action) => {
   if (action.type === 'auth/oneIdLogOut/fulfilled') {
     state = undefined;
-    // window.location.reload()
+    window.location.reload()
   }
   if (action.type === 'auth/oneIdLogOut/rejected') {
     state = undefined;
-    // window.location.reload()
+    window.location.reload()
   }
   return appReducer(state, action);
 };

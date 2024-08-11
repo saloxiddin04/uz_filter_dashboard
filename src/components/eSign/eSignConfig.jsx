@@ -6,7 +6,14 @@ import {EIMZOClient, dates} from './eSignClient';
 // import {axios2} from "../axios";
 import instance from '../../API';
 import {toast} from "react-toastify";
-import {oneIdGetUserDetail, setAccessToken, setLogout, setRefresh, setUser} from "../../redux/slices/auth/authSlice";
+import {
+  logOut,
+  oneIdGetUserDetail, setAccess,
+  setAccessToken,
+  setLogout,
+  setRefresh,
+  setUser
+} from "../../redux/slices/auth/authSlice";
 import {api_url, APIS} from "../../config";
 import axios from "axios";
 import {getContractDetail, savePkcs} from "../../redux/slices/contracts/contractsSlice";
@@ -22,7 +29,7 @@ export function HooksCommission() {
   const navigate = useNavigate();
   const {pathname} = useLocation();
 
-  const {access_token} = useSelector((state) => state.user);
+  const {access_token, refresh_token, access} = useSelector((state) => state.user);
 
   let EIMZO_MAJOR = 3;
   let EIMZO_MINOR = 37;
@@ -267,14 +274,16 @@ export function HooksCommission() {
             await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
               if (res?.payload?.userdata?.role?.name === 'mijoz') {
                 toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+                await dispatch(logOut({access, access_token, refresh_token}))
                 await dispatch(setLogout())
                 navigate('/login')
               } else {
                 await dispatch(setUser(res))
+                await dispatch(setAccess(response?.data?.access))
                 await dispatch(setAccessToken(response?.data?.access))
                 await dispatch(setRefresh(response?.data?.refresh))
                 await navigate('/dashboard')
-                // window.location.reload()
+                window.location.reload()
               }
             })
             // if (responseData?.auth_method === 'strong') {

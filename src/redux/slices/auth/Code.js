@@ -2,12 +2,13 @@ import React, {useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {
+  logOut,
   oneIdGetUser,
   oneIdGetUserDetail,
   oneIdLogin,
   setAccess,
   setAccessToken,
-  setCode, setLogout, setOneId,
+  setCode, setOneId,
   setRefresh, setUser
 } from "./authSlice";
 import {toast} from "react-toastify";
@@ -31,7 +32,7 @@ function Code() {
         dispatch(setUser({payload: res2?.payload}))
         if (res2?.payload?.userdata?.role?.name === 'mijoz') {
           toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
-          dispatch(setLogout())
+          await dispatch(logOut({access: res.payload.data.access, access_token: tok, refresh_token: res.payload.data.refresh}))
           navigate('/login')
         } else {
           navigate('/dashboard')
