@@ -29,13 +29,14 @@ const TwoFactor = () => {
 			const response = await instance.post('/accounts/confirm-auth', {password}, {headers})
 			if (response.data?.success) {
 				await dispatch(setAccess(response?.data?.access))
-				dispatch(setAccessToken(response?.data?.access))
+				console.log(response)
+				// dispatch(setAccessToken(response?.data?.access))
 				dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))
 				if (response?.data?.role !== 'mijoz') {
 					await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
 						dispatch(setUser(res))
 						navigate('/dashboard')
-						window.location.reload()
+						// window.location.reload()
 					})
 				} else {
 					toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
