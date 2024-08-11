@@ -27,6 +27,7 @@ const TwoFactor = () => {
 					await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
 						dispatch(setUser(res))
 						navigate('/dashboard')
+						window.location.reload()
 					})
 				} else {
 					toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
