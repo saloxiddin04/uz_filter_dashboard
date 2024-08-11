@@ -9,9 +9,9 @@ const ProtectedRoutes = () => {
 	
 	useEffect(() => {
 		if (pathname === '/code') {
-			return <Code/>;
+			<Code/>;
 		} else {
-			return user ? <Outlet/> : <Navigate to="/login"/>;
+			user ? <Outlet/> : <Navigate to="/login"/>;
 		}
 	}, [pathname]);
 	
