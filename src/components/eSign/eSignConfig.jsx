@@ -273,7 +273,7 @@ export function HooksCommission() {
           } else {
             await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
               if (res?.payload?.userdata?.role?.name === 'mijoz') {
-                toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+                alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
                 await dispatch(logOut({access, access_token, refresh_token}))
                 await dispatch(setLogout())
                 navigate('/login')

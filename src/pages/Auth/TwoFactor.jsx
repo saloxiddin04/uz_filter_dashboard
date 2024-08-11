@@ -40,7 +40,7 @@ const TwoFactor = () => {
 						window.location.reload()
 					})
 				} else {
-					toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+					alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
 					await dispatch(logOut({access, access_token, refresh_token}))
 					dispatch(setLogout())
 					navigate('/login')

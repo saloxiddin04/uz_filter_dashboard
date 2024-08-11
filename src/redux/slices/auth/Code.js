@@ -31,7 +31,7 @@ function Code() {
         let res2 = await dispatch(oneIdGetUserDetail(res?.payload?.data?.access))
         dispatch(setUser({payload: res2?.payload}))
         if (res2?.payload?.userdata?.role?.name === 'mijoz') {
-          toast.success('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+          alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
           await dispatch(logOut({access: res.payload.data.access, access_token: tok, refresh_token: res.payload.data.refresh}))
           navigate('/login')
         } else {
