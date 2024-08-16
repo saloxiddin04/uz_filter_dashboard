@@ -116,11 +116,13 @@ export const refreshToken = createAsyncThunk(
 
 export const oneIdGetUserDetail = createAsyncThunk("auth/oneIdGetUserDetail", async (access) => {
     try {
+      const PINORTIN = localStorage.getItem("tin_or_pin") || undefined
       const response = await axios.get(
         APIS.getUserDetail,
         {
           headers: {
-            'Authorization': `Bearer ${access}`
+            'Authorization': `Bearer ${access}`,
+            "PINORTIN": PINORTIN
           }
         }
       )
