@@ -3,11 +3,13 @@ import {api_url} from '../config';
 import {toast} from "react-toastify";
 
 const access_token = localStorage.getItem("access") || "";
+const pin_or_tin = JSON.parse(localStorage.getItem("res") || [''])
 
 const instance = axios.create({
   baseURL: api_url,
   headers: {
     "Content-Type": "application/json",
+    "PINORTIN": pin_or_tin?.tin_or_pin
   }
 })
 
@@ -19,6 +21,7 @@ instance.interceptors.request.use(
   (config) => {
     if (access_token) {
       config.headers.Authorization = `Bearer ${access_token}`;
+      config.headers['PINORTIN'] = pin_or_tin?.tin_or_pin
     }
     return config;
   },
