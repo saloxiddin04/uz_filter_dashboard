@@ -3,8 +3,7 @@ import {api_url} from '../config';
 import {toast} from "react-toastify";
 
 const access_token = localStorage.getItem("access") || "";
-const res = localStorage.getItem("res");
-const pin_or_tin = res ? JSON.parse(res) : [];
+const pin_or_tin = localStorage.getItem("tin_or_pin") || undefined;
 
 const instance = axios.create({
   baseURL: api_url,
