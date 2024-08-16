@@ -36,7 +36,7 @@ function Code() {
           navigate('/login')
         } else {
           navigate('/dashboard')
-          window.location.reload()
+          // window.location.reload()
         }
       } else {
         navigate('/two-factor')
