@@ -9,19 +9,20 @@ const instance = axios.create({
   baseURL: api_url,
   headers: {
     "Content-Type": "application/json",
-    "PINORTIN": pin_or_tin?.tin_or_pin
+    "PINORTIN": pin_or_tin
   }
 })
 
 if (access_token) {
   instance.defaults.headers.common = { Authorization: `Bearer ${access_token}` };
+  instance.defaults.headers.common = { "PINORTIN": `${pin_or_tin}` };
 }
 
 instance.interceptors.request.use(
   (config) => {
     if (access_token) {
       config.headers.Authorization = `Bearer ${access_token}`;
-      config.headers['PINORTIN'] = pin_or_tin?.tin_or_pin
+      config.headers['PINORTIN'] = pin_or_tin
     }
     return config;
   },
