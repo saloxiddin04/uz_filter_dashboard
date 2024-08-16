@@ -9,7 +9,7 @@ import {
   setAccess,
   setAccessToken,
   setCode, setOneId,
-  setRefresh, setUser
+  setRefresh, setTinOrPin, setUser
 } from "./authSlice";
 import {toast} from "react-toastify";
 import {Loader} from "../../../components";
@@ -25,6 +25,7 @@ function Code() {
       let res = await dispatch(oneIdGetUser(tok))
       console.log("res", res)
       localStorage.setItem("res", JSON.stringify(res?.payload?.data))
+      dispatch(setTinOrPin(res?.payload?.data?.tin_or_pin))
       if (res?.payload?.data?.auth_method !== 'strong') {
         await dispatch(setAccess(res.payload.data.access))
         await dispatch(setRefresh(res.payload.data.refresh))

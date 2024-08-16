@@ -15,6 +15,7 @@ const initialState = {
   access: localStorage.getItem('access'),
   access_token: localStorage.getItem('access_token'),
   refresh_token: localStorage.getItem('refresh_token'),
+  tin_or_pin: localStorage.getItem('tin_or_pin'),
 }
 
 export const oneIdLogin = createAsyncThunk(
@@ -197,6 +198,12 @@ const authSlice = createSlice({
       state.user = action.payload?.payload
       localStorage.setItem('user', JSON.stringify(action.payload?.payload))
     },
+    setTinOrPin: (
+      state, {payload}
+    ) => {
+      state.tin_or_pin = payload
+      localStorage.setItem('tin_or_pin', payload)
+    },
     setLogout: (state) => {
       state.user = null
       state.loading = false
@@ -241,7 +248,8 @@ export const {
   setRefresh,
   setLogout,
   setUser,
-  setOneId
+  setOneId,
+  setTinOrPin
 } = authSlice.actions
 
 export default authSlice.reducer

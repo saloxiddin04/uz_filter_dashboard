@@ -6,8 +6,6 @@ const access_token = localStorage.getItem("access") || "";
 const res = localStorage.getItem("res");
 const pin_or_tin = res ? JSON.parse(res) : [];
 
-console.log('pin_or_tin?.tin_or_pin', pin_or_tin?.tin_or_pin)
-
 const instance = axios.create({
   baseURL: api_url,
   headers: {

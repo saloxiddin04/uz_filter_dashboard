@@ -4,13 +4,7 @@ import Logo from "../../assets/images/logo";
 import AuthLogo from "../../assets/images/AuthLogo";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {toast} from "react-toastify";
 import {api_url, APIS} from "../../config";
-import {
-  oneIdGetUserDetail,
-  refreshToken,
-  setAccessToken, setUser,
-} from "../../redux/slices/auth/authSlice";
 import instance from "../../API";
 import {HooksCommission} from "../../components/eSign/eSignConfig";
 
@@ -27,15 +21,8 @@ const tabs = [
 
 const Login = () => {
   const {signIn, AppLoad} = HooksCommission()
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
-
-  const [pin_or_tin, setPinOrTin] = useState('')
-  const [password, setPassword] = useState('')
-  
-  console.log(window.location.pathname)
 
   useEffect(() => {
     if (openTab === 1) {
