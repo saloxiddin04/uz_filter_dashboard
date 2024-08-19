@@ -57,8 +57,6 @@ const Navbar = () => {
   const activeLink = 'flex items-center gap-5 p-2.5 rounded font-semibold text-white text-md m-2 border-b border-neutral-50';
   const normalLink = 'flex items-center gap-5 p-2.5 rounded font-semibold text-md text-gray-300 dark:text-gray-200' +
     ' dark:hover:text-black hover:bg-gray-100 hover:text-black m-2';
-  
-  if (loading) return <Loader/>
 
   return (
     <div

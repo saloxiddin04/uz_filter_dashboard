@@ -7,6 +7,8 @@ import {useDispatch} from "react-redux";
 import {api_url, APIS} from "../../config";
 import instance from "../../API";
 import {HooksCommission} from "../../components/eSign/eSignConfig";
+import {oneIdGetUserDetail, refreshToken, setAccess, setAccessToken, setUser} from "../../redux/slices/auth/authSlice";
+import {toast} from "react-toastify";
 
 const tabs = [
   {
@@ -16,11 +18,21 @@ const tabs = [
   {
     title: "ERI",
     active: false
+  },
+  {
+    title: "PINFL",
+    active: false
   }
 ];
 
 const Login = () => {
   const {signIn, AppLoad} = HooksCommission()
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const [pin_or_tin, setPinOrTin] = useState('')
+  const [password, setPassword] = useState('')
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
@@ -33,25 +45,28 @@ const Login = () => {
   const login = async () => {
     window.location.href =
       `${api_url}/api/oauth/oneid-login?path=` + window.location.origin
-    // try {
-    //   const response = await instance.post(APIS.customLogin, {pin_or_tin, password})
-    //   instance.defaults.headers.common = { Authorization: `Bearer ${response?.data?.access}` }
-    //   if (response?.data?.success) {
-    //     dispatch(setAccessToken(response?.data?.access))
-    //     dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))
-    //     if (response?.data?.role !== 'mijoz') {
-    //       await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
-    //         dispatch(setUser(res))
-    //         navigate('/dashboard')
-    //       })
-    //     } else {
-    //       setPinOrTin('')
-    //       setPassword('')
-    //     }
-    //   }
-    // } catch (e) {
-    //   toast.error(e.message)
-    // }
+  }
+
+  const loginPin = async () => {
+    try {
+      const response = await instance.post(APIS.customLogin, {pin_or_tin, password})
+      instance.defaults.headers.common = { Authorization: `Bearer ${response?.data?.access}` }
+      if (response?.data?.success) {
+        dispatch(setAccess(response?.data?.access))
+        dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))
+        if (response?.data?.role !== 'mijoz') {
+          await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
+            dispatch(setUser(res))
+            navigate('/dashboard')
+          })
+        } else {
+          setPinOrTin('')
+          setPassword('')
+        }
+      }
+    } catch (e) {
+      toast.error(e.message)
+    }
   }
 
   const loginEri = async () => {
@@ -66,22 +81,6 @@ const Login = () => {
       case 0:
         return (
           <>
-            {/*<div className={'mb-2'}>*/}
-            {/*  <Input*/}
-            {/*    type={'text'}*/}
-            {/*    placeholder={'PINFL'}*/}
-            {/*    value={pin_or_tin || ''}*/}
-            {/*    onChange={(e) => setPinOrTin(e.target.value)}*/}
-            {/*  />*/}
-            {/*</div>*/}
-            {/*<div>*/}
-            {/*  <Input*/}
-            {/*    type={'password'}*/}
-            {/*    placeholder={'Parol'}*/}
-            {/*    value={password || ''}*/}
-            {/*    onChange={(e) => setPassword(e.target.value)}*/}
-            {/*  />*/}
-            {/*</div>*/}
             <div className={'w-full flex justify-center'}>
               <Button
                 text={'Kirish'}
@@ -113,11 +112,42 @@ const Login = () => {
             </div>
           </div>
         )
+      case 2:
+        return (
+          <>
+            <div className={'mb-2'}>
+              <Input
+                type={'text'}
+                placeholder={'PINFL'}
+                value={pin_or_tin || ''}
+                onChange={(e) => setPinOrTin(e.target.value)}
+              />
+            </div>
+            <div>
+              <Input
+                type={'password'}
+                placeholder={'Parol'}
+                value={password || ''}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className={'w-full flex justify-center'}>
+              <Button
+                text={'Kirish'}
+                color={'white'}
+                className={'bg-blue-600 rounded mt-2 mx-auto text-center'}
+                width={'24'}
+                onClick={loginPin}
+                disabled={password === '' || password.length <= 7 || pin_or_tin === ''}
+              />
+            </div>
+          </>
+        )
       default:
         return null
     }
   }
-  
+
   return (
     <>
       <div className={'flex justify-center items-center h-screen bg-login-bg'}>
