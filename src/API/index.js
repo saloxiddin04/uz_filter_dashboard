@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {api_url} from '../config';
 import {toast} from "react-toastify";
-import {useNavigate} from "react-router-dom";
 
 const access_token = localStorage.getItem("access") || "";
 const user = localStorage.getItem("user") || "";
@@ -40,8 +39,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (user && error.response.status === 401) {
-      const navigate = useNavigate()
-      navigate('/login')
+      window.location.href = '/login'
       localStorage.clear()
       window.location.reload()
     }
