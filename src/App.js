@@ -14,7 +14,7 @@ import TwoFactor from "./pages/Auth/TwoFactor";
 
 const App = () => {
   const { setCurrentColor, setCurrentMode, currentMode } = useStateContext();
-  const { loading } = useSelector((state) => state.user);
+  const { loading, one_id } = useSelector((state) => state.user);
 
   if (loading) return <Loader />;
 
@@ -48,7 +48,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/code" element={<Code />} />
             <Route path="/two-factor" element={<TwoFactor />} />
-            <Route path="/" element={<Loader />} />
+            <Route path="/" element={one_id ? <Loader /> : <Navigate to="login" replace />} />
           </Route>
         </Routes>
       </BrowserRouter>
