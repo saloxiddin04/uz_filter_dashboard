@@ -214,7 +214,6 @@ const authSlice = createSlice({
       state.access = null
       state.access_token = null
       state.refresh_token = null
-      window.location.href = '/login'
       localStorage.clear()
     }
   },

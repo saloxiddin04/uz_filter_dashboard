@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {api_url} from '../config';
 import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 const access_token = localStorage.getItem("access") || "";
 const pin_or_tin = localStorage.getItem("tin_or_pin") || undefined;
@@ -38,7 +39,8 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (access_token && error.response.status === 401) {
-      window.location.href = '/login'
+      const navigate = useNavigate()
+      navigate('/login')
       localStorage.clear()
       window.location.reload()
     }
