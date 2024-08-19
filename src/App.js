@@ -48,7 +48,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/code" element={<Code />} />
             <Route path="/two-factor" element={<TwoFactor />} />
-            <Route path="/" element={<Navigate to="login" replace />} />
+            <Route path="/" element={<Loader />} />
           </Route>
         </Routes>
       </BrowserRouter>

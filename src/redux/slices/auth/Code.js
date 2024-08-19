@@ -71,11 +71,7 @@ function Code() {
     navigate('/')
   }, [])
 
-  return (
-    <div>
-      <Loader />
-    </div>
-  );
+  return <Loader />
 }
 
 export default Code;
