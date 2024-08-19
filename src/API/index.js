@@ -4,6 +4,7 @@ import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 
 const access_token = localStorage.getItem("access") || "";
+const user = localStorage.getItem("user") || "";
 const pin_or_tin = localStorage.getItem("tin_or_pin") || undefined;
 
 const instance = axios.create({
@@ -38,7 +39,7 @@ instance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (access_token && error.response.status === 401) {
+    if (user && error.response.status === 401) {
       const navigate = useNavigate()
       navigate('/login')
       localStorage.clear()
