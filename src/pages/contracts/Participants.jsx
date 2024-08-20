@@ -13,7 +13,7 @@ const Participants = () => {
           <tr
             className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
             <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>
-              {el.userdata?.userdata?.role?.name?.charAt(0).toUpperCase() + el.userdata?.userdata?.role?.name.slice(1)}
+              {el?.role}
             </th>
             <td
               className={`${el?.agreement_status !== 'Kelishildi' ? 'text-dark' : 'bg-green-400 text-white'} text-center`}>
