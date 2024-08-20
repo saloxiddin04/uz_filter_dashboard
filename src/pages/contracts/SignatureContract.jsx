@@ -131,7 +131,7 @@ const SignatureContract = ({setOpenTab}) => {
     else return false
   }
 
-  if (contractDetail?.is_confirmed) {
+  if (!contractDetail?.is_confirmed) {
     return (
       <div className={'w-full'}>
         <div>
