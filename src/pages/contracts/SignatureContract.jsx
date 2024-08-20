@@ -28,11 +28,12 @@ const SignatureContract = ({setOpenTab}) => {
   const {contractDetail, loading} = useSelector(state => state.contracts);
   const {user} = useSelector(state => state.user)
 
+  const pin_or_tin = localStorage.getItem("tin_or_pin") || undefined;
   const option = document.querySelector(`[name="${user?.pin}"]`)
   const selectedOption = optionRef?.current?.querySelector(`[name="${user?.pin}"]`);
 
   useEffect(() => {
-    if (contractDetail?.is_confirmed && signatureValidate()) {
+    if (!contractDetail?.is_confirmed && signatureValidate()) {
       AppLoad()
     }
   }, []);
@@ -62,7 +63,7 @@ const SignatureContract = ({setOpenTab}) => {
     formData.append('contract', contractDetail?.contract?.id)
 
     await instance.post(`${slug}/confirm-contract`, formData, {
-      headers: {'Content-Type': 'multipart/form-data'}
+      headers: {'Content-Type': 'multipart/form-data', "PINORTIN": pin_or_tin}
     }).then(() => {
       setOpenTab(2)
     }).catch((e) => toast.error('Xatolik'))
@@ -98,7 +99,7 @@ const SignatureContract = ({setOpenTab}) => {
     formData.append('contract', contractDetail?.contract?.id)
 
     await instance.post(`${slug}/confirm-contract`, formData, {
-      headers: {'Content-Type': 'multipart/form-data'}
+      headers: {'Content-Type': 'multipart/form-data', "PINORTIN": pin_or_tin}
     }).then(() => {
       setOpenTab(2)
       toast.success('Muvoffaqiyatli xulosa berildi')

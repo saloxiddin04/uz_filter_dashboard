@@ -184,9 +184,11 @@ export function HooksCommission() {
     if (itm) {
       let id = document.getElementById(itm);
       let vo = JSON.parse(id.getAttribute("vo"));
+      const pin_or_tin = localStorage.getItem("tin_or_pin") || undefined;
       const headers = {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${access_token}`
+        Authorization: `Bearer ${access_token}`,
+        "PINORTIN": pin_or_tin
       }
       EIMZOClient.loadKey(
         vo,
