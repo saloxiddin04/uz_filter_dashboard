@@ -66,6 +66,7 @@ const Login = () => {
             await dispatch(setTinOrPin(res?.payload?.pin))
             await dispatch(setUser(res))
             navigate('/dashboard')
+            window.location.reload()
           })
         } else {
           setPinOrTin('')
