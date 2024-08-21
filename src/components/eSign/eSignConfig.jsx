@@ -11,7 +11,7 @@ import {
   oneIdGetUserDetail, setAccess,
   setAccessToken,
   setLogout,
-  setRefresh,
+  setRefresh, setTinOrPin,
   setUser
 } from "../../redux/slices/auth/authSlice";
 import {api_url, APIS} from "../../config";
@@ -282,8 +282,10 @@ export function HooksCommission() {
               } else {
                 await dispatch(setUser(res))
                 await dispatch(setAccess(response?.data?.access))
+                await dispatch(setTinOrPin(response?.data?.tin_or_pin))
                 await dispatch(setAccessToken(response?.data?.access))
                 await dispatch(setRefresh(response?.data?.refresh))
+                console.log(response)
                 await navigate('/dashboard')
                 window.location.reload()
               }
