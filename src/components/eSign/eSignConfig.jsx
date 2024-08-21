@@ -270,23 +270,23 @@ export function HooksCommission() {
         try {
           const response = await instance.post(`${APIS.eriLogin}`, {pkcs7, is_client: 1})
           instance.defaults.headers.common = {Authorization: `Bearer ${response?.data?.access}`};
+          dispatch(setTinOrPin(response?.data?.tin_or_pin))
           if (!response?.data?.success) {
             toast.error(response?.data?.err_msg)
           } else {
-            await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
+            dispatch(oneIdGetUserDetail(response?.data?.tin_or_pin)).then((res) => {
               if (res?.payload?.userdata?.role?.name === 'mijoz') {
                 alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
-                await dispatch(logOut({access, access_token, refresh_token}))
-                await dispatch(setLogout())
+                dispatch(logOut({access, access_token, refresh_token}))
+                dispatch(setLogout())
                 navigate('/login')
               } else {
-                await dispatch(setUser(res))
-                await dispatch(setAccess(response?.data?.access))
-                await dispatch(setTinOrPin(response?.data?.tin_or_pin))
-                await dispatch(setAccessToken(response?.data?.access))
-                await dispatch(setRefresh(response?.data?.refresh))
-                // await navigate('/dashboard')
-                // window.location.reload()
+                dispatch(setUser(res))
+                dispatch(setAccess(response?.data?.access))
+                dispatch(setAccessToken(response?.data?.access))
+                dispatch(setRefresh(response?.data?.refresh))
+                navigate('/dashboard')
+                window.location.reload()
               }
             })
             // if (responseData?.auth_method === 'strong') {

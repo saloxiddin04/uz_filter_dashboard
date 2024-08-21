@@ -3,6 +3,7 @@ import {APIS} from "../../../config";
 import axios from "axios";
 import {toast} from "react-toastify";
 import {clearSidebar} from "../sections/sectionSlice";
+import instance from "../../../API";
 
 const user = JSON.parse(localStorage.getItem("user") ? localStorage.getItem("user") : null)
 
@@ -114,18 +115,13 @@ export const refreshToken = createAsyncThunk(
   }
 )
 
-export const oneIdGetUserDetail = createAsyncThunk("auth/oneIdGetUserDetail", async (access) => {
+export const oneIdGetUserDetail = createAsyncThunk("auth/oneIdGetUserDetail", async (tin_or_pin) => {
     try {
-      const PINORTIN = localStorage.getItem("tin_or_pin") || undefined
-      const response = await axios.get(
-        APIS.getUserDetail,
-        {
-          headers: {
-            'Authorization': `Bearer ${access}`,
-            "PINORTIN": PINORTIN
-          }
+      const response = await instance.get('/contracts/user-detail', {
+        headers: {
+          "PINORTIN": tin_or_pin
         }
-      )
+      })
       return response.data
     } catch (e) {
       console.log(e.message)
