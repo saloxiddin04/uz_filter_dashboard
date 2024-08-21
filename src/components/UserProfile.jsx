@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 
 import { Button } from '.';
@@ -6,21 +6,36 @@ import { userProfileData } from '../data/dummy';
 import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
 import {logOut} from "../redux/slices/auth/authSlice";
+import {useStateContext} from "../contexts/ContextProvider";
 
-const UserProfile = () => {
+const UserProfile = ({onClose}) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const {pathname} = useLocation()
 
   const {user, access, access_token, refresh_token} = useSelector((state) => state.user)
 
+  const modalRef = useRef();
+
   const handleLogout = async () => {
     await dispatch(logOut({access, access_token, refresh_token}))
     navigate('/')
   }
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef?.current.contains(event.target)) {
+        onClose()
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
+
   return (
-    <div className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg w-96">
+    <div ref={modalRef} className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg w-96">
       <div className="flex justify-between items-center">
         <p className="font-semibold text-lg dark:text-gray-200">User Profile</p>
         <Button
@@ -29,6 +44,7 @@ const UserProfile = () => {
           bgHoverColor="light-gray"
           size="2xl"
           borderRadius="50%"
+          onClick={onClose}
         />
       </div>
       <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">

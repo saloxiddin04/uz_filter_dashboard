@@ -23,7 +23,6 @@ function Code() {
   const getUser = async (tok) => {
     try {
       let res = await dispatch(oneIdGetUser(tok))
-      console.log("res", res)
       localStorage.setItem("res", JSON.stringify(res?.payload?.data))
       dispatch(setTinOrPin(res?.payload?.data?.tin_or_pin))
       if (res?.payload?.data?.auth_method !== 'strong') {

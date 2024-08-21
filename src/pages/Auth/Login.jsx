@@ -7,7 +7,14 @@ import {useDispatch} from "react-redux";
 import {api_url, APIS} from "../../config";
 import instance from "../../API";
 import {HooksCommission} from "../../components/eSign/eSignConfig";
-import {oneIdGetUserDetail, refreshToken, setAccess, setAccessToken, setUser} from "../../redux/slices/auth/authSlice";
+import {
+  oneIdGetUserDetail,
+  refreshToken,
+  setAccess,
+  setAccessToken,
+  setTinOrPin,
+  setUser
+} from "../../redux/slices/auth/authSlice";
 import {toast} from "react-toastify";
 
 const tabs = [
@@ -56,7 +63,8 @@ const Login = () => {
         dispatch(refreshToken({refresh: response?.data?.refresh, role: response?.data?.role, navigate: navigate}))
         if (response?.data?.role !== 'mijoz') {
           await dispatch(oneIdGetUserDetail(response?.data?.access)).then(async (res) => {
-            dispatch(setUser(res))
+            await dispatch(setTinOrPin(res?.payload?.pin))
+            await dispatch(setUser(res))
             navigate('/dashboard')
           })
         } else {

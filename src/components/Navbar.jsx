@@ -32,7 +32,7 @@ const Navbar = () => {
   const {user} = useSelector((state) => state.user)
   const {sidebar, loading} = useSelector(state => state.sections)
 
-  const {currentColor, activeMenu, setActiveMenu, handleClick, setScreenSize, screenSize, isClicked, setPage} = useStateContext();
+  const {currentColor, activeMenu, setActiveMenu, handleClick, setScreenSize, screenSize, isClicked, setPage, handleClose} = useStateContext();
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -130,7 +130,7 @@ const Navbar = () => {
           </div>
         {/*</TooltipComponent>*/}
 
-        {isClicked.userProfile && (<UserProfile />)}
+        {isClicked.userProfile && (<UserProfile onClose={handleClose} />)}
       </div>
     </div>
   );
