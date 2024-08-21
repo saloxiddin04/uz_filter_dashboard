@@ -120,7 +120,7 @@ export const oneIdGetUserDetail = createAsyncThunk("auth/oneIdGetUserDetail", as
       const response = await instance.get('/contracts/user-detail', {
         headers: {
           "PINORTIN": tin_or_pin?.tin_or_pin,
-          Authorization: `Bearer ${tin_or_pin?.access}`
+          Authorization: `Bearer ${tin_or_pin?.token}`
         }
       })
       return response.data
