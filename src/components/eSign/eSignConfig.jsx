@@ -285,8 +285,8 @@ export function HooksCommission() {
                 await dispatch(setTinOrPin(response?.data?.tin_or_pin))
                 await dispatch(setAccessToken(response?.data?.access))
                 await dispatch(setRefresh(response?.data?.refresh))
-                await navigate('/dashboard')
-                window.location.reload()
+                // await navigate('/dashboard')
+                // window.location.reload()
               }
             })
             // if (responseData?.auth_method === 'strong') {
