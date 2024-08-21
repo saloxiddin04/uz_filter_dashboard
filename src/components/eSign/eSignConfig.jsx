@@ -285,7 +285,6 @@ export function HooksCommission() {
                 await dispatch(setTinOrPin(response?.data?.tin_or_pin))
                 await dispatch(setAccessToken(response?.data?.access))
                 await dispatch(setRefresh(response?.data?.refresh))
-                console.log(response)
                 await navigate('/dashboard')
                 window.location.reload()
               }
