@@ -270,11 +270,12 @@ export function HooksCommission() {
         try {
           const response = await instance.post(`${APIS.eriLogin}`, {pkcs7, is_client: 1})
           instance.defaults.headers.common = {Authorization: `Bearer ${response?.data?.access}`};
+          instance.defaults.headers.common = {"PINORTIN": response?.data?.tin_or_pin};
           dispatch(setTinOrPin(response?.data?.tin_or_pin))
           if (!response?.data?.success) {
             toast.error(response?.data?.err_msg)
           } else {
-            dispatch(oneIdGetUserDetail(response?.data?.tin_or_pin)).then((res) => {
+            dispatch(oneIdGetUserDetail({tin_or_pin: response?.data?.tin_or_pin, token: response?.data?.access})).then((res) => {
               if (res?.payload?.userdata?.role?.name === 'mijoz') {
                 alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
                 dispatch(logOut({access, access_token, refresh_token}))
