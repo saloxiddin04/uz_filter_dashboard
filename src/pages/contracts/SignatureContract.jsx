@@ -59,8 +59,10 @@ const SignatureContract = ({setOpenTab}) => {
     const formData = new FormData()
     formData.append('comment', selectedFile.comment)
     formData.append('summary', selectedFile.conclusion)
-    formData.append('documents', formFile)
     formData.append('contract', contractDetail?.contract?.id)
+    if (formFile) {
+      formData.append('documents', formFile)
+    }
 
     await instance.post(`${slug}/confirm-contract`, formData, {
       headers: {'Content-Type': 'multipart/form-data', "PINORTIN": pin_or_tin}
@@ -73,8 +75,10 @@ const SignatureContract = ({setOpenTab}) => {
     const formData = new FormData()
     formData.append('comment', selectedFile.comment)
     formData.append('summary', selectedFile.conclusion)
-    formData.append('documents', formFile)
     formData.append('contract', contractDetail?.contract?.id)
+    if (formFile) {
+      formData.append('documents', formFile)
+    }
 
     const body = {
       comment: selectedFile.comment,
@@ -95,8 +99,10 @@ const SignatureContract = ({setOpenTab}) => {
     const formData = new FormData()
     formData.append('comment', selectedFile.comment)
     formData.append('summary', selectedFile.conclusion)
-    formData.append('documents', formFile)
     formData.append('contract', contractDetail?.contract?.id)
+    if (formFile) {
+      formData.append('documents', formFile)
+    }
 
     await instance.post(`${slug}/confirm-contract`, formData, {
       headers: {'Content-Type': 'multipart/form-data', "PINORTIN": pin_or_tin}
