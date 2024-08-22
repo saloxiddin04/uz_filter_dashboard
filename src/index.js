@@ -11,6 +11,13 @@ import store from "./redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
+console.error = (message) => {
+  if (message.startsWith('WebSocket connection to')) {
+    return;
+  }
+  console.warn(message);
+};
+
 root.render(
   <React.StrictMode>
     <ContextProvider>
