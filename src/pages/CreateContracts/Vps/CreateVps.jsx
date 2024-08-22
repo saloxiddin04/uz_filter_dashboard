@@ -142,10 +142,7 @@ const CreateVps = () => {
       image_id: null,
       os_type_id: null,
       account_id: null,
-      data_disks: [{
-        storage: "",
-        storage_disk: ""
-      }],
+      data_disks: [],
       vm_systems: [{
         ipv_address: false,
         vm_name: '',
@@ -452,12 +449,13 @@ const CreateVps = () => {
     ) {
       value[i].data_disks.splice(diskIndex, 1)
       value[i].billing_status = 4
+      setServer(value)
     } else {
       value[i].data_disks[diskIndex].status = 3
       value[i].billing_status = 4
+      setServer(value)
     }
-    setServer(value)
-    // postBilling(value)
+    postBilling(value)
   }
 
   const handleSecondValidate = () => {

@@ -33,6 +33,10 @@ const tabs = [
   {
     title: "Fayl birishtirish",
     active: false
+  },
+  {
+    title: "Eski shartnomalar",
+    active: false
   }
 ];
 
@@ -147,7 +151,7 @@ const renderDetail = (
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Fayl yuklab olish</th>
               <td className={'text-center px-2 py-2'}>
                 <AiOutlineCloudDownload
-                  className={'size-6 m-auto cursor-pointer'}
+                  className={`size-6 m-auto ${data?.contract?.contract_status === 'Shartnomani raqami bron qilingan' ? 'opacity-25 pointer-events-none' : 'cursor-pointer'}`}
                   onClick={async () => {
                     await instance.get(`${api_url}/${slug}/contract/${data?.contract?.hashcode}`, {
                       headers: {
@@ -195,6 +199,82 @@ const renderDetail = (
     case 4:
       return (
         user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" ? <CreateEmail/> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
+      )
+    case 5:
+      return (
+        <>
+          {data?.related_contracts?.map((el, index) => (
+            <table key={el?.id} className={'w-full my-5'}>
+              <thead className="my-4">
+                <tr>
+                  <td className="font-bold">Exat {index + 1}</td>
+                </tr>
+              </thead>
+              <tbody className="border border-1">
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma raqami</th>
+                <td className={'text-center px-2 py-2'}>{el?.contract_number}</td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma sanasi</th>
+                <td className={'text-center px-2 py-2'}
+                >{moment(el?.contract_date).format('DD.MM.YYYY')}</td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma holati</th>
+                <td className={'text-center px-2 py-2'}>{el?.contract_status?.name
+                  ? el?.contract_status?.name
+                  : el?.contract_status}</td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Amal qilish muddati</th>
+                <td className={'text-center px-2 py-2'}>{el?.expiration_date == null
+                  ? moment(data?.contract?.contract_date)
+                    .add(1, 'y')
+                    .format('DD.MM.YYYY')
+                  : moment(el?.expiration_date).format(
+                    'DD.MM.YYYY',
+                  )}</td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>To'lov miqdori</th>
+                <td
+                  className={'text-center px-2 py-2'}
+                >{el?.contract_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
+                </td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>To'landi</th>
+                <td
+                  className={'text-center px-2 py-2'}
+                >{el?.payed_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
+                </td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Qarzdorlik</th>
+                <td
+                  className={'text-center px-2 py-2'}
+                >{el?.arrearage?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          ))}
+        </>
       )
     default:
       return null

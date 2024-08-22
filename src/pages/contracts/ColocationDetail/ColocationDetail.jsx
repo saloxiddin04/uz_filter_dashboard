@@ -146,12 +146,11 @@ const renderDetail = (
                 className={'text-center px-2 py-2'}>{data?.contract?.arrearage?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
               </td>
             </tr>
-            <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+            <tr className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Fayl yuklab olish</th>
               <td className={'text-center px-2 py-2'}>
                 <AiOutlineCloudDownload
-                  className={'size-6 m-auto cursor-pointer'}
+                  className={`size-6 m-auto ${data?.contract?.contract_status === 'Shartnomani raqami bron qilingan' ? 'opacity-25 pointer-events-none' : 'cursor-pointer'}`}
                   onClick={async () => {
                     await instance.get(`${api_url}/${slug}/contract/${data?.contract?.hashcode}`, {
                       headers: {
