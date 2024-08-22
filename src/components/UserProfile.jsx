@@ -66,7 +66,7 @@ const UserProfile = ({onClose}) => {
         </span>
         <div>
           <p className="font-semibold text-xl dark:text-gray-200"> {user?.full_name} </p>
-          <p className="text-gray-500 text-sm dark:text-gray-400"> {user?.userdata?.role?.name} </p>
+          <p className="text-gray-500 text-sm dark:text-gray-400"> {user?.role} </p>
         </div>
       </div>
       <div>
