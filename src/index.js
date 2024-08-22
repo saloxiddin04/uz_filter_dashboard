@@ -11,15 +11,13 @@ import store from "./redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-console.warn = (message) => {
+console.log = (message) => {
   console.log(message)
   if (message.startsWith('WebSocket connection to')) {
     return;
   }
   console.warn(message);
 };
-
-window.process = {}
 
 root.render(
   <React.StrictMode>
