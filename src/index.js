@@ -19,6 +19,8 @@ console.warn = (message) => {
   console.warn(message);
 };
 
+window.process = {}
+
 root.render(
   <React.StrictMode>
     <ContextProvider>
