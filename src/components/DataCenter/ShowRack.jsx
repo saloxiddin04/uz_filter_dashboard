@@ -533,17 +533,20 @@ const ShowRack = () => {
                 style={{
                   background: currentColor,
                   opacity:
-                    user?.userdata?.role?.name === 'direktor' ||
-                    user?.userdata?.role?.name === "direktor o'rinbosari" ||
-                    user?.userdata?.role?.name === "departament boshlig'i" ||
-                    user?.userdata?.role?.name === 'buxgalteriya'
+                    user?.role === 'direktor' ||
+                    user?.role === "direktor o'rinbosari" ||
+                    user?.role === "departament boshlig'i" ||
+                    user?.role === "bosh direktor maslahatchisi" ||
+                    user?.role === 'buxgalteriya'
                       ? 0.5
                       : 1,
                 }}
                 role={
-                  user?.userdata?.role?.name === 'direktor' ||
-                  user?.userdata?.role?.name === "direktor o'rinbosari" ||
-                  user?.userdata?.role?.name === "departament boshlig'i"
+                  user?.role === 'direktor' ||
+                  user?.role === "direktor o'rinbosari" ||
+                  user?.role === "direktor o'rinbosari" ||
+                  user?.role === "bosh direktor maslahatchisi" ||
+                  user?.role === "departament boshlig'i"
                 }
                 onClick={() => {
                   setSelectable(true)
@@ -586,9 +589,10 @@ const ShowRack = () => {
                   <button
                     className="px-4 py-2 rounded bg-red-500 text-white"
                     disabled={
-                      user?.userdata?.role?.name === 'direktor' ||
-                      user?.userdata?.role?.name === "direktor o'rinbosari" ||
-                      user?.userdata?.role?.name === "departament boshlig'i"
+                      user?.role === 'direktor' ||
+                      user?.role === "direktor o'rinbosari" ||
+                      user?.role === "bosh direktor maslahatchisi" ||
+                      user?.role === "departament boshlig'i"
                     }
                     style={{display: selectable ? 'none' : 'block'}}
                     onClick={() => setModal(true)}
@@ -929,9 +933,10 @@ const ShowRack = () => {
                 >UNIT raqami: {deviceDetail?.unit?.start + '-' + deviceDetail?.unit?.end}</span>
                 <button
                   disabled={
-                    user?.userdata?.role?.name === 'direktor' ||
-                    user?.userdata?.role?.name === "direktor o'rinbosari" ||
-                    user?.userdata?.role?.name === "departament boshlig'i"
+                    user?.role === 'direktor' ||
+                    user?.role === "direktor o'rinbosari" ||
+                    user?.role === "bosh direktor maslahatchisi" ||
+                    user?.role === "departament boshlig'i"
                   }
                   className="px-4 py-2 rounded bg-red-500 text-white"
                   style={{display: selectable ? 'none' : 'block'}}
@@ -1300,7 +1305,7 @@ const ShowRack = () => {
                   ?
                   <Loader/>
                   :
-                  unitsData?.sort((rack1, rack2) => rack1.place_number - rack2.place_number)?.map((el) => (
+                  unitsData?.sort((rack1, rack2) => rack1.place_number - rack2.place_number)?.reverse()?.map((el) => (
                     <div className="flex items-center relative mt-2 w-full" key={el.id}>
                       <div
                         className={`w-7 h-7 rounded-full flex items-center justify-center text-lg leading-5 ${el.is_busy ? 'bg-white text-gray-800' : 'text-[#b6b6b6]'} ${el.unit_valid_action ? 'bg-red-500' : ''}`}

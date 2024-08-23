@@ -96,7 +96,7 @@ const Profile = () => {
               type={'text'}
               placeholder={'Lavozim'}
               label="Lavozim"
-              value={user?.userdata?.role?.name || ''}
+              value={user?.role || ''}
               disabled={true}
             />
           </div>

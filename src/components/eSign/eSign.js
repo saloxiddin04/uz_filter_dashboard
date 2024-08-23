@@ -5,13 +5,28 @@ export const CAPIWS = {
       : "ws://127.0.0.1:64646") + "/service/cryptapi",
   callFunction: function (funcDef, callback, error) {
     if (!window.WebSocket) {
-      if (error) error();
+      if (error) {
+        window.addEventListener('error', (event) => {
+          if (event.message && event.message.includes('WebSocket connection to')) {
+            return
+          }
+        });
+        error()
+      }
       return;
     }
     let socket;
     try {
       socket = new WebSocket(this.URL);
     } catch (e) {
+      if (error) {
+        window.addEventListener('error', (event) => {
+          if (event.message && event.message.includes('WebSocket connection to')) {
+            return
+          }
+        });
+        error()
+      }
       error(e);
     }
     socket.onerror = function (e) {
@@ -28,7 +43,14 @@ export const CAPIWS = {
   },
   version: function (callback, error) {
     if (!window.WebSocket) {
-      if (error) error();
+      if (error) {
+        window.addEventListener('error', (event) => {
+          if (event.message && event.message.includes('WebSocket connection to')) {
+            return
+          }
+        });
+        error()
+      }
       return;
     }
     let socket;
@@ -38,7 +60,14 @@ export const CAPIWS = {
       error(e);
     }
     socket.onerror = function (e) {
-      if (error) error(e);
+      if (error) {
+        window.addEventListener('error', (event) => {
+          if (event.message && event.message.includes('WebSocket connection to')) {
+            return
+          }
+        });
+        error()
+      }
     };
     socket.onmessage = function (event) {
       let data = JSON.parse(event.data);
@@ -59,10 +88,25 @@ export const CAPIWS = {
     try {
       socket = new WebSocket(this.URL);
     } catch (e) {
+      if (error) {
+        window.addEventListener('error', (event) => {
+          if (event.message && event.message.includes('WebSocket connection to')) {
+            return
+          }
+        });
+        error()
+      }
       error(e);
     }
     socket.onerror = function (e) {
-      if (error) error(e);
+      if (error) {
+        window.addEventListener('error', (event) => {
+          if (event.message && event.message.includes('WebSocket connection to')) {
+            return
+          }
+        });
+        error()
+      }
     };
     socket.onmessage = function (event) {
       let data = JSON.parse(event.data);
@@ -76,13 +120,28 @@ export const CAPIWS = {
   },
   apikey: function (domainAndKey, callback, error) {
     if (!window.WebSocket) {
-      if (error) error();
+      if (error) {
+        window.addEventListener('error', (event) => {
+          if (event.message && event.message.includes('WebSocket connection to')) {
+            return
+          }
+        });
+        error()
+      }
       return;
     }
     let socket;
     try {
       socket = new WebSocket(this.URL);
     } catch (e) {
+      if (error) {
+        window.addEventListener('error', (event) => {
+          if (event.message && event.message.includes('WebSocket connection to')) {
+            return
+          }
+        });
+        error()
+      }
       error(e);
     }
     socket.onerror = function (e) {
