@@ -19,7 +19,8 @@ export const getSidebar = createAsyncThunk(
       dispatch(setSidebar(response.data))
       return response.data
     } catch (e) {
-      toast.error(e.message)
+      return e
+      // toast.error(e.message)
     }
   }
 )

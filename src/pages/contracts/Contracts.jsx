@@ -50,9 +50,9 @@ const Contracts = () => {
   const handlePageChange = (page) => {
     if (contract_number || contract_status || tin_or_pin) {
       const body = {
-        tin_or_pin,
+        tin_or_pin: tin_or_pin === '' ? undefined : tin_or_pin,
         contract_status: Number(contract_status),
-        contract_number
+        contract_number: contract_number === '' ? undefined : contract_number
       }
       dispatch(getFilteredContracts({slug, page, body}))
     } else {
@@ -62,9 +62,9 @@ const Contracts = () => {
 
   const postFilteredContracts = () => {
     const body = {
-      tin_or_pin,
+      tin_or_pin: tin_or_pin === '' ? undefined : tin_or_pin,
       contract_status: Number(contract_status),
-      contract_number
+      contract_number: contract_number === '' ? undefined : contract_number
     }
     if (currentPage > 1) {
       setPage(1)
@@ -97,7 +97,7 @@ const Contracts = () => {
   }
 
   return (
-    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
+    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 dark:bg-secondary-dark-bg bg-white rounded">
       <div className={'flex items-start justify-between'}>
         <Header category="Sahifa" title="Shartnomalar"/>
         {handleFilter && (
@@ -110,6 +110,15 @@ const Contracts = () => {
                 <input
                   value={contract_number || ""}
                   onChange={(e) => setContractNumber(e.target.value.toUpperCase())}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      if (!contract_number) {
+                        toast.error('Shartnoma raqamini kitiring')
+                      } else {
+                        postFilteredContracts()
+                      }
+                    }
+                  }}
                   name="amount"
                   id="amount"
                   type="text"

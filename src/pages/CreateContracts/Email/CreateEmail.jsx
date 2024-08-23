@@ -377,7 +377,7 @@ const CreateEmail = () => {
                   Orqaga
                 </button>
                 <button
-                  className={`px-4 py-2 rounded text-white`}
+                  className={`px-4 py-2 rounded text-white disabled:opacity-25`}
                   style={{backgroundColor: currentColor}}
                   disabled={!contract_date || !emailContractNum}
                   onClick={postContractNum}
@@ -394,7 +394,7 @@ const CreateEmail = () => {
   }
 
   return (
-    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
+    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white dark:bg-secondary-dark-bg rounded">
       <Header category="Exat" title="Shartnomalar yaratish"/>
       {displayStep(currentStep)}
     </div>

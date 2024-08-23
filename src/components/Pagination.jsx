@@ -141,7 +141,7 @@ const Pagination = ({ totalItems, itemsPerPage, onPageChange }) => {
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
         >
-          <FiChevronLeft />
+          <FiChevronLeft className="dark:text-white" />
         </button>
       </li>
       {renderPaginationItems()}
@@ -151,7 +151,7 @@ const Pagination = ({ totalItems, itemsPerPage, onPageChange }) => {
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
         >
-          <FiChevronRight />
+          <FiChevronRight className="dark:text-white" />
         </button>
       </li>
     </ul>

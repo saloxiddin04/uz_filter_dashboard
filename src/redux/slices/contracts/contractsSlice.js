@@ -18,7 +18,7 @@ export const getContracts = createAsyncThunk(
       const response = await instance.get(`${api_url}/${data?.slug}/group-contracts?page_size=${data?.page === undefined ? 1 : data?.page}`)
       return response.data
     } catch (e) {
-      toast.error(e.message)
+      return e
     }
   }
 )
@@ -30,7 +30,7 @@ export const getContractDetail = createAsyncThunk(
       const response = await instance(`${api_url}/${params?.slug}/contract-detail/${params?.id}`)
       return response.data
     } catch (e) {
-      toast.error(e.message)
+      return e
     }
   }
 )
@@ -42,7 +42,8 @@ export const getContractDetailBalance = createAsyncThunk(
       const response = await instance.post(`${api_url}/billing/contract-balance-monitor`, data)
       return response.data
     } catch (e) {
-      toast.error(e.message)
+      return e
+      // toast.error(e.message)
     }
   }
 )
@@ -54,7 +55,7 @@ export const savePkcs = createAsyncThunk(
       const response = await instance.post(`${api_url}/${data.service}/save-pkcs`, data)
       return response.data
     } catch (e) {
-      return e.message
+      return e
     }
   }
 )
@@ -66,7 +67,7 @@ export const getFilteredContracts = createAsyncThunk(
       const response = await instance.post(`/${data.slug}/filter-contracts?page_size=${data?.page === undefined ? 1 : data?.page}`, data.body)
       return response.data
     } catch (e) {
-      return e.message
+      return e
     }
   }
 )

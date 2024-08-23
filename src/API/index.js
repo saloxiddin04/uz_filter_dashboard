@@ -28,7 +28,7 @@ instance.interceptors.request.use(
     return config;
   },
   async (error) => {
-    toast.error(error.message)
+    toast.error(error?.response?.data?.err_msg)
     return Promise.reject(error);
   }
 );
@@ -43,7 +43,7 @@ instance.interceptors.response.use(
       localStorage.clear()
       window.location.reload()
     }
-    toast.error(error.message)
+    toast.error(error?.response?.data?.err_msg)
     return Promise.reject(error);
   }
 );

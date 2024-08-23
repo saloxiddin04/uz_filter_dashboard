@@ -92,25 +92,25 @@ const renderDetail = (
           <table className={'w-full'}>
             <tbody>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
             >
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma raqami</th>
               <td className={'text-center px-2 py-2'}>{data?.contract?.contract_number}</td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma sanasi</th>
               <td className={'text-center px-2 py-2'}>{moment(data?.contract?.contract_date).format('DD.MM.YYYY')}</td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma holati</th>
               <td className={'text-center px-2 py-2'}>{data?.contract?.contract_status?.name
                 ? data?.contract?.contract_status?.name
                 : data?.contract?.contract_status}</td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Amal qilish muddati</th>
               <td className={'text-center px-2 py-2'}>{data?.contract?.expiration_date == null
                 ? moment(data?.contract?.contract_date)
@@ -121,28 +121,28 @@ const renderDetail = (
                 )}</td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>To'lov miqdori</th>
               <td
                 className={'text-center px-2 py-2'}>{data?.contract?.contract_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
               </td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>To'landi</th>
               <td
                 className={'text-center px-2 py-2'}>{data?.contract?.payed_cash?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
               </td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Qarzdorlik</th>
               <td
                 className={'text-center px-2 py-2'}>{data?.contract?.arrearage?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm
               </td>
             </tr>
             <tr
-              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 font-medium whitespace-nowrap border-b-1'}>
+              className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Fayl yuklab olish</th>
               <td className={'text-center px-2 py-2'}>
                 <AiOutlineCloudDownload

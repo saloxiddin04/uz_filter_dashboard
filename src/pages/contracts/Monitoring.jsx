@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Input} from "../../components";
 import {BiSearch} from "react-icons/bi";
 import {getContractDetailBalance} from "../../redux/slices/contracts/contractsSlice";
@@ -42,6 +42,10 @@ const Monitoring = () => {
     }
     dispatch(getContractDetailBalance(data))
   }
+
+  useEffect(() => {
+    getBalance()
+  }, [])
 
   const formatDate = (dateStr) => {
     if (dateStr?.length % 2 !== 0) {
@@ -94,14 +98,14 @@ const Monitoring = () => {
         </thead>
         <tbody>
         {contractDetailBalance?.detail && contractDetailBalance?.detail.map((item, index) => (
-          <tr className={'hover:bg-gray-100 hover:dark:bg-gray-800'} key={index}>
+          <tr className={'hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white'} key={index}>
             <td className={'px-3 py-4 border-b-1'}>{item?.month}</td>
-            <td className={'px-3 py-4 border-b-1'}>{item?.amount} so’m</td>
-            <td className={'px-3 py-4 border-b-1'}>{item?.pay_amount} so’m</td>
+            <td className={'px-3 py-4 border-b-1'}>{item?.amount?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so’m</td>
+            <td className={'px-3 py-4 border-b-1'}>{item?.pay_amount?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so’m</td>
             <td className={'px-3 py-4 border-b-1'}>{item?.amount_precent}%</td>
             <td className={'px-3 py-4 border-b-1'}>{formatDate(item?.amount_date)}</td>
             <td className={'px-3 py-4 border-b-1'}>{item?.send_invoice === '0' ? 'Yuborilmagan' : 'Yuborilgan'}</td>
-            <td className={'px-3 py-4 border-b-1'}>{contractDetailBalance?.balance} so’m</td>
+            <td className={'px-3 py-4 border-b-1'}>{contractDetailBalance?.balance?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so’m</td>
           </tr>
         ))}
         </tbody>

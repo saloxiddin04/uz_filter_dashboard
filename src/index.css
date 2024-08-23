@@ -22,6 +22,30 @@
     z-index: 1000000 !important;
 }
 
+@layer components {
+    label {
+        @apply dark:text-white;
+    }
+    table thead tr {
+        @apply dark:text-white;
+    }
+    option {
+        @apply dark:text-black;
+    }
+    select {
+        @apply dark:text-black;
+    }
+    .dark .requirement-text,
+    .dark .requirement-title,
+    .dark .requirement-title-main {
+        color: #fff;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
 }

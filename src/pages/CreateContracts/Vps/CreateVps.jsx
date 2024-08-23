@@ -718,7 +718,7 @@ const CreateVps = () => {
                         }
                       }}
                       label={'Tashkilotning STIR raqami'}
-                      className={`${stir.length === 9 ? 'border border-green-500' : ''}`}
+                      className={`${stir?.length === 9 ? 'border border-green-500' : ''}`}
                     />
                   </div>
                   <button
@@ -733,7 +733,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Tashkilot nomi'}
-                    className={`${name.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${name?.length > 0 ? 'border border-green-500' : ''}`}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     type={'text'}
@@ -744,7 +744,7 @@ const CreateVps = () => {
                     <div className={'w-[88%]'}>
                       <Input
                         label={'MFO'}
-                        className={`${bank_mfo.length > 0 ? 'border border-green-500' : ''}`}
+                        className={`${bank_mfo?.length > 0 ? 'border border-green-500' : ''}`}
                         value={bank_mfo}
                         onChange={(e) => setBankMfo(e.target.value)}
                       />
@@ -761,7 +761,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Yuridik manzil'}
-                    className={`${per_adr.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${per_adr?.length > 0 ? 'border border-green-500' : ''}`}
                     value={per_adr}
                     onChange={(e) => setPerAdr(e.target.value)}
                   />
@@ -769,7 +769,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Bank filliali'}
-                    className={`${bank_name.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${bank_name?.length > 0 ? 'border border-green-500' : ''}`}
                     value={bank_name}
                     onChange={(e) => setBankName(e.target.value)}
                   />
@@ -777,7 +777,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Lavozim'}
-                    className={`${position.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${position?.length > 0 ? 'border border-green-500' : ''}`}
                     value={position}
                     onChange={(e) => setPosition(e.target.value)}
                   />
@@ -785,7 +785,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Hisob raqami'}
-                    className={`${paymentAccount.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${paymentAccount?.length > 0 ? 'border border-green-500' : ''}`}
                     value={paymentAccount}
                     onChange={(e) => setPaymentAccount(e.target.value)}
                   />
@@ -793,7 +793,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Familiya'}
-                    className={`${director_lastname.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${director_lastname?.length > 0 ? 'border border-green-500' : ''}`}
                     value={director_lastname}
                     onChange={(e) => setDirectorLastName(e.target.value)}
                   />
@@ -801,7 +801,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'XXTUT'}
-                    className={`${xxtut.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${xxtut?.length > 0 ? 'border border-green-500' : ''}`}
                     value={xxtut}
                     onChange={(e) => setXxtut(e.target.value)}
                   />
@@ -809,7 +809,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Ismi'}
-                    className={`${director_firstname.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${director_firstname?.length > 0 ? 'border border-green-500' : ''}`}
                     value={director_firstname}
                     onChange={(e) => setDirectorFirstName(e.target.value)}
                   />
@@ -817,7 +817,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'KTUT'}
-                    className={`${ktut.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${ktut?.length > 0 ? 'border border-green-500' : ''}`}
                     value={ktut}
                     onChange={(e) => setKtut(e.target.value)}
                   />
@@ -825,7 +825,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Sharifi'}
-                    className={`${director_middlename.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${director_middlename?.length > 0 ? 'border border-green-500' : ''}`}
                     value={director_middlename}
                     onChange={(e) => setDirectorMiddleName(e.target.value)}
                   />
@@ -833,7 +833,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'IFUT'}
-                    className={`${oked.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${oked?.length > 0 ? 'border border-green-500' : ''}`}
                     value={oked}
                     onChange={(e) => setOked(e.target.value)}
                   />
@@ -841,7 +841,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Telefon raqami'}
-                    className={`${mob_phone_no.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${mob_phone_no?.length > 0 ? 'border border-green-500' : ''}`}
                     value={mob_phone_no}
                     onChange={(e) => setMobileNum(e.target.value)}
                   />
@@ -849,7 +849,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Email'}
-                    className={`${email.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${email?.length > 0 ? 'border border-green-500' : ''}`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
@@ -890,7 +890,7 @@ const CreateVps = () => {
                         value={pport_no}
                         onChange={(e) => setPportNo(e.target.value.toUpperCase().slice(0, 9))}
                         type={'text'}
-                        className={`${pport_no.length === 9 ? 'border border-green-500' : ''}`}
+                        className={`${pport_no?.length === 9 ? 'border border-green-500' : ''}`}
                       />
                     </div>
                     <div className={'w-3/5'}>
@@ -905,14 +905,15 @@ const CreateVps = () => {
                         }}
                         value={pinfl}
                         type={'text'}
-                        className={`${pinfl.length === 14 ? 'border border-green-500' : ''}`}
+                        className={`${pinfl?.length === 14 ? 'border border-green-500' : ''}`}
                       />
                     </div>
                   </div>
                   <button
-                    className={'px-4 py-2 rounded text-white'}
+                    className={'px-4 py-2 rounded text-white disabled:opacity-25'}
                     style={{backgroundColor: currentColor}}
                     onClick={searchUserPhysics}
+                    disabled={!pport_no || pinfl?.length === 14}
                   >
                     Izlash
                   </button>
@@ -920,7 +921,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Familiyasi'}
-                    className={`${sur_name.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${sur_name?.length > 0 ? 'border border-green-500' : ''}`}
                     value={sur_name}
                     onChange={(e) => setSurName(e.target.value)}
                     type={'text'}
@@ -929,7 +930,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Yashash manzili'}
-                    className={`${per_adr.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${per_adr?.length > 0 ? 'border border-green-500' : ''}`}
                     value={per_adr}
                     onChange={(e) => setPerAdr(e.target.value)}
                     type={'text'}
@@ -938,7 +939,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Ismi'}
-                    className={`${first_name.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${first_name?.length > 0 ? 'border border-green-500' : ''}`}
                     value={first_name}
                     onChange={(e) => setFirstName(e.target.value)}
                     type={'text'}
@@ -947,7 +948,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Telefon raqami'}
-                    className={`${mob_phone_no.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${mob_phone_no?.length > 0 ? 'border border-green-500' : ''}`}
                     value={mob_phone_no}
                     onChange={(e) => setMobileNum(e.target.value)}
                     type={'text'}
@@ -956,7 +957,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Otasining ismi'}
-                    className={`${mid_name.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${mid_name?.length > 0 ? 'border border-green-500' : ''}`}
                     value={mid_name}
                     onChange={(e) => setMiddName(e.target.value)}
                     type={'text'}
@@ -965,7 +966,7 @@ const CreateVps = () => {
                 <div className={'w-[49%]'}>
                   <Input
                     label={'Email'}
-                    className={`${email.length > 0 ? 'border border-green-500' : ''}`}
+                    className={`${email?.length > 0 ? 'border border-green-500' : ''}`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     type={'email'}
@@ -1049,7 +1050,7 @@ const CreateVps = () => {
                   </select>
                 </div>
                 <div className="w-full flex items-center justify-between">
-                  <div className={'w-[79%] flex items-center justify-between flex-wrap gap-4 mt-4'}>
+                  <div className={'w-[79%] flex items-center justify-between flex-wrap gap-4 mt-4 dark:text-white'}>
                     <div className="ml-2 font-bold w-full">Shartnoma malumotlari</div>
                     {server && server?.map((data, index) => (
                       <div key={index} className="border rounded p-3 w-full flex flex-col gap-4">
@@ -1314,7 +1315,7 @@ const CreateVps = () => {
                                          htmlFor="dataSaved"
                                   >Malumotlarni saqlash (GB)</label>
                                   <button
-                                    className={`rounded-full py-1.5 px-3 bg-inherit border ${(data.tariff !== null ? true : handleSecondValidate()) ? 'opacity-25' : ''}`}
+                                    className={`rounded-full py-1.5 px-3 bg-inherit border dark:border-white ${(data.tariff !== null ? true : handleSecondValidate()) ? 'opacity-25' : ''}`}
                                     disabled={data.tariff !== null ? true : handleSecondValidate()}
                                     onClick={() => addDisks(index)}
                                   >
@@ -1338,7 +1339,7 @@ const CreateVps = () => {
                                           </select>
                                           <div>
                                             <button
-                                              className={`rounded-full py-1.5 px-3 bg-inherit border ${(data.tariff !== null ? true : handleValidateStorages()) ? "opacity-25" : ''}`}
+                                              className={`rounded-full py-1.5 px-3 bg-inherit border dark:border-white ${(data.tariff !== null ? true : handleValidateStorages()) ? "opacity-25" : ''}`}
                                               onClick={() => disksDelete(index, diskIndex)}
                                               disabled={data.tariff !== null ? true : handleValidateStorages()}
                                             >
@@ -1375,7 +1376,7 @@ const CreateVps = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="w-[20%] border rounded p-3">
+                  <div className="w-[20%] border rounded p-3 dark:text-white">
                     <h3 className="font-bold">Serverlar</h3>
                     <div className="text-red-500 mb-2">
                       {vpsCalculate?.success === false && vpsCalculate?.err_msg}
@@ -2059,7 +2060,7 @@ const CreateVps = () => {
           <>
             <div
               dangerouslySetInnerHTML={{__html: typeContract === '3' ? vpsFinish : vpsDocument}}
-              className="px-2 py-3 border rounded"
+              className="px-2 py-3 border rounded dark:text-white"
             />
             <div className="w-full flex items-center justify-between mt-4">
               <div>
@@ -2104,7 +2105,7 @@ const CreateVps = () => {
   if (loading) return <Loader/>
 
   return (
-    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
+    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 dark:bg-secondary-dark-bg bg-white rounded">
       <Header category="Vps" title="Shartnomalar yaratish"/>
       {displayStep(currentStep)}
     </div>

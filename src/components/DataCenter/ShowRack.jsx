@@ -208,9 +208,7 @@ const ShowRack = () => {
               cursor: 'pointer',
               backgroundColor: selected ? '#b6b6b6' : currentColor,
             }}
-            onClick={() => {
-              handleUnitSelect(number, busy)
-            }}
+            onClick={() => handleUnitSelect(number, busy)}
           >
             {!busy && (
               <span className="font-bold text-xs leading-3 text-white" style={{color: selected ? '#000' : '#fff'}}>
@@ -1284,7 +1282,7 @@ const ShowRack = () => {
             <div className="flex items-center justify-between w-full h-14 bg-white border rounded p-5">
               <span className="font-bold text-2xl leading-6 text-black">Unitni tanlang</span>
               <div className="flex items-center">
-              <span className="font-bold text-3xl leading-9 text-black">
+              <span className="font-bold text-xl leading-9 text-black">
                 {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
               </span>
                 <div className="flex flex-col justify-center ml-5 showRack_unitBlock-head-count-buttons">
@@ -1338,7 +1336,7 @@ const ShowRack = () => {
                 <button
                   className={`flex items-center rounded-full border-0 p-1 disabled:opacity-50`}
                   onClick={() => setDrawer(true)}
-                  disabled={rack_detail?.is_for_unit_service || ["direktor", "direktor o'rinbosari", "departament boshlig'i"].includes(user?.userdata?.role?.name)}
+                  disabled={rack_detail?.is_for_unit_service || ["direktor", "direktor o'rinbosari", "departament boshlig'i", "bosh direktor maslahatchisi"].includes(user?.role)}
                 >
                   {<BiBadgeCheck size={30} color={'#b6b6b6'}/>}
                 </button>
