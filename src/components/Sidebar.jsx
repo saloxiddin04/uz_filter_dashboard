@@ -10,6 +10,7 @@ import Logo from "../assets/images/logo";
 
 const Sidebar = () => {
   const {loading, sidebar} = useSelector(state => state.sections)
+  const {user} = useSelector(state => state.user)
   const {currentColor, activeMenu, setActiveMenu, screenSize, setPage, setCurrentPage} = useStateContext();
   const {pathname} = useLocation();
 
@@ -74,21 +75,23 @@ const Sidebar = () => {
                 >
                   <span className="capitalize">Statistika</span>
                 </NavLink>
-                <NavLink
-                  to={`/xizmatlar`}
-                  onClick={() => {
-                    setPage(1)
-                    setCurrentPage(1)
-                    localStorage.setItem("currentPage", 1);
-                    handleCloseSideBar();
-                  }}
-                  style={({isActive}) => ({
-                    backgroundColor: isActive ? currentColor : '',
-                  })}
-                  className={({isActive}) => (isActive ? activeLink : normalLink)}
-                >
-                  <span className="capitalize">Xizmatlar</span>
-                </NavLink>
+                {user?.role === 'admin' && (
+                  <NavLink
+                    to={`/xizmatlar`}
+                    onClick={() => {
+                      setPage(1)
+                      setCurrentPage(1)
+                      localStorage.setItem("currentPage", 1);
+                      handleCloseSideBar();
+                    }}
+                    style={({isActive}) => ({
+                      backgroundColor: isActive ? currentColor : '',
+                    })}
+                    className={({isActive}) => (isActive ? activeLink : normalLink)}
+                  >
+                    <span className="capitalize">Xizmatlar</span>
+                  </NavLink>
+                )}
               </div>
             )}
             {pathname.indexOf('/shartnomalar') === 0 ? (
