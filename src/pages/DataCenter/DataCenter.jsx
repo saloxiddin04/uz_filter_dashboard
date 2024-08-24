@@ -61,7 +61,7 @@ const DataCenter = () => {
 
   if (dataCenterListDetail?.data_center_choice === 'data-center-1') {
     return (
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 dark:bg-secondary-dark-bg bg-white rounded">
         <div className={'flex items-center justify-between'}>
           <Header category="Data markaz" title={dataCenterListDetail?.display_name}/>
         </div>
@@ -195,7 +195,7 @@ const DataCenter = () => {
 
   if (dataCenterListDetail?.data_center_choice === 'data-center-2') {
     return (
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 dark:bg-secondary-dark-bg bg-white rounded">
         <div className={'flex items-center justify-between'}>
           <Header category="Data markaz" title={dataCenterListDetail?.display_name}/>
         </div>

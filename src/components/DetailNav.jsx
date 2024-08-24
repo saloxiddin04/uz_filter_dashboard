@@ -9,7 +9,7 @@ const DetailNav = ({id, name, status}) => {
 
   return (
     <>
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap dark:text-white">
         <div className="w-full flex gap-3">
           <div className="cursor-pointer flex flex-col items-center w-[5%] border-r border-gray-200" onClick={() => navigate(-1)}>
             <HiArrowUturnUp style={{ color: currentColor }} className="size-6" />

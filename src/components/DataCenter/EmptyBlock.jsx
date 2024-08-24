@@ -4,10 +4,10 @@ const EmptyBlock = ({ icon, title, descr, button, onClick, style, role }) => {
   return (
     <div className="w-full flex flex-col items-center justify-center border rounded mt-5 h-full">
       {icon}
-      <div className="mt-12 font-bold text-2xl leading-6 text-[#0E0E4B]">
+      <div className="mt-12 font-bold text-2xl leading-6 text-[#0E0E4B] dark:text-white">
         {title}
       </div>
-      <div className="mt-4 font-normal text-xl leading-6 text-[#0E0E4B] max-w-[345px] text-center">
+      <div className="mt-4 font-normal text-xl leading-6 text-[#0E0E4B] max-w-[345px] text-center dark:text-white">
         {descr}
       </div>
       <button

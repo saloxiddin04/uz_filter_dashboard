@@ -121,7 +121,7 @@ const RackDrawer = ({onClose, type}) => {
       style={{boxShadow: "0 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12)"}}
     >
       {type === 'sold' && (
-        <div className="bg-white w-2/4 h-full ml-auto overflow-y-scroll py-8 px-16">
+        <div className="bg-white dark:bg-secondary-dark-bg dark:text-white w-2/4 h-full ml-auto overflow-y-scroll py-8 px-16">
           <div className="flex flex-col gap-4">
             <button
               className="px-4 py-2 w-[10%] rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition"
@@ -129,7 +129,7 @@ const RackDrawer = ({onClose, type}) => {
             >
               Yopish
             </button>
-            <div className="font-bold text-2xl">Rack sotib olinganlik belgisi</div>
+            <div className="font-bold text-2xl dark:text-white">Rack sotib olinganlik belgisi</div>
             <button
               className="px-4 py-2 w-[20%] rounded bg-red-500 text-white"
               onClick={handleDeleteRack}
@@ -231,7 +231,7 @@ const RackDrawer = ({onClose, type}) => {
               rows="10"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="rounded w-full border outline-none p-4"
+              className="rounded w-full border outline-none p-4 dark:text-black"
             />
           </div>
 
@@ -367,7 +367,7 @@ const RackDrawer = ({onClose, type}) => {
         </div>
       )}
       {type === 'notSold' && (
-        <div className="bg-white w-2/4 h-full ml-auto overflow-y-scroll py-8 px-16">
+        <div className="bg-white dark:bg-secondary-dark-bg dark:text-white w-2/4 h-full ml-auto overflow-y-scroll py-8 px-16">
           <div className="flex flex-col gap-4">
             <button
               className="px-4 py-2 w-[10%] rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition"
@@ -482,7 +482,7 @@ const RackDrawer = ({onClose, type}) => {
               rows="10"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="rounded w-full border outline-none p-4"
+              className="rounded w-full border outline-none p-4 dark:text-black"
             />
           </div>
 

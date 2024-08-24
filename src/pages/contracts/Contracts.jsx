@@ -176,6 +176,15 @@ const Contracts = () => {
                         setTin(e.target.value)
                       }
                     }}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        if (!tin_or_pin) {
+                          toast.error('Stir/JShShIR kiriting!')
+                        } else {
+                          postFilteredContracts()
+                        }
+                      }
+                    }}
                     name="amount"
                     id="amount"
                     type="text"

@@ -133,7 +133,7 @@ const ShowRack = () => {
     if (deviceCount === 4) {
       return (
         <div
-          className="absolute top-1 left-6 w-[87%] h-[132px] ml-5 rounded cursor-pointer bg-cover border border-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
+          className="absolute top-1 left-5 w-[87%] h-[132px] ml-5 rounded cursor-pointer bg-cover border border-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
           style={{background: currentColor}}
         >
@@ -144,7 +144,7 @@ const ShowRack = () => {
     if (deviceCount === 3) {
       return (
         <div
-          className="absolute top-0 left-6 w-[87%] h-[100px] ml-5 rounded cursor-pointer bg-cover border border-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
+          className="absolute top-0 left-5 w-[87%] h-[100px] ml-5 rounded cursor-pointer bg-cover border border-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
           style={{background: currentColor}}
         >
@@ -155,7 +155,7 @@ const ShowRack = () => {
     if (deviceCount === 2) {
       return (
         <div
-          className="absolute top-0 left-6 w-[87%] h-[65px] ml-5 rounded cursor-pointer bg-cover border border-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
+          className="absolute top-0 left-5 w-[87%] h-[65px] ml-5 rounded cursor-pointer bg-cover border border-[#b6b6b6] bg-no-repeat z-10 text-white font-bold flex justify-center items-center"
           onClick={() => showUnitInfo(number, busy, device)}
           style={{background: currentColor}}
         >
@@ -577,10 +577,10 @@ const ShowRack = () => {
           } else
             return (
               <div
-                className="showRack_rackBlock-infoBody h-[750px] overflow-y-scroll rounded shadow-md mt-5 border p-4"
+                className="showRack_rackBlock-infoBody h-[750px] overflow-y-scroll rounded shadow-md mt-5 border p-4 dark:text-white"
               >
                 <div className="flex justify-between">
-                  <span className="font-bold">
+                  <span className="font-bold dark:text-white">
                     UNIT raqami:{' '}
                     {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
                   </span>
@@ -703,7 +703,7 @@ const ShowRack = () => {
                         rows="10"
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
-                        className="rounded w-full border outline-none p-4"
+                        className="rounded w-full border outline-none p-4 dark:text-black"
                       />
                     </div>
                     <div className="rounded p-4 border">
@@ -826,7 +826,7 @@ const ShowRack = () => {
                   </>
                 )}
 
-                <div className="font-bold text-center">Qurilma maʼlumotlari</div>
+                <div className="font-bold text-center dark:text-white">Qurilma maʼlumotlari</div>
                 <div className="my-4 flex flex-wrap justify-between gap-4 p-4 border rounded">
                   <div className="w-full">
                     {/*<DeviceInfoIcon />*/}
@@ -927,7 +927,7 @@ const ShowRack = () => {
           <>
             <div className="showRack_rackBlock-infoBody mt-4 border rounded p-4 max-h-[750px] overflow-y-scroll">
               <div className="flex justify-between items-center">
-                <span className="font-bold"
+                <span className="font-bold dark:text-white"
                 >UNIT raqami: {deviceDetail?.unit?.start + '-' + deviceDetail?.unit?.end}</span>
                 <button
                   disabled={
@@ -1039,7 +1039,7 @@ const ShowRack = () => {
                       rows="10"
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
-                      className="rounded w-full border outline-none p-4"
+                      className="rounded w-full border outline-none p-4 dark:text-black"
                     />
                   </div>
                   <div className="rounded p-4 border">
@@ -1162,8 +1162,8 @@ const ShowRack = () => {
                 </>
               )}
 
-              <div className="font-bold text-center">Qurilma maʼlumotlari</div>
-              <div className="my-4 flex flex-wrap justify-between gap-4 p-4 border rounded">
+              <div className="font-bold text-center dark:text-white">Qurilma maʼlumotlari</div>
+              <div className="my-4 flex flex-wrap justify-between gap-4 p-4 border rounded dark:text-white">
                 <div className="w-full">
                   {/*<DeviceInfoIcon />*/}
                   <span className="font-bold">Umumiy maʼlumot</span>
@@ -1269,7 +1269,7 @@ const ShowRack = () => {
 
   return (
     <>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <DetailNav
           id={rack}
           name={client}
@@ -1277,12 +1277,12 @@ const ShowRack = () => {
         />
       </div>
       <div className="mx-4">
-        <div className="flex justify-between w-full relative md:mt-8 mt-24 p-2 md:px-4 bg-white rounded">
+        <div className="flex justify-between w-full relative md:mt-8 mt-24 p-2 md:px-4 bg-white dark:bg-secondary-dark-bg rounded">
           <div className="flex-3 flex flex-col w-[30%]">
-            <div className="flex items-center justify-between w-full h-14 bg-white border rounded p-5">
-              <span className="font-bold text-2xl leading-6 text-black">Unitni tanlang</span>
+            <div className="flex items-center justify-between w-full h-14 dark:bg-secondary-dark-bg bg-white border rounded p-5">
+              <span className="font-bold text-2xl leading-6 text-black dark:text-white">Unitni tanlang</span>
               <div className="flex items-center">
-              <span className="font-bold text-xl leading-9 text-black">
+              <span className="font-bold text-xl leading-9 text-black dark:text-white">
                 {selectedUnits.length > 1 ? `${getMinOfArray()} - ${getMaxOfArray()}` : addUnit}
               </span>
                 <div className="flex flex-col justify-center ml-5 showRack_unitBlock-head-count-buttons">
@@ -1296,7 +1296,7 @@ const ShowRack = () => {
               </div>
             </div>
             <div
-              className="mt-5 w-full max-h-[750px] overflow-y-scroll bg-white border rounded p-5 showRack_unitBlock-body"
+              className="mt-5 w-full max-h-[750px] overflow-y-scroll bg-white dark:bg-secondary-dark-bg border rounded p-5 showRack_unitBlock-body"
             >
               {
                 loading
@@ -1321,10 +1321,10 @@ const ShowRack = () => {
           </div>
           <div className="flex-9 ml-7 w-full">
             <div
-              className="flex items-center justify-between h-14 px-5 bg-white border rounded showRack_rackBlock-head"
+              className="flex items-center justify-between h-14 px-5 bg-white dark:bg-secondary-dark-bg border rounded showRack_rackBlock-head"
             >
               <div style={{width: 50}}/>
-              <span className="font-bold text-2xl leading-6 text-dark">Rack: {rack_detail?.place_number}</span>
+              <span className="font-bold text-2xl leading-6 text-dark dark:text-white">Rack: {rack_detail?.place_number}</span>
               {rack_detail?.is_busy ? (
                 <div
                   className="flex items-center rounded-full cursor-pointer showRack_rackBlock-head-sold"
