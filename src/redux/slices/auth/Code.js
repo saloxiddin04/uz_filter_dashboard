@@ -19,6 +19,8 @@ function Code() {
   const navigate = useNavigate()
   const {search, pathname} = useLocation()
   const code = search.substring(search.lastIndexOf('code=') + 5).split('&', 1)[0]
+
+  const user = localStorage.getItem("user")
   
   const getUser = async (tok) => {
     try {
@@ -69,6 +71,13 @@ function Code() {
     }
     navigate('/')
   }, [])
+
+  useEffect(() => {
+    if (user === 'undefined') {
+      navigate('/login')
+      localStorage.clear()
+    }
+  }, [user]);
 
   return <Loader />
 }
