@@ -22,10 +22,10 @@ const tabs = [
     title: 'One id',
     active: true
   },
-  {
-    title: "ERI",
-    active: false
-  },
+  // {
+  //   title: "ERI",
+  //   active: false
+  // },
   // {
   //   title: "PINFL",
   //   active: false
