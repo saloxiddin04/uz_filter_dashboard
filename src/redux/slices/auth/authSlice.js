@@ -7,7 +7,7 @@ import instance from "../../../API";
 
 const user = JSON.parse(localStorage.getItem("user") !== undefined ? localStorage.getItem("user") : null)
 
-console.log(JSON.parse(localStorage.getItem("user")))
+console.log(localStorage.getItem("user"))
 
 const initialState = {
   user,
