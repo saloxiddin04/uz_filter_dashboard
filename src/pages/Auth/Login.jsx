@@ -11,7 +11,6 @@ import {
   oneIdGetUserDetail,
   refreshToken,
   setAccess,
-  setAccessToken,
   setTinOrPin,
   setUser
 } from "../../redux/slices/auth/authSlice";
