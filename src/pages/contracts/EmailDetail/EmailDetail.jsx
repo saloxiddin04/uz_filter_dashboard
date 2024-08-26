@@ -51,14 +51,14 @@ const EmailDetail = () => {
 
   return (
     <>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <DetailNav
           id={contractDetail?.contract?.id}
           name={contractDetail?.contract?.contract_number}
           status={contractDetail?.contract?.contract_status?.name ? contractDetail?.contract?.contract_status?.name : contractDetail?.contract?.contract_status}
         />
       </div>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <TabsRender
           tabs={tabs}
           color={currentColor}
@@ -66,7 +66,7 @@ const EmailDetail = () => {
           setOpenTab={setOpenTab}
         />
       </div>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         {
           renderDetail(
             openTab,
@@ -95,7 +95,7 @@ const renderDetail = (
       return (
         <>
           <table className={'w-full'}>
-            <tbody>
+            <tbody className="dark:text-white">
             <tr
               className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
             >
@@ -198,7 +198,7 @@ const renderDetail = (
       )
     case 4:
       return (
-        user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" ? <CreateEmail/> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
+        user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" ? <CreateEmail/> : <h1 className="text-center dark:text-white">Shartnoma yuklay olmaysiz</h1>
       )
     case 5:
       return (
@@ -210,7 +210,7 @@ const renderDetail = (
                   <td className="font-bold">Exat {index + 1}</td>
                 </tr>
               </thead>
-              <tbody className="border border-1">
+              <tbody className="border dark:text-white">
               <tr
                 className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
               >

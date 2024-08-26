@@ -186,7 +186,7 @@ const SignatureContract = ({setOpenTab}) => {
             name="document"
             id="document"
             type="file"
-            className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+            className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1 dark:text-white"
           />
         </div>
         {signatureValidate() && (

@@ -109,6 +109,33 @@ const CreateEmail = () => {
     }
   }
 
+  const updateYurUser = async () => {
+    const data = {
+      tin: stir,
+      name,
+      paymentAccount: paymentAccount?.replace(/[_\s]/g, ''),
+      oked,
+      xxtut,
+      ktut,
+      position,
+      director_middlename,
+      director_lastname,
+      director_firstname,
+      per_adr,
+      mfo: bank_mfo,
+      email,
+      lang,
+      mob_phone_no
+    }
+    await instance.patch('/accounts/update-yuruser-cabinet', data).then((res) => {
+      if (res.status === 200) {
+        toast.success('Muvoffaqiyatli saqlandi!')
+      } else {
+        toast.error('Xatolik')
+      }
+    })
+  }
+
   if (loading) return <Loader />
 
   const displayStep = (step) => {
@@ -283,6 +310,16 @@ const CreateEmail = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
                   />
+                </div>
+                <div className="w-full flex items-center justify-between">
+                  <button
+                    className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+                    style={{backgroundColor: currentColor}}
+                    disabled={!stir}
+                    onClick={updateYurUser}
+                  >
+                    Saqlash
+                  </button>
                 </div>
                 <div className="w-full flex items-center justify-between">
                   <div>

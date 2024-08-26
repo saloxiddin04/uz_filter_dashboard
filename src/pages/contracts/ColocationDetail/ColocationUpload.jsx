@@ -303,7 +303,7 @@ const ColocationUpload = () => {
       </>
     )
   } else {
-    return <h1 className="text-center">Shartnomani raqami bron qilinmagan</h1>
+    return <h1 className="text-center dark:text-white">Shartnomani raqami bron qilinmagan</h1>
   }
 };
 

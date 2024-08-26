@@ -9,7 +9,7 @@ const Participants = () => {
     <>
       {contractDetail?.participants?.map((el, idx) => (
         <table key={idx} className={'w-full mb-8 border'}>
-          <tbody>
+          <tbody className="dark:text-white">
           <tr
             className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
             <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>

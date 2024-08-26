@@ -30,7 +30,7 @@ function Code() {
         await dispatch(setRefresh(res.payload.data.refresh))
         let res2 = await dispatch(oneIdGetUserDetail({tin_or_pin: res?.payload?.data?.tin_or_pin, token: res?.payload?.data?.access}))
         dispatch(setUser({payload: res2?.payload}))
-        if (res2?.payload?.userdata?.role?.name === 'mijoz') {
+        if (res2?.payload?.role === 'mijoz' || res2?.payload === undefined) {
           alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
           await dispatch(logOut({access: res.payload.data.access, access_token: tok, refresh_token: res.payload.data.refresh}))
           navigate('/login')

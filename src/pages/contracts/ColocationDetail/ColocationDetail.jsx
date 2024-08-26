@@ -51,14 +51,14 @@ const ColocationDetail = () => {
 
   return (
     <>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <DetailNav
           id={contractDetail?.contract?.id}
           name={contractDetail?.contract?.contract_number}
           status={contractDetail?.contract?.contract_status?.name ? contractDetail?.contract?.contract_status?.name : contractDetail?.contract?.contract_status}
         />
       </div>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <TabsRender
           tabs={tabs}
           color={currentColor}
@@ -66,7 +66,7 @@ const ColocationDetail = () => {
           setOpenTab={setOpenTab}
         />
       </div>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         {
           renderDetail(
             openTab,
@@ -95,7 +95,7 @@ const renderDetail = (
       return (
         <>
           <table className={'w-full'}>
-            <tbody>
+            <tbody className="dark:text-white">
             <tr
               className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
             >
@@ -197,7 +197,7 @@ const renderDetail = (
           {(data?.contract?.contract_status === "Aktiv" || data?.contract?.contract_status === "To'lov kutilmoqda" || data?.contract?.contract_status === "Yakunlangan" || data?.contract?.contract_status === "Qo'shimcha shartnoma mavjud") ? (
             <Monitoring/>
           ) : (
-            <h1 className="text-center">Shartnoma statusi <span className="font-bold">"Aktiv"</span> yoki <span className="font-bold">"Yakunlangan"</span> <span className="font-bold">"Qo'shimcha shartnoma mavjud"</span> emas</h1>
+            <h1 className="text-center dark:text-white">Shartnoma statusi <span className="font-bold">"Aktiv"</span> yoki <span className="font-bold">"Yakunlangan"</span> <span className="font-bold">"Qo'shimcha shartnoma mavjud"</span> emas</h1>
           )}
         </>
       )
@@ -207,7 +207,7 @@ const renderDetail = (
       )
     case 5:
       return (
-        user?.is_pinned_user ? <ColocationUpload /> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
+        user?.role === 'admin' ? <ColocationUpload /> : <h1 className="text-center dark:text-white">Shartnoma yuklay olmaysiz</h1>
       )
     default:
       return null

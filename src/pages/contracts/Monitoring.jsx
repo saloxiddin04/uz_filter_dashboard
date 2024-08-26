@@ -57,7 +57,7 @@ const Monitoring = () => {
   return (
     <>
       <div
-        className="m-1 md:mx-8 md:my-4 mt-24 p-2 md:px-2 md:py-2 bg-white rounded flex items-center justify-between">
+        className="m-1 md:mx-8 md:my-4 mt-24 p-2 md:px-2 md:py-2 bg-white dark:bg-secondary-dark-bg rounded flex items-center justify-between">
         <div className={'w-2/4'}>
           <Input
             label={'Sanadan'}

@@ -48,14 +48,14 @@ const ExpertiseDetail = () => {
 
   return (
     <>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <DetailNav
           id={contractDetail?.contract?.id}
           name={contractDetail?.contract?.contract_number}
           status={contractDetail?.contract?.contract_status?.name ? contractDetail?.contract?.contract_status?.name : contractDetail?.contract?.contract_status}
         />
       </div>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <TabsRender
           tabs={tabs}
           color={currentColor}
@@ -92,7 +92,7 @@ const renderDetail = (
       return (
         <>
           <table className={'w-full'}>
-            <tbody>
+            <tbody className="dark:text-white">
             <tr
               className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
             >

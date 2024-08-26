@@ -1,5 +1,5 @@
-const api_url = 'https://api2.unicon.uz/uz'
-// const api_url = 'https://dcid.unicon.uz/uz'
+// const api_url = 'https://api2.unicon.uz/uz'
+const api_url = 'https://dcid.unicon.uz/uz'
 
 const APIS = {
   getOneIdLogin: `${api_url}/api/oauth/oneid-login?path=http://localhost:3000`,

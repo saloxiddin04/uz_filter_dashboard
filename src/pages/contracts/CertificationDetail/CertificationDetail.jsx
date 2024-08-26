@@ -46,7 +46,7 @@ const CertificationDetail = () => {
 
   return (
     <>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <DetailNav
           id={contractDetail?.contract?.id}
           name={contractDetail?.contract?.contract_number}
