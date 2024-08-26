@@ -5,12 +5,10 @@ import {toast} from "react-toastify";
 import {clearSidebar} from "../sections/sectionSlice";
 import instance from "../../../API";
 
-// const user = JSON.parse(localStorage.getItem("user") !== undefined ? localStorage.getItem("user") : null)
-
-console.log(localStorage.getItem("user"))
+const user = JSON.parse(localStorage.getItem("user") !== "undefined" ? localStorage.getItem("user") : null)
 
 const initialState = {
-  user: null,
+  user,
   loading: false,
   one_id: false,
   error: null,
