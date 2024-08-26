@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
   logOut,
   oneIdGetUser,
@@ -21,6 +21,8 @@ function Code() {
   const code = search.substring(search.lastIndexOf('code=') + 5).split('&', 1)[0]
 
   const user = localStorage.getItem("user")
+
+  const {access, access_token, refresh_token} = useSelector((state) => state.user)
   
   const getUser = async (tok) => {
     try {
@@ -75,6 +77,7 @@ function Code() {
   useEffect(() => {
     if (user === 'undefined') {
       navigate('/login')
+      dispatch(logOut({access, access_token, refresh_token}))
       localStorage.clear()
     }
   }, [user]);
