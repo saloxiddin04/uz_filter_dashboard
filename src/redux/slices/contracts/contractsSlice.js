@@ -72,6 +72,18 @@ export const getFilteredContracts = createAsyncThunk(
   }
 )
 
+export const refreshUserByTin = createAsyncThunk(
+  "contracts/refreshUserByTin",
+  async (data) => {
+    try {
+      const response = await instance.post('/accounts/refresh-yuruser-cabinet', {tin: data?.tin})
+      return response.data
+    } catch (e) {
+      return e
+    }
+  }
+)
+
 const contractSlice = createSlice({
   name: 'contracts',
   initialState,

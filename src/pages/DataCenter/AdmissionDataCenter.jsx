@@ -10,6 +10,8 @@ import {
   getAdmissionLetters,
   getDataCenterList
 } from "../../redux/slices/dataCenter/dataCenterSlice";
+import instance from "../../API";
+import {toast} from "react-toastify";
 
 const tabs = [
   {
@@ -33,12 +35,28 @@ const AdmissionDataCenter = () => {
   const {currentColor} = useStateContext();
   const {admissionLetter, admissionEmployee, loading, dataCenterList} = useSelector((state) => state.dataCenter)
 
-  const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
+  // const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
+  const [openTab, setOpenTab] = useState(2);
 
   const [selectedOptions, setSelectedOptions] = useState([]);
 
+  const [contract_number, setContractNumber] = useState(null)
+  const [contract, setContract] = useState(null)
+  const [letter_number, setLetterNumber] = useState(null)
+  const [letter_date, setLetterDate] = useState(null)
+  const [file, setFile] = useState(null)
+  const [employees_count, setEmployeesCount] = useState(null)
   const [employees, setEmployees] = useState([
-    {pin: null, admission_type: null, admission_time: null, data_center: []}
+    {
+      pin: null,
+      pport_no: null,
+      name: null,
+      admission_type: null,
+      admission_time: null,
+      data_center: [],
+      admission_status: 0,
+      additional_info: null
+    }
   ])
 
   useEffect(() => {
@@ -53,9 +71,18 @@ const AdmissionDataCenter = () => {
 
   const handleAddEmployee = () => {
     const employee = [...employees, {
-      pin: null, admission_type: null, admission_time: null, data_center: []
+      pin: null,
+      pport_no: null,
+      name: null,
+      admission_type: null,
+      admission_time: null,
+      data_center: [],
+      admission_status: 0,
+      additional_info: null
     }]
-    setEmployees(employee)
+    if (employees.length !== Number(employees_count)) {
+      setEmployees(employee)
+    }
   }
 
   const handleDeleteEmployee = (i) => {
@@ -82,6 +109,15 @@ const AdmissionDataCenter = () => {
       };
     }
     setEmployees(updatedEmployee)
+  }
+
+  const searchContract = async () => {
+    try {
+      const response = await instance.get(`dispatcher/admission-search-letters?search=${contract_number}`)
+      console.log(response.data)
+    } catch (e) {
+      return e
+    }
   }
 
   const displayStep = (step) => {
@@ -263,11 +299,15 @@ const AdmissionDataCenter = () => {
                   label={'Shartnoma raqami'}
                   placeholder={'Shartnoma raqami'}
                   type={'text'}
+                  value={contract_number || ''}
+                  onChange={(e) => setContractNumber(e.target.value.toUpperCase())}
                 />
               </div>
               <button
                 className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
                 style={{border: `1px solid ${currentColor}`}}
+                disabled={!contract_number}
+                onClick={searchContract}
               >
                 <BiSearch className="size-6" color={currentColor}/>
               </button>
@@ -294,6 +334,8 @@ const AdmissionDataCenter = () => {
                   label={'Xat raqami'}
                   placeholder={'Xat raqami'}
                   type={'text'}
+                  value={letter_number || ''}
+                  onChange={(e) => setLetterNumber(e.target.value)}
                 />
               </div>
               <div className={'w-[49%]'}>
@@ -301,6 +343,8 @@ const AdmissionDataCenter = () => {
                   label={'Xat sanasi'}
                   placeholder={'Xat sanasi'}
                   type={'date'}
+                  value={letter_date || ''}
+                  onChange={(e) => setLetterDate(e.target.value)}
                 />
               </div>
               <div className={'w-[49%]'}>
@@ -308,6 +352,13 @@ const AdmissionDataCenter = () => {
                   label={"Xat bo'yicha mutahassislar soni"}
                   placeholder={"Xat bo'yicha mutahassislar soni"}
                   type={'text'}
+                  value={employees_count || ''}
+                  onChange={(e) => {
+                    const re = /^[0-9\b]+$/;
+                    if (e.target.value === '' || re.test(e.target.value)) {
+                      setEmployeesCount(e.target.value);
+                    }
+                  }}
                 />
               </div>
               <div className={'w-[49%]'}>
@@ -315,6 +366,7 @@ const AdmissionDataCenter = () => {
                   label={"Xat biriktirish"}
                   placeholder={"Xat biriktirish"}
                   type={'file'}
+                  onChange={(e) => setFile(e.target.files[0])}
                 />
               </div>
             </div>
@@ -328,16 +380,19 @@ const AdmissionDataCenter = () => {
                         label={'Passport malumotlari'}
                         placeholder={'Passport seriyasi va raqami'}
                         type={'text'}
+                        value={item?.pport_no || ''}
+                        onChange={(e) => changeEmployee({target: e.target.value, name: "pport_no"}, index)}
                       />
                     </div>
                     <div className={'w-10/12'}>
                       <Input
                         label={''}
                         placeholder={'JShIShIR'}
+                        value={item?.pin || ""}
                         onChange={(e) => {
                           const re = /^[0-9\b]+$/;
                           if (e.target.value === '' || re.test(e.target.value)) {
-                            // setPinfl(e.target.value.slice(0, 14));
+                            changeEmployee({target: e.target.value.slice(0, 14), name: "pin"}, index)
                           }
                         }}
                         type={'text'}
@@ -350,8 +405,9 @@ const AdmissionDataCenter = () => {
                       <BiSearch className="size-6" color={currentColor}/>
                     </button>
                   </div>
-                  <button disabled={employees.length === 1} onClick={() => handleDeleteEmployee(index)}
-                          className="disabled:opacity-25 rounded px-4 py-1.5 mt-5 border border-red-500 disabled:opacity-25"
+                  <button
+                    disabled={employees.length === 1} onClick={() => handleDeleteEmployee(index)}
+                    className="rounded px-4 py-1.5 mt-5 border border-red-500 disabled:opacity-25"
                   >
                     <TrashIcon className="size-6" color={'rgb(239 68 68)'}/>
                   </button>
@@ -361,7 +417,8 @@ const AdmissionDataCenter = () => {
                     label={"Ism"}
                     placeholder={"Ism"}
                     type={'text'}
-                    disabled={true}
+                    value={item?.name || ''}
+                    onChange={(e) => changeEmployee({target: {value: e.target.value, name: "name"}}, index)}
                   />
                 </div>
                 <div className={'w-[49%]'}>
@@ -403,7 +460,7 @@ const AdmissionDataCenter = () => {
                       style={{
                         background: item?.admission_type === 0 ? currentColor : ''
                       }}
-                      onClick={() => changeEmployee({target: {value: 0, name: 'admission_type'}}, index)}
+                      onClick={() => changeEmployee({target: {value: 2, name: 'admission_type'}}, index)}
                     >
                       Qurilmalarni olib kirish/chiqish
                     </div>
@@ -425,7 +482,7 @@ const AdmissionDataCenter = () => {
                       style={{
                         background: item?.admission_type === 2 ? currentColor : ''
                       }}
-                      onClick={() => changeEmployee({target: {value: 2, name: 'admission_type'}}, index)}
+                      onClick={() => changeEmployee({target: {value: 0, name: 'admission_type'}}, index)}
                     >
                       Ekskursiya
                     </div>
@@ -487,11 +544,30 @@ const AdmissionDataCenter = () => {
                     ))}
                   </div>
                 </div>
+                <div className="w-full">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+                    htmlFor="device_name"
+                  >
+                    Izoh
+                  </label>
+                  <textarea
+                    value={item?.additional_info || ''}
+                    onChange={(e) => changeEmployee({target: {value: e.target.value, name: "additional_info"}}, index)}
+                    name="additional_info"
+                    id="additional_info"
+                    cols="30"
+                    rows="10"
+                    className="w-full rounded outline-none border p-2"
+                  />
+                </div>
               </div>
             ))}
             <div className="flex justify-center">
-              <button onClick={handleAddEmployee} className="px-4 py-2 text-white rounded"
-                      style={{background: currentColor}}
+              <button
+                onClick={handleAddEmployee} className="px-4 py-2 text-white rounded disabled:opacity-25"
+                style={{background: currentColor}}
+                disabled={!employees_count || employees.length === Number(employees_count)}
               >
                 Qo'shish
               </button>

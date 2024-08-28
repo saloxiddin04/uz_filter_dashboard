@@ -14,6 +14,7 @@ import instance from "../../../API";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {toast} from "react-toastify";
 import {clearStatesExpertise} from "../../../redux/slices/contractCreate/Expertise/expertiseSlices";
+import {refreshUserByTin} from "../../../redux/slices/contracts/contractsSlice";
 
 const CreateCertification = () => {
 
@@ -28,6 +29,7 @@ const CreateCertification = () => {
 
 
   // -------------------- juridic ---------------------
+  const [loader, setLoader] = useState(false)
   const [stir, setStir] = useState('');
   const [name, setName] = useState('')
   const [lang, setLang] = useState('')
@@ -104,6 +106,32 @@ const CreateCertification = () => {
     })
   }
 
+  const updateYurUser = async () => {
+    const data = {
+      tin: stir,
+      name,
+      paymentAccount: paymentAccount?.replace(/[_\s]/g, ''),
+      oked,
+      xxtut,
+      ktut,
+      position,
+      director_middlename,
+      director_lastname,
+      director_firstname,
+      per_adr,
+      mfo: bank_mfo,
+      email,
+      lang,
+      mob_phone_no
+    }
+    await instance.patch('/accounts/update-yuruser-cabinet', data).then((res) => {
+      if (res.status === 200) {
+        toast.success('Muvoffaqiyatli saqlandi!')
+      } else {
+        toast.error('Xatolik')
+      }
+    })
+  }
 
   // ---------------- data -----------------------
   const [certificationScheme, setCertificationScheme] = useState('')
@@ -521,6 +549,38 @@ const CreateCertification = () => {
                   >
                     Izlash
                   </button>
+                  <button
+                    className={`px-4 py-2 rounded text-white ${stir.length === 9 ? 'opacity-1' : 'opacity-50'}`}
+                    style={{backgroundColor: currentColor}}
+                    onClick={() => {
+                      setLoader(true)
+                      try {
+                        dispatch(refreshUserByTin({tin: stir})).then((res) => {
+                          setLoader(false)
+                          setName(res?.payload?.name || '')
+                          setPosition(res?.payload?.position || '')
+                          setPerAdr(res?.payload?.per_adr || '')
+                          setPaymentAccount(res?.payload?.paymentAccount || '')
+                          setBankMfo(res?.payload?.bank_mfo?.mfo || '')
+                          setBankName(res?.payload?.bank_mfo?.bank_name || '')
+                          setXxtut(res?.payload?.xxtut || '')
+                          setOked(res?.payload?.oked || '')
+                          setKtut(res?.payload?.ktut || '')
+                          setDirectorLastName(res?.payload?.director_lastname || '')
+                          setDirectorFirstName(res?.payload?.director_firstname || '')
+                          setDirectorMiddleName(res?.payload?.director_middlename || '')
+                          setLang(res?.payload?.lang || '')
+                          setEmail(res?.payload?.email || '')
+                          setMobileNum(res?.payload?.mob_phone_no || '')
+                        })
+                      } catch (e) {
+                        setLoader(false)
+                      }
+                    }}
+                    disabled={stir.length !== 9}
+                  >
+                    {loader ? 'Yangilanmoqda...' : 'Yangilash'}
+                  </button>
                 </div>
                 <div className={'w-[49%]'}>
                   <Input
@@ -646,6 +706,16 @@ const CreateCertification = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
                   />
+                </div>
+                <div className="w-full flex items-center justify-between">
+                  <button
+                    className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+                    style={{backgroundColor: currentColor}}
+                    disabled={!stir}
+                    onClick={updateYurUser}
+                  >
+                    Saqlash
+                  </button>
                 </div>
                 <div className="w-full flex items-center justify-between">
                   <div>
