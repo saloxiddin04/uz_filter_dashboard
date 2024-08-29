@@ -6,12 +6,14 @@ import {useNavigate} from "react-router-dom";
 import {EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
+  createAdmission,
   getAdmissionEmployee,
   getAdmissionLetters,
   getDataCenterList
 } from "../../redux/slices/dataCenter/dataCenterSlice";
 import instance from "../../API";
 import {toast} from "react-toastify";
+import {getUserByTin} from "../../redux/slices/contractCreate/FirstStepSlices";
 
 const tabs = [
   {
@@ -41,21 +43,24 @@ const AdmissionDataCenter = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   const [contract_number, setContractNumber] = useState(null)
-  const [contract, setContract] = useState(null)
+  const [contract, setContract] = useState([])
   const [letter_number, setLetterNumber] = useState(null)
   const [letter_date, setLetterDate] = useState(null)
   const [file, setFile] = useState(null)
   const [employees_count, setEmployeesCount] = useState(null)
   const [employees, setEmployees] = useState([
     {
-      pin: null,
-      pport_no: null,
-      name: null,
+      pin: '',
+      pport_no: '',
+      per_adr: '',
+      mid_name: '',
+      sur_name: '',
+      name: '',
       admission_type: null,
       admission_time: null,
       data_center: [],
       admission_status: 0,
-      additional_info: null
+      additional_info: ''
     }
   ])
 
@@ -71,14 +76,17 @@ const AdmissionDataCenter = () => {
 
   const handleAddEmployee = () => {
     const employee = [...employees, {
-      pin: null,
-      pport_no: null,
-      name: null,
+      pin: '',
+      pport_no: '',
+      per_adr: '',
+      mid_name: '',
+      sur_name: '',
+      name: '',
       admission_type: null,
       admission_time: null,
       data_center: [],
       admission_status: 0,
-      additional_info: null
+      additional_info: ''
     }]
     if (employees.length !== Number(employees_count)) {
       setEmployees(employee)
@@ -92,32 +100,106 @@ const AdmissionDataCenter = () => {
   }
 
   const changeEmployee = (e, i) => {
-    const {name, value} = e.target;
+    const {name, value} = e;
     const updatedEmployee = [...employees];
     if (name === 'data_center') {
       const dataCenter = updatedEmployee[i]?.data_center || [];
 
       if (dataCenter.includes(value)) {
         updatedEmployee[i].data_center = dataCenter.filter((selected) => selected !== value);
+        setEmployees(updatedEmployee)
       } else {
         updatedEmployee[i].data_center = [...dataCenter, value];
+        setEmployees(updatedEmployee)
       }
     } else {
       updatedEmployee[i] = {
         ...updatedEmployee[i],
         [name]: value,
       };
+      setEmployees(updatedEmployee)
     }
-    setEmployees(updatedEmployee)
   }
 
   const searchContract = async () => {
     try {
-      const response = await instance.get(`dispatcher/admission-search-letters?search=${contract_number}`)
-      console.log(response.data)
+      const response = await instance.get(`dispatcher/admission-search-letters?contract_number=${contract_number}`)
+      setContract(response.data)
     } catch (e) {
       return e
     }
+  }
+
+  const searchUserPhysics = (index) => {
+    console.log(index)
+    dispatch(getUserByTin({
+      pin: employees[index].pin,
+      client: 'fiz',
+      passport_ce: employees[index].pport_no
+    })).then((res) => {
+      setEmployees((prevState) => {
+        const updatedEmployees = [...prevState];
+        const updatedEmployee = {...updatedEmployees[index]};
+
+        updatedEmployee.name = res?.payload?.first_name ?? '';
+        updatedEmployee.per_adr = res?.payload?.per_adr ?? '';
+        updatedEmployee.mid_name = res?.payload?.mid_name ?? '';
+        updatedEmployee.sur_name = res?.payload?.sur_name ?? '';
+
+        updatedEmployees[index] = updatedEmployee;
+        return updatedEmployees;
+      });
+    });
+  }
+
+  const handleValidate = () => {
+    for (const currentEmployee of employees) {
+      if (
+        !contract || !contract_number || !letter_number || !letter_date || !file || !employees_count ||
+        !currentEmployee?.pin || !currentEmployee?.pport_no || !currentEmployee?.per_adr || !currentEmployee?.mid_name || !currentEmployee?.sur_name ||
+        !currentEmployee?.name || currentEmployee?.admission_type === null || currentEmployee?.admission_time === null || currentEmployee.data_center.length === 0
+      ) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  const clearData = () => {
+    setContractNumber(null)
+    setContract([])
+    setLetterNumber(null)
+    setLetterDate(null)
+    setFile(null)
+    setEmployeesCount(null)
+    setEmployees([
+      {
+        pin: '',
+        pport_no: '',
+        per_adr: '',
+        mid_name: '',
+        sur_name: '',
+        name: '',
+        admission_type: null,
+        admission_time: null,
+        data_center: [],
+        admission_status: 0,
+        additional_info: ''
+      }
+    ])
+  }
+
+  const create = async () => {
+    const data = {
+      contract: contract[0]?.id,
+      letter_number,
+      letter_date: new Date(letter_date)?.toISOString(),
+      admission_status: 0,
+      file,
+      employees: JSON.stringify(employees)
+    }
+    await dispatch(createAdmission(data))
   }
 
   const displayStep = (step) => {
@@ -319,6 +401,7 @@ const AdmissionDataCenter = () => {
                   placeholder={'Tashkilot nomi'}
                   type={'text'}
                   disabled={true}
+                  value={contract[0]?.client?.name || ''}
                 />
               </div>
               <div className={'w-[49%]'}>
@@ -327,6 +410,7 @@ const AdmissionDataCenter = () => {
                   placeholder={'STIR/JShShIR'}
                   type={'text'}
                   disabled={true}
+                  value={contract[0]?.client?.pin_or_tin || ''}
                 />
               </div>
               <div className={'w-[49%]'}>
@@ -380,8 +464,11 @@ const AdmissionDataCenter = () => {
                         label={'Passport malumotlari'}
                         placeholder={'Passport seriyasi va raqami'}
                         type={'text'}
-                        value={item?.pport_no || ''}
-                        onChange={(e) => changeEmployee({target: e.target.value, name: "pport_no"}, index)}
+                        value={item.pport_no}
+                        onChange={(e) => changeEmployee({
+                          value: e.target.value?.toString()?.toUpperCase(),
+                          name: "pport_no"
+                        }, index)}
                       />
                     </div>
                     <div className={'w-10/12'}>
@@ -392,7 +479,7 @@ const AdmissionDataCenter = () => {
                         onChange={(e) => {
                           const re = /^[0-9\b]+$/;
                           if (e.target.value === '' || re.test(e.target.value)) {
-                            changeEmployee({target: e.target.value.slice(0, 14), name: "pin"}, index)
+                            changeEmployee({value: e.target.value.slice(0, 14), name: "pin"}, index)
                           }
                         }}
                         type={'text'}
@@ -401,6 +488,8 @@ const AdmissionDataCenter = () => {
                     <button
                       className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
                       style={{border: `1px solid ${currentColor}`}}
+                      disabled={!item?.pin || !item?.pport_no}
+                      onClick={() => searchUserPhysics(index)}
                     >
                       <BiSearch className="size-6" color={currentColor}/>
                     </button>
@@ -418,7 +507,7 @@ const AdmissionDataCenter = () => {
                     placeholder={"Ism"}
                     type={'text'}
                     value={item?.name || ''}
-                    onChange={(e) => changeEmployee({target: {value: e.target.value, name: "name"}}, index)}
+                    onChange={(e) => changeEmployee({value: e.target.value, name: "name"}, index)}
                   />
                 </div>
                 <div className={'w-[49%]'}>
@@ -426,7 +515,11 @@ const AdmissionDataCenter = () => {
                     label={"Familiya"}
                     placeholder={"Familiya"}
                     type={'text'}
-                    disabled={true}
+                    value={item?.sur_name}
+                    onChange={(e) => changeEmployee({
+                      value: e.target.value?.toString()?.toUpperCase(),
+                      name: "sur_name"
+                    }, index)}
                   />
                 </div>
                 <div className={'w-[49%]'}>
@@ -434,7 +527,11 @@ const AdmissionDataCenter = () => {
                     label={"Otasining ismi"}
                     placeholder={"Otasining ismi"}
                     type={'text'}
-                    disabled={true}
+                    value={item?.mid_name}
+                    onChange={(e) => changeEmployee({
+                      value: e.target.value?.toString()?.toUpperCase(),
+                      name: "mid_name"
+                    }, index)}
                   />
                 </div>
                 <div className={'w-[49%]'}>
@@ -442,7 +539,11 @@ const AdmissionDataCenter = () => {
                     label={"Yashash joyi"}
                     placeholder={"Yashash joyi"}
                     type={'text'}
-                    disabled={true}
+                    value={item?.per_adr}
+                    onChange={(e) => changeEmployee({
+                      value: e.target.value?.toString()?.toUpperCase(),
+                      name: "per_adr"
+                    }, index)}
                   />
                 </div>
                 <div className={'w-[49%] flex flex-col'}>
@@ -455,12 +556,12 @@ const AdmissionDataCenter = () => {
                   <div className="flex items-center gap-2">
                     <div
                       className={`px-4 py-2 border rounded cursor-pointer 
-                          ${item?.admission_type === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                          ${item?.admission_type === 2 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
                         `}
                       style={{
-                        background: item?.admission_type === 0 ? currentColor : ''
+                        background: item?.admission_type === 2 ? currentColor : ''
                       }}
-                      onClick={() => changeEmployee({target: {value: 2, name: 'admission_type'}}, index)}
+                      onClick={() => changeEmployee({value: 2, name: 'admission_type'}, index)}
                     >
                       Qurilmalarni olib kirish/chiqish
                     </div>
@@ -471,18 +572,18 @@ const AdmissionDataCenter = () => {
                       style={{
                         background: item?.admission_type === 1 ? currentColor : ''
                       }}
-                      onClick={() => changeEmployee({target: {value: 1, name: 'admission_type'}}, index)}
+                      onClick={() => changeEmployee({value: 1, name: 'admission_type'}, index)}
                     >
                       Faqat kirish
                     </div>
                     <div
                       className={`px-4 py-2 border rounded cursor-pointer 
-                          ${item?.admission_type === 2 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                          ${item?.admission_type === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
                         `}
                       style={{
-                        background: item?.admission_type === 2 ? currentColor : ''
+                        background: item?.admission_type === 0 ? currentColor : ''
                       }}
-                      onClick={() => changeEmployee({target: {value: 0, name: 'admission_type'}}, index)}
+                      onClick={() => changeEmployee({value: 0, name: 'admission_type'}, index)}
                     >
                       Ekskursiya
                     </div>
@@ -503,7 +604,7 @@ const AdmissionDataCenter = () => {
                       style={{
                         background: item?.admission_time === 0 ? currentColor : ''
                       }}
-                      onClick={() => changeEmployee({target: {value: 0, name: 'admission_time'}}, index)}
+                      onClick={() => changeEmployee({value: 0, name: 'admission_time'}, index)}
                     >
                       9:00 - 18:00
                     </div>
@@ -514,7 +615,7 @@ const AdmissionDataCenter = () => {
                       style={{
                         background: item?.admission_time === 1 ? currentColor : ''
                       }}
-                      onClick={() => changeEmployee({target: {value: 1, name: 'admission_time'}}, index)}
+                      onClick={() => changeEmployee({value: 1, name: 'admission_time'}, index)}
                     >
                       Kecha-kunduz
                     </div>
@@ -537,7 +638,7 @@ const AdmissionDataCenter = () => {
                         style={{
                           background: item?.data_center.includes(option?.id) ? currentColor : ''
                         }}
-                        onClick={() => changeEmployee({target: {value: option?.id, name: "data_center"}}, index)}
+                        onClick={() => changeEmployee({value: option?.id, name: "data_center"}, index)}
                       >
                         {option?.name}
                       </div>
@@ -553,7 +654,7 @@ const AdmissionDataCenter = () => {
                   </label>
                   <textarea
                     value={item?.additional_info || ''}
-                    onChange={(e) => changeEmployee({target: {value: e.target.value, name: "additional_info"}}, index)}
+                    onChange={(e) => changeEmployee({value: e.target.value, name: "additional_info"}, index)}
                     name="additional_info"
                     id="additional_info"
                     cols="30"
@@ -570,6 +671,28 @@ const AdmissionDataCenter = () => {
                 disabled={!employees_count || employees.length === Number(employees_count)}
               >
                 Qo'shish
+              </button>
+            </div>
+            <div className="w-full flex items-center justify-between">
+              <div>
+                <button
+                  className={'px-4 py-2 rounded'}
+                  style={{
+                    color: currentColor,
+                    border: `1px solid ${currentColor}`
+                  }}
+                  onClick={clearData}
+                >
+                  Bekor qilish
+                </button>
+              </div>
+              <button
+                className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+                style={{backgroundColor: currentColor}}
+                onClick={create}
+                disabled={handleValidate()}
+              >
+                Saqlash
               </button>
             </div>
           </>

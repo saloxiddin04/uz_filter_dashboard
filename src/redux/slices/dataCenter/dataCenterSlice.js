@@ -239,6 +239,19 @@ export const getAdmissionEmployee = createAsyncThunk(
   }
 )
 
+export const createAdmission = createAsyncThunk(
+  "dataCenter/createAdmission",
+  async (data) => {
+    try {
+      return await instance.post('/dispatcher/admission-employee-letters', data, {
+        headers: { "Content-type": 'multipart/form-data' }
+      })
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -412,6 +425,18 @@ const dataCenterSlice = createSlice({
       state.loading = false
       state.error = payload
       state.admissionEmployee = null
+    })
+
+    // createAdmission
+    builder.addCase(createAdmission.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(createAdmission.fulfilled, (state, {payload}) => {
+      state.loading = false
+    })
+    builder.addCase(createAdmission.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
     })
 
   }
