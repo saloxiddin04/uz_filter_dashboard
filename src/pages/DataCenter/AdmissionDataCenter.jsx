@@ -14,15 +14,12 @@ import {
 import instance from "../../API";
 import {toast} from "react-toastify";
 import {getUserByTin} from "../../redux/slices/contractCreate/FirstStepSlices";
+import moment from "moment";
 
 const tabs = [
   {
     title: "Xatlar",
     active: true
-  },
-  {
-    title: "Xodimlar",
-    active: false
   },
   {
     title: "Ruxsatnoma yaratish",
@@ -37,10 +34,8 @@ const AdmissionDataCenter = () => {
   const {currentColor} = useStateContext();
   const {admissionLetter, admissionEmployee, loading, dataCenterList} = useSelector((state) => state.dataCenter)
 
-  // const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
-  const [openTab, setOpenTab] = useState(2);
-
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
+  // const [openTab, setOpenTab] = useState(2);
 
   const [contract_number, setContractNumber] = useState(null)
   const [contract, setContract] = useState([])
@@ -67,8 +62,6 @@ const AdmissionDataCenter = () => {
   useEffect(() => {
     if (openTab === 0) {
       dispatch(getAdmissionLetters())
-    } else if (openTab === 1) {
-      dispatch(getAdmissionEmployee())
     } else {
       dispatch(getDataCenterList())
     }
@@ -197,9 +190,19 @@ const AdmissionDataCenter = () => {
       letter_date: new Date(letter_date)?.toISOString(),
       admission_status: 0,
       file,
+      employee_count: employees_count,
       employees: JSON.stringify(employees)
     }
-    await dispatch(createAdmission(data))
+    await dispatch(createAdmission(data)).then((res) => {
+      if (res?.payload?.status === 201) {
+        toast.success("Muvofaqqiyatli yaratildi")
+        setOpenTab(0)
+        clearData()
+      } else {
+        toast.error("Xatolik")
+        return
+      }
+    })
   }
 
   const displayStep = (step) => {
@@ -213,6 +216,8 @@ const AdmissionDataCenter = () => {
                   label={'Tashkilot nomi'}
                   placeholder={'Tashkilot nomi'}
                   type={'text'}
+                  value={''}
+                  onChange={(e) => console.log(e)}
                 />
               </div>
               <button
@@ -230,6 +235,7 @@ const AdmissionDataCenter = () => {
                 <th scope="col" className="px-3 py-3"></th>
                 <th scope="col" className="px-4 py-3">Tashkilot</th>
                 <th scope="col" className="px-6 py-3">STIR/JSHSHIR</th>
+                <th scope="col" className="px-8 py-3">Shartnoma raqami</th>
                 <th scope="col" className="px-8 py-3">Xat raqami</th>
                 <th scope="col" className="px-6 py-3">Xat sanasi</th>
                 <th scope="col" className="px-6 py-3">Xat holati</th>
@@ -238,141 +244,64 @@ const AdmissionDataCenter = () => {
               </tr>
               </thead>
               <tbody>
-              <tr
-                className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
-              >
-                <td scope="row" className="px-6 py-4 font-medium whitespace-nowrap border-b-1">
-                  {1}
-                </td>
-                <td className={'px-4 py-2'}>
-                  Unicon
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className="px-4 py-2 flex gap-2">
-                  <button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
-                    <EyeIcon
-                      style={{color: currentColor}}
-                      className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
-                      // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
-                    />
-                  </button>
-                  <button className="rounded border-yellow-500 border p-1">
-                    <PencilIcon
-                      className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
-                      // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
-                    />
-                  </button>
-                  <button className="rounded border border-red-500 p-1">
-                    <TrashIcon
-                      className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
-                      // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
-                    />
-                  </button>
-                </td>
-              </tr>
+              {admissionLetter && admissionLetter?.map((item, index) => (
+                <tr
+                  className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
+                  key={item?.id}
+                >
+                  <td scope="row" className="px-6 py-4 font-medium border-b-1">
+                    {index + 1}
+                  </td>
+                  <td className={'px-4 py-2'}>
+                    {item?.client?.name}
+                  </td>
+                  <td className={'px-4 py-2'}>
+                    {item?.client?.pin_or_tin}
+                  </td>
+                  <td className={'px-4 py-2'}>
+                    {item?.contract}
+                  </td>
+                  <td className={'px-4 py-2'}>
+                    {item?.letter_number}
+                  </td>
+                  <td className={'px-4 py-2'}>
+                    {moment(item?.letter_date).format('DD-MM-YYYY')}
+                  </td>
+                  <td className={'px-4 py-2'}>
+                    {item?.admission_status === 0 ? <span className="text-green-400">Aktiv</span> :
+                      <span className="text-red-400">No Aktiv</span>}
+                  </td>
+                  <td className={'px-4 py-2'}>
+                    {item?.employee_count}
+                  </td>
+                  <td className="px-4 py-2 flex gap-2">
+                    <button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
+                      <EyeIcon
+                        style={{color: currentColor}}
+                        className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
+                        // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
+                      />
+                    </button>
+                    <button className="rounded border-yellow-500 border p-1">
+                      <PencilIcon
+                        className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
+                        // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
+                      />
+                    </button>
+                    <button className="rounded border border-red-500 p-1">
+                      <TrashIcon
+                        className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
+                        // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
+                      />
+                    </button>
+                  </td>
+                </tr>
+              ))}
               </tbody>
             </table>
           </>
         )
       case 1:
-        return (
-          <>
-            <div className="flex items-end gap-4">
-              <div className={'w-2/5'}>
-                <Input
-                  label={'PINFL'}
-                  placeholder={'PINFL'}
-                  type={'text'}
-                />
-              </div>
-              <button
-                className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
-                style={{border: `1px solid ${currentColor}`}}
-              >
-                <BiSearch className="size-6" color={currentColor}/>
-              </button>
-            </div>
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
-              <thead
-                className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-              >
-              <tr>
-                <th scope="col" className="px-3 py-3"></th>
-                <th scope="col" className="px-4 py-3">F.I.SH</th>
-                <th scope="col" className="px-6 py-3">Pasport</th>
-                <th scope="col" className="px-8 py-3">Tashkilot</th>
-                <th scope="col" className="px-6 py-3">Ruxsatnoma turi</th>
-                <th scope="col" className="px-6 py-3">Kirish vaqti</th>
-                <th scope="col" className="px-6 py-3">Holati</th>
-                <th scope="col" className="px-6 py-3">Boshqarish</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr
-                className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
-              >
-                <td scope="row" className="px-6 py-4 font-medium whitespace-nowrap border-b-1">
-                  {1}
-                </td>
-                <td className={'px-4 py-2'}>
-                  Unicon
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className={'px-4 py-2'}>
-                  123
-                </td>
-                <td className="px-4 py-2 flex gap-2">
-                  <button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
-                    <EyeIcon
-                      style={{color: currentColor}}
-                      className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
-                      // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
-                    />
-                  </button>
-                  <button className="rounded border-yellow-500 border p-1">
-                    <PencilIcon
-                      className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
-                      // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
-                    />
-                  </button>
-                  <button className="rounded border border-red-500 p-1">
-                    <TrashIcon
-                      className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
-                      // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
-                    />
-                  </button>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </>
-        )
-      case 2:
         return (
           <>
             <div className="flex items-end gap-4">
@@ -464,7 +393,7 @@ const AdmissionDataCenter = () => {
                         label={'Passport malumotlari'}
                         placeholder={'Passport seriyasi va raqami'}
                         type={'text'}
-                        value={item.pport_no}
+                        value={item.pport_no || ''}
                         onChange={(e) => changeEmployee({
                           value: e.target.value?.toString()?.toUpperCase(),
                           name: "pport_no"
@@ -515,7 +444,7 @@ const AdmissionDataCenter = () => {
                     label={"Familiya"}
                     placeholder={"Familiya"}
                     type={'text'}
-                    value={item?.sur_name}
+                    value={item?.sur_name || ''}
                     onChange={(e) => changeEmployee({
                       value: e.target.value?.toString()?.toUpperCase(),
                       name: "sur_name"
@@ -527,7 +456,7 @@ const AdmissionDataCenter = () => {
                     label={"Otasining ismi"}
                     placeholder={"Otasining ismi"}
                     type={'text'}
-                    value={item?.mid_name}
+                    value={item?.mid_name || ''}
                     onChange={(e) => changeEmployee({
                       value: e.target.value?.toString()?.toUpperCase(),
                       name: "mid_name"
@@ -539,7 +468,7 @@ const AdmissionDataCenter = () => {
                     label={"Yashash joyi"}
                     placeholder={"Yashash joyi"}
                     type={'text'}
-                    value={item?.per_adr}
+                    value={item?.per_adr || ""}
                     onChange={(e) => changeEmployee({
                       value: e.target.value?.toString()?.toUpperCase(),
                       name: "per_adr"
@@ -706,7 +635,7 @@ const AdmissionDataCenter = () => {
 
   return (
     <>
-      <div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <TabsRender
           tabs={tabs}
           color={currentColor}
@@ -714,7 +643,7 @@ const AdmissionDataCenter = () => {
           setOpenTab={setOpenTab}
         />
       </div>
-      <div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white rounded">
+      <div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         {displayStep(openTab)}
       </div>
     </>

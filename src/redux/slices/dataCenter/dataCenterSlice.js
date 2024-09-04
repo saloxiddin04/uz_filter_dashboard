@@ -231,7 +231,7 @@ export const getAdmissionEmployee = createAsyncThunk(
   "dataCenter/getAdmissionEmployee",
   async () => {
     try {
-      const response = await instance.get('/dispatcher/admission-employee')
+      const response = await instance.get('/dispatcher/admission-employees')
       return response.data
     } catch (e) {
       return e.message
