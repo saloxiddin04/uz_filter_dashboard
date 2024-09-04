@@ -227,18 +227,6 @@ export const getAdmissionLetters = createAsyncThunk(
   }
 )
 
-export const getAdmissionEmployee = createAsyncThunk(
-  "dataCenter/getAdmissionEmployee",
-  async () => {
-    try {
-      const response = await instance.get('/dispatcher/admission-employees')
-      return response.data
-    } catch (e) {
-      return e.message
-    }
-  }
-)
-
 export const createAdmission = createAsyncThunk(
   "dataCenter/createAdmission",
   async (data) => {
@@ -252,10 +240,29 @@ export const createAdmission = createAsyncThunk(
   }
 )
 
+export const deleteAdmission = createAsyncThunk(
+  "dataCenter/deleteAdmission",
+  async (id, {dispatch}) => {
+    try {
+      toast.success("Muvofaqqiyatli o'chirildi")
+      return await instance.delete(`/dispatcher/admission-employee-letters/${id}`)
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
   reducers: {
+    setAdmissionLetterReducer: (
+      state, {payload}
+    ) => {
+      state.loading = true
+      state.admissionLetter = payload
+      state.loading = false
+    },
     clearDataCenter: () => initialState
   },
   extraReducers: (builder) => {
@@ -413,20 +420,6 @@ const dataCenterSlice = createSlice({
       state.admissionLetter = null
     })
 
-    // getAdmissionEmployee
-    builder.addCase(getAdmissionEmployee.pending, (state) => {
-      state.loading = true
-    })
-    builder.addCase(getAdmissionEmployee.fulfilled, (state, {payload}) => {
-      state.loading = false
-      state.admissionEmployee = payload
-    })
-    builder.addCase(getAdmissionEmployee.rejected, (state, {payload}) => {
-      state.loading = false
-      state.error = payload
-      state.admissionEmployee = null
-    })
-
     // createAdmission
     builder.addCase(createAdmission.pending, (state) => {
       state.loading = true
@@ -443,5 +436,5 @@ const dataCenterSlice = createSlice({
 })
 
 
-export const {clearDataCenter} = dataCenterSlice.actions
+export const {clearDataCenter, setAdmissionLetterReducer} = dataCenterSlice.actions
 export default dataCenterSlice.reducer;

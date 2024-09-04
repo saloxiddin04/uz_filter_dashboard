@@ -6,10 +6,9 @@ import {useNavigate} from "react-router-dom";
 import {EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
-  createAdmission,
-  getAdmissionEmployee,
+  createAdmission, deleteAdmission,
   getAdmissionLetters,
-  getDataCenterList
+  getDataCenterList, setAdmissionLetterReducer
 } from "../../redux/slices/dataCenter/dataCenterSlice";
 import instance from "../../API";
 import {toast} from "react-toastify";
@@ -205,6 +204,12 @@ const AdmissionDataCenter = () => {
     })
   }
 
+  const deleteAdmissions = (id) => {
+    dispatch(deleteAdmission(id)).then(() => {
+      dispatch(getAdmissionLetters())
+    })
+  }
+
   const displayStep = (step) => {
     switch (step) {
       case 0:
@@ -213,16 +218,18 @@ const AdmissionDataCenter = () => {
             <div className="flex items-end gap-4">
               <div className={'w-2/5'}>
                 <Input
-                  label={'Tashkilot nomi'}
-                  placeholder={'Tashkilot nomi'}
+                  label={'Shartnoma raqami'}
+                  placeholder={'Shartnoma raqami'}
                   type={'text'}
-                  value={''}
-                  onChange={(e) => console.log(e)}
+                  value={contract_number || ''}
+                  onChange={(e) => setContractNumber(e.target.value)}
                 />
               </div>
               <button
                 className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
                 style={{border: `1px solid ${currentColor}`}}
+                disabled={!contract_number}
+                onClick={() => searchContract('search')}
               >
                 <BiSearch className="size-6" color={currentColor}/>
               </button>
@@ -291,7 +298,7 @@ const AdmissionDataCenter = () => {
                     <button className="rounded border border-red-500 p-1">
                       <TrashIcon
                         className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
-                        // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
+                        onClick={() => deleteAdmissions(item?.id)}
                       />
                     </button>
                   </td>
