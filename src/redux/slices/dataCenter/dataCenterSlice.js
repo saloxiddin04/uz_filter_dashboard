@@ -227,6 +227,18 @@ export const getAdmissionLetters = createAsyncThunk(
   }
 )
 
+export const getAdmissionSearch = createAsyncThunk(
+  "dataCenter/getAdmissionSearch",
+  async (params) => {
+    try {
+      const response = await instance.get('/dispatcher/admission-search', {params})
+      return response.data
+    } catch (e) {
+      return e.message
+    }
+  }
+)
+
 export const createAdmission = createAsyncThunk(
   "dataCenter/createAdmission",
   async (data) => {
@@ -430,6 +442,20 @@ const dataCenterSlice = createSlice({
     builder.addCase(createAdmission.rejected, (state, {payload}) => {
       state.loading = false
       state.error = payload
+    })
+
+    // getAdmissionSearch
+    builder.addCase(getAdmissionSearch.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getAdmissionSearch.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.admissionLetter = payload
+    })
+    builder.addCase(getAdmissionSearch.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.admissionLetter = null
     })
 
   }

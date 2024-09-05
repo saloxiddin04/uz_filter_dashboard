@@ -3,12 +3,12 @@ import {Input, Loader, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {ArrowPathIcon, EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
   createAdmission, deleteAdmission,
-  getAdmissionLetters,
-  getDataCenterList, setAdmissionLetterReducer
+  getAdmissionLetters, getAdmissionSearch,
+  getDataCenterList
 } from "../../redux/slices/dataCenter/dataCenterSlice";
 import instance from "../../API";
 import {toast} from "react-toastify";
@@ -222,17 +222,29 @@ const AdmissionDataCenter = () => {
                   placeholder={'Shartnoma raqami'}
                   type={'text'}
                   value={contract_number || ''}
-                  onChange={(e) => setContractNumber(e.target.value)}
+                  onChange={(e) => setContractNumber(e.target.value.toUpperCase())}
                 />
               </div>
-              <button
-                className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
-                style={{border: `1px solid ${currentColor}`}}
-                disabled={!contract_number}
-                onClick={() => searchContract('search')}
-              >
-                <BiSearch className="size-6" color={currentColor}/>
-              </button>
+              <div className="flex items-end gap-4">
+                <button
+                  className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
+                  style={{border: `1px solid ${currentColor}`}}
+                  disabled={!contract_number}
+                  onClick={() => dispatch(getAdmissionSearch({contract_number}))}
+                >
+                  <BiSearch className="size-6" color={currentColor}/>
+                </button>
+                <button
+                  className={`px-2 py-1.5 rounded border text-center`}
+                  style={{borderColor: currentColor}}
+                  onClick={() => {
+                    dispatch(getAdmissionLetters())
+                    setContractNumber('')
+                  }}
+                >
+                  <ArrowPathIcon className="size-6" fill={currentColor}/>
+                </button>
+              </div>
             </div>
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
               <thead
