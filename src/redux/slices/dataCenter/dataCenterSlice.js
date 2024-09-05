@@ -16,7 +16,8 @@ const initialState = {
   rackContractInfo: null,
   updateRack: null,
   admissionLetter: null,
-  admissionEmployee: null
+  admissionEmployee: null,
+  admissionLetterDetail: null
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -264,17 +265,22 @@ export const deleteAdmission = createAsyncThunk(
   }
 )
 
+export const getAdmissionDetail = createAsyncThunk(
+  "dataCenter/getAdmissionDetail",
+  async (id) => {
+    try {
+      const response = await instance.get(`/dispatcher/admission-employee-letters/${id}`)
+      return response.data
+    } catch (e) {
+      return e
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
   reducers: {
-    setAdmissionLetterReducer: (
-      state, {payload}
-    ) => {
-      state.loading = true
-      state.admissionLetter = payload
-      state.loading = false
-    },
     clearDataCenter: () => initialState
   },
   extraReducers: (builder) => {
@@ -457,10 +463,24 @@ const dataCenterSlice = createSlice({
       state.error = payload
       state.admissionLetter = null
     })
+    
+    // getAdmissionDetail
+    builder.addCase(getAdmissionDetail.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getAdmissionDetail.fulfilled, (state, {payload}) => {
+      state.loading = false
+      state.admissionLetterDetail = payload
+    })
+    builder.addCase(getAdmissionDetail.rejected, (state, {payload}) => {
+      state.loading = false
+      state.error = payload
+      state.admissionLetterDetail = null
+    })
 
   }
 })
 
 
-export const {clearDataCenter, setAdmissionLetterReducer} = dataCenterSlice.actions
+export const {clearDataCenter} = dataCenterSlice.actions
 export default dataCenterSlice.reducer;

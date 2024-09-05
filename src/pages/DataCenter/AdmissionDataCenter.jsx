@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {ArrowPathIcon, EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
-  createAdmission, deleteAdmission,
+  createAdmission, deleteAdmission, getAdmissionDetail,
   getAdmissionLetters, getAdmissionSearch,
   getDataCenterList
 } from "../../redux/slices/dataCenter/dataCenterSlice";
@@ -14,6 +14,7 @@ import instance from "../../API";
 import {toast} from "react-toastify";
 import {getUserByTin} from "../../redux/slices/contractCreate/FirstStepSlices";
 import moment from "moment";
+import AdmissionDrawer from "../../components/DataCenter/AdmissionDrawer";
 
 const tabs = [
   {
@@ -57,6 +58,10 @@ const AdmissionDataCenter = () => {
       additional_info: ''
     }
   ])
+  
+  const [drawer, setDrawer] = useState(false)
+  const [id, setId] = useState(null)
+  const [type, setType] = useState(null)
 
   useEffect(() => {
     if (openTab === 0) {
@@ -65,6 +70,12 @@ const AdmissionDataCenter = () => {
       dispatch(getDataCenterList())
     }
   }, [openTab]);
+  
+  useEffect(() => {
+    if (id && drawer) {
+      dispatch(getAdmissionDetail(id))
+    }
+  }, [id, drawer]);
 
   const handleAddEmployee = () => {
     const employee = [...employees, {
@@ -298,13 +309,21 @@ const AdmissionDataCenter = () => {
                       <EyeIcon
                         style={{color: currentColor}}
                         className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
-                        // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
+                        onClick={() => {
+                          setId(item?.id)
+                          setDrawer(true)
+                          setType('get')
+                        }}
                       />
                     </button>
                     <button className="rounded border-yellow-500 border p-1">
                       <PencilIcon
                         className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
-                        // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
+                        onClick={() => {
+                          setId(item?.id)
+                          setDrawer(true)
+                          setType('put')
+                        }}
                       />
                     </button>
                     <button className="rounded border border-red-500 p-1">
@@ -665,6 +684,16 @@ const AdmissionDataCenter = () => {
       <div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         {displayStep(openTab)}
       </div>
+      {drawer && (
+        <AdmissionDrawer
+          id={id}
+          type={type}
+          onclose={() => {
+            setDrawer(false)
+            setId(null)
+          }}
+        />
+      )}
     </>
   );
 };
