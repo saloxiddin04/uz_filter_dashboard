@@ -209,7 +209,7 @@ const DataCenter = () => {
               backgroundRepeat: 'no-repeat'
             }}
           >
-            <div className={'flex items-center justify-center gap-14 pb-8 ml-24'}>
+            <div className={'flex items-center justify-evenly pb-8'}>
               <div className="capsula">
                 <div className="text-center">CAPSULA № 1</div>
                 <div className="flex items-center gap-4">
@@ -295,7 +295,7 @@ const DataCenter = () => {
               </div>
               <div className="capsula ml-10">
                 <div className="text-center">CAPSULA № 2</div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 mr-36">
                   <div className="flex flex-col">
                     {dividedRackData2[2]?.reverse().map((rack, index) => {
                       return (
