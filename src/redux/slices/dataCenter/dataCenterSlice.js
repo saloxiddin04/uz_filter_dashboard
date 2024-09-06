@@ -281,7 +281,11 @@ const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
   reducers: {
-    clearDataCenter: () => initialState
+    clearDataCenter: () => initialState,
+    clearLetterDetail: (state) => {
+      state.admissionLetterDetail = null
+      state.dataCenterList = null
+    }
   },
   extraReducers: (builder) => {
     // getDataCenterList
@@ -481,6 +485,5 @@ const dataCenterSlice = createSlice({
   }
 })
 
-
-export const {clearDataCenter} = dataCenterSlice.actions
+export const {clearDataCenter, clearLetterDetail} = dataCenterSlice.actions
 export default dataCenterSlice.reducer;

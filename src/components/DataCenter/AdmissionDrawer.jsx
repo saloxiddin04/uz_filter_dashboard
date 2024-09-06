@@ -3,13 +3,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {Input} from "../index";
 import moment from "moment";
+import {BiSearch} from "react-icons/bi";
+import {TrashIcon} from "@heroicons/react/16/solid";
 
 const AdmissionDrawer = ({onclose, id, type}) => {
 	const dispatch = useDispatch();
 	
 	const {currentColor} = useStateContext();
 	
-	const {loading, admissionLetterDetail} = useSelector(state => state.dataCenter)
+	const {loading, admissionLetterDetail, dataCenterList} = useSelector(state => state.dataCenter)
 	
 	return (
 		<div
@@ -68,7 +70,7 @@ const AdmissionDrawer = ({onclose, id, type}) => {
 									/>
 								</div>
 							</div>
-							
+
 							<div className="w-[49%] flex flex-wrap gap-4 rounded border p-4">
 								<div>
 									<span className="font-bold">Mijoz</span>
@@ -98,6 +100,157 @@ const AdmissionDrawer = ({onclose, id, type}) => {
 									/>
 								</div>
 							</div>
+						</div>
+						<div className="w-full flex flex-wrap gap-4 rounded border p-4">
+							<div>
+								<span className="font-bold">Xodim</span>
+							</div>
+
+							{admissionLetterDetail?.employees?.map((item, index) => (
+								<div key={index} className="flex justify-between flex-wrap p-4 gap-4 mb-4 rounded border border-dashed">
+									<div className="w-full flex items-end gap-4 justify-between">
+										<div className={'w-full flex items-end justify-between gap-4'}>
+											<div className={'w-[49%]'}>
+												<Input
+													label={'Passport malumotlari'}
+													placeholder={'Passport seriyasi va raqami'}
+													type={'text'}
+													value={item.pport_no || ''}
+													disabled={true}
+												/>
+											</div>
+											<div className={'w-[49%]'}>
+												<Input
+													label={''}
+													placeholder={'JShIShIR'}
+													value={item?.pin || ""}
+													disabled={true}
+													type={'text'}
+												/>
+											</div>
+										</div>
+									</div>
+									<div className={'w-full'}>
+										<Input
+											label={"Ism"}
+											placeholder={"Ism"}
+											type={'text'}
+											value={item?.name || ''}
+											disabled={true}
+										/>
+									</div>
+									<div className={'w-full flex flex-col'}>
+										<label
+											className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+											htmlFor="device_name"
+										>
+											Ruxsatnoma turi
+										</label>
+										<div className="flex items-center gap-2">
+											<div
+												className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 2 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+												style={{
+													background: item?.admission_type === 2 ? currentColor : ''
+												}}
+											>
+												Qurilmalarni olib kirish/chiqish
+											</div>
+											<div
+												className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 1 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+												style={{
+													background: item?.admission_type === 1 ? currentColor : ''
+												}}
+											>
+												Faqat kirish
+											</div>
+											<div
+												className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+												style={{
+													background: item?.admission_type === 0 ? currentColor : ''
+												}}
+											>
+												Ekskursiya
+											</div>
+										</div>
+									</div>
+									<div className={'w-[49%] flex flex-col'}>
+										<label
+											className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+											htmlFor="device_name"
+										>
+											Ruxsatnoma vaqti
+										</label>
+										<div className="flex items-center gap-2 py-1.5">
+											<div
+												className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_time === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+												style={{
+													background: item?.admission_time === 0 ? currentColor : ''
+												}}
+											>
+												9:00 - 18:00
+											</div>
+											<div
+												className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_time === 1 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+												style={{
+													background: item?.admission_time === 1 ? currentColor : ''
+												}}
+											>
+												Kecha-kunduz
+											</div>
+										</div>
+									</div>
+									<div className={'w-[49%] flex flex-col'}>
+										<label
+											className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+											htmlFor="device_name"
+										>
+											Data markaz
+										</label>
+										<div className="flex flex-wrap gap-2">
+											{dataCenterList && dataCenterList?.map((option) => (
+												<div
+													key={option?.id}
+													className={`px-4 py-2 border rounded cursor-pointer 
+                        ${item?.data_center.includes(option?.id) ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                      `}
+													style={{
+														background: item?.data_center.includes(option?.id) ? currentColor : ''
+													}}
+												>
+													{option?.name}
+												</div>
+											))}
+										</div>
+									</div>
+									<div className="w-full">
+										<label
+											className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+											htmlFor="device_name"
+										>
+											Izoh
+										</label>
+										<textarea
+											value={item?.additional_info || ''}
+											disabled={true}
+											name="additional_info"
+											id="additional_info"
+											cols="30"
+											rows="10"
+											className="w-full rounded outline-none border p-2"
+										/>
+									</div>
+								</div>
+							))}
 						</div>
 					</>
 				)}

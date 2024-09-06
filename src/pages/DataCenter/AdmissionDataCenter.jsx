@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {ArrowPathIcon, EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
+  clearLetterDetail,
   createAdmission, deleteAdmission, getAdmissionDetail,
   getAdmissionLetters, getAdmissionSearch,
   getDataCenterList
@@ -74,6 +75,7 @@ const AdmissionDataCenter = () => {
   useEffect(() => {
     if (id && drawer) {
       dispatch(getAdmissionDetail(id))
+      dispatch(getDataCenterList())
     }
   }, [id, drawer]);
 
@@ -691,6 +693,7 @@ const AdmissionDataCenter = () => {
           onclose={() => {
             setDrawer(false)
             setId(null)
+            dispatch(clearLetterDetail())
           }}
         />
       )}

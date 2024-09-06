@@ -300,7 +300,7 @@ const CreateColocation = () => {
   const postContractNum = async () => {
     await instance.post('colocation/booked-contract', {
       pin_or_tin: userByTin?.bank_mfo ? userByTin?.tin : userByTin?.pin,
-      contract_date: bookedContractDate?.toISOString()
+      contract_date: new Date(bookedContractDate)?.toISOString()
     }).then((res) => {
       if (res.status === 201) {
         toast.success(`${contractNumberColocation} raqam muvuffaqiyatli band qilindi!`)
@@ -905,6 +905,15 @@ const CreateColocation = () => {
                 </div>
                 <div className={'w-[49%] flex items-end'}>
                   <div className="w-full">
+                    {/*<div className="flex flex-col">*/}
+                    {/*  <label className="block text-gray-700 text-sm font-bold mb-2 ml-3" htmlFor="date">Shartnoma sanasi</label>*/}
+                    {/*  <input*/}
+                    {/*    type="date"*/}
+                    {/*    id="date"*/}
+                    {/*    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight`}*/}
+                    {/*    value={moment()}*/}
+                    {/*  />*/}
+                    {/*</div>*/}
                     <Input
                       value={moment(bookedContractDate).format('YYYY-MM-DD')}
                       label={'Shartnoma sanasi'}
