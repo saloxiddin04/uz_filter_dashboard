@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {Input} from "../index";
 import moment from "moment";
 import {BiSearch} from "react-icons/bi";
 import {TrashIcon} from "@heroicons/react/16/solid";
+import {getUserByTin} from "../../redux/slices/contractCreate/FirstStepSlices";
 
 const AdmissionDrawer = ({onclose, id, type}) => {
 	const dispatch = useDispatch();
@@ -12,6 +13,127 @@ const AdmissionDrawer = ({onclose, id, type}) => {
 	const {currentColor} = useStateContext();
 	
 	const {loading, admissionLetterDetail, dataCenterList} = useSelector(state => state.dataCenter)
+
+	const [letter_number, setLetterNumber] = useState(null)
+	const [letter_date, setLetterDate] = useState(null)
+	const [file, setFile] = useState(undefined)
+	const [employees_count, setEmployeesCount] = useState(null)
+	const [employees, setEmployees] = useState([
+		{
+			pin: '',
+			pport_no: '',
+			per_adr: '',
+			mid_name: '',
+			sur_name: '',
+			name: '',
+			admission_type: null,
+			admission_time: null,
+			data_center: [],
+			admission_status: 0,
+			additional_info: ''
+		}
+	])
+
+	useEffect(() => {
+		if (type === 'put') {
+			const employeeObjects = admissionLetterDetail?.employees?.map((item) => ({
+				pin: item?.pin,
+				pport_no: item.pport_no,
+				name: item?.name,
+				admission_type: item?.admission_type,
+				admission_time: item?.admission_time,
+				data_center: item?.data_center,
+				admission_status: 0,
+				additional_info: item?.additional_info
+			}))
+			setEmployees(employeeObjects)
+			setEmployeesCount(admissionLetterDetail?.employees?.length)
+			setLetterDate(admissionLetterDetail?.letter_date?.split("T")[0])
+			setLetterNumber(admissionLetterDetail?.letter_number)
+		}
+	}, [id, dispatch, type]);
+
+	const handleAddEmployee = () => {
+		const employee = [...employees, {
+			pin: "",
+			pport_no: '',
+			per_adr: '',
+			mid_name: '',
+			sur_name: '',
+			name: '',
+			admission_type: null,
+			admission_time: null,
+			data_center: [],
+			admission_status: 0,
+			additional_info: ''
+		}]
+		if (employees.length !== Number(employees_count)) {
+			setEmployees(employee)
+		}
+	}
+
+	const handleDeleteEmployee = (i) => {
+		const value = [...employees]
+		value.splice(i, 1)
+		setEmployees(value)
+	}
+
+	const changeEmployee = (e, i) => {
+		const {name, value} = e;
+		const updatedEmployee = [...employees];
+		if (name === 'data_center') {
+			const dataCenter = updatedEmployee[i]?.data_center || [];
+
+			if (dataCenter.includes(value)) {
+				updatedEmployee[i].data_center = dataCenter.filter((selected) => selected !== value);
+				setEmployees(updatedEmployee)
+			} else {
+				updatedEmployee[i].data_center = [...dataCenter, value];
+				setEmployees(updatedEmployee)
+			}
+		} else {
+			updatedEmployee[i] = {
+				...updatedEmployee[i],
+				[name]: value,
+			};
+			setEmployees(updatedEmployee)
+		}
+	}
+
+	const handleValidate = () => {
+		for (const currentEmployee of employees) {
+			if (
+				!contract || !contract_number || !letter_number || !letter_date || !file || !employees_count ||
+				!currentEmployee?.pin || !currentEmployee?.pport_no || !currentEmployee?.per_adr || !currentEmployee?.mid_name || !currentEmployee?.sur_name ||
+				!currentEmployee?.name || currentEmployee?.admission_type === null || currentEmployee?.admission_time === null || currentEmployee.data_center.length === 0
+			) {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	const searchUserPhysics = (index) => {
+		dispatch(getUserByTin({
+			pin: employees[index].pin,
+			client: 'fiz',
+			passport_ce: employees[index].pport_no
+		})).then((res) => {
+			setEmployees((prevState) => {
+				const updatedEmployees = [...prevState];
+				const updatedEmployee = {...updatedEmployees[index]};
+
+				updatedEmployee.name = res?.payload?.first_name ?? '';
+				updatedEmployee.per_adr = res?.payload?.per_adr ?? '';
+				updatedEmployee.mid_name = res?.payload?.mid_name ?? '';
+				updatedEmployee.sur_name = res?.payload?.sur_name ?? '';
+
+				updatedEmployees[index] = updatedEmployee;
+				return updatedEmployees;
+			});
+		});
+	}
 	
 	return (
 		<div
@@ -31,9 +153,289 @@ const AdmissionDrawer = ({onclose, id, type}) => {
 				</div>
 				
 				{type === 'put' && (
-					<input type="text"/>
+					<>
+					<div className="font-bold text-center">Shartnoma maʼlumotlari</div>
+					<div className="my-4 flex justify-between">
+						<div className="w-[49%] flex flex-wrap gap-4 rounded border p-4">
+							<div className="showRack_rackBlock-infoBody-contractInfo_block_title">
+								{/*<ContractIcon />*/}
+								<span className="font-bold">Shartnoma</span>
+							</div>
+							<div className={'w-full flex items-end gap-4'}>
+								<div className={'w-full'}>
+									<Input
+										value={admissionLetterDetail?.contract || ''}
+										label={'Shartnoma raqami'}
+										disabled={true}
+										type={'text'}
+									/>
+								</div>
+							</div>
+							<div className="w-full">
+								<Input
+									label={'STIR/JShShIR'}
+									value={admissionLetterDetail?.client?.pin_or_tin || ""}
+									type={'text'}
+									disabled={true}
+								/>
+							</div>
+							<div className="w-full">
+								<Input
+									label={"Xat bo'yicha xodim soni"}
+									value={employees_count || ''}
+									onChange={(e) => {
+										const re = /^[0-9\b]+$/;
+										if (e.target.value === '' || re.test(e.target.value)) {
+											setEmployeesCount(e.target.value);
+										}
+									}}
+									type={'text'}
+								/>
+							</div>
+						</div>
+
+						<div className="w-[49%] flex flex-wrap gap-4 rounded border p-4">
+							<div>
+								<span className="font-bold">Mijoz</span>
+							</div>
+							<div className="w-full">
+								<Input
+									label={'F.I.SH'}
+									value={admissionLetterDetail?.client?.name || ""}
+									type={'text'}
+									disabled={true}
+								/>
+							</div>
+							<div className="w-full">
+								<Input
+									label={'Xat raqami'}
+									type={'text'}
+									value={letter_number || ''}
+									onChange={(e) => setLetterNumber(e.target.value)}
+								/>
+							</div>
+							<div className="w-full">
+								<Input
+									label={'Xat sanasi'}
+									type={'date'}
+									value={letter_date || ''}
+									onChange={(e) => setLetterDate(e.target.value)}
+								/>
+							</div>
+						</div>
+					</div>
+						{employees?.map((item, index) => (
+							<div key={index} className="flex justify-between flex-wrap p-4 gap-4 mb-4 rounded border border-dashed">
+								<div className="w-full flex items-end gap-4 justify-between">
+									<div className={'w-8/12 flex items-end gap-4'}>
+										<div className={'w-9/12'}>
+											<Input
+												label={'Passport malumotlari'}
+												placeholder={'Passport seriyasi va raqami'}
+												type={'text'}
+												value={item.pport_no || ''}
+												onChange={(e) => changeEmployee({
+													value: e.target.value?.toString()?.toUpperCase(),
+													name: "pport_no"
+												}, index)}
+											/>
+										</div>
+										<div className={'w-10/12'}>
+											<Input
+												label={''}
+												placeholder={'JShIShIR'}
+												value={item?.pin || ""}
+												onChange={(e) => {
+													const re = /^[0-9\b]+$/;
+													if (e.target.value === '' || re.test(e.target.value)) {
+														changeEmployee({value: e.target.value.slice(0, 14), name: "pin"}, index)
+													}
+												}}
+												type={'text'}
+											/>
+										</div>
+										<button
+											className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
+											style={{border: `1px solid ${currentColor}`}}
+											disabled={!item?.pin || !item?.pport_no}
+											onClick={() => searchUserPhysics(index)}
+										>
+											<BiSearch className="size-6" color={currentColor}/>
+										</button>
+									</div>
+									<button
+										disabled={employees.length === 1} onClick={() => handleDeleteEmployee(index)}
+										className="rounded px-4 py-1.5 mt-5 border border-red-500 disabled:opacity-25"
+									>
+										<TrashIcon className="size-6" color={'rgb(239 68 68)'}/>
+									</button>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input
+										label={"Ism"}
+										placeholder={"Ism"}
+										type={'text'}
+										value={item?.name || ''}
+										onChange={(e) => changeEmployee({value: e.target.value, name: "name"}, index)}
+									/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input
+										label={"Familiya"}
+										placeholder={"Familiya"}
+										type={'text'}
+										value={item?.sur_name || ''}
+										onChange={(e) => changeEmployee({
+											value: e.target.value?.toString()?.toUpperCase(),
+											name: "sur_name"
+										}, index)}
+									/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input
+										label={"Otasining ismi"}
+										placeholder={"Otasining ismi"}
+										type={'text'}
+										value={item?.mid_name || ''}
+										onChange={(e) => changeEmployee({
+											value: e.target.value?.toString()?.toUpperCase(),
+											name: "mid_name"
+										}, index)}
+									/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input
+										label={"Yashash joyi"}
+										placeholder={"Yashash joyi"}
+										type={'text'}
+										value={item?.per_adr || ""}
+										onChange={(e) => changeEmployee({
+											value: e.target.value?.toString()?.toUpperCase(),
+											name: "per_adr"
+										}, index)}
+									/>
+								</div>
+								<div className={'w-[49%] flex flex-col'}>
+									<label
+										className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+										htmlFor="device_name"
+									>
+										Ruxsatnoma turi
+									</label>
+									<div className="flex items-center gap-2">
+										<div
+											className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 2 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+											style={{
+												background: item?.admission_type === 2 ? currentColor : ''
+											}}
+											onClick={() => changeEmployee({value: 2, name: 'admission_type'}, index)}
+										>
+											Qurilmalarni olib kirish/chiqish
+										</div>
+										<div
+											className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 1 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+											style={{
+												background: item?.admission_type === 1 ? currentColor : ''
+											}}
+											onClick={() => changeEmployee({value: 1, name: 'admission_type'}, index)}
+										>
+											Faqat kirish
+										</div>
+										<div
+											className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_type === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+											style={{
+												background: item?.admission_type === 0 ? currentColor : ''
+											}}
+											onClick={() => changeEmployee({value: 0, name: 'admission_type'}, index)}
+										>
+											Ekskursiya
+										</div>
+									</div>
+								</div>
+								<div className={'w-[49%] flex flex-col'}>
+									<label
+										className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+										htmlFor="device_name"
+									>
+										Ruxsatnoma vaqti
+									</label>
+									<div className="flex items-center gap-2 py-1.5 px-2">
+										<div
+											className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_time === 0 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+											style={{
+												background: item?.admission_time === 0 ? currentColor : ''
+											}}
+											onClick={() => changeEmployee({value: 0, name: 'admission_time'}, index)}
+										>
+											9:00 - 18:00
+										</div>
+										<div
+											className={`px-4 py-2 border rounded cursor-pointer 
+                          ${item?.admission_time === 1 ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                        `}
+											style={{
+												background: item?.admission_time === 1 ? currentColor : ''
+											}}
+											onClick={() => changeEmployee({value: 1, name: 'admission_time'}, index)}
+										>
+											Kecha-kunduz
+										</div>
+									</div>
+								</div>
+								<div className={'w-[49%] flex flex-col'}>
+									<label
+										className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+										htmlFor="device_name"
+									>
+										Data markaz
+									</label>
+									<div className="flex flex-wrap gap-2">
+										{dataCenterList && dataCenterList?.map((option) => (
+											<div
+												key={option?.id}
+												className={`px-4 py-2 border rounded cursor-pointer 
+                        ${item?.data_center.includes(option?.id) ? `text-white` : 'bg-white text-gray-800 border-gray-300'}
+                      `}
+												style={{
+													background: item?.data_center.includes(option?.id) ? currentColor : ''
+												}}
+												onClick={() => changeEmployee({value: option?.id, name: "data_center"}, index)}
+											>
+												{option?.name}
+											</div>
+										))}
+									</div>
+								</div>
+								<div className="w-full">
+									<label
+										className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+										htmlFor="device_name"
+									>
+										Izoh
+									</label>
+									<textarea
+										value={item?.additional_info || ''}
+										onChange={(e) => changeEmployee({value: e.target.value, name: "additional_info"}, index)}
+										name="additional_info"
+										id="additional_info"
+										cols="30"
+										rows="10"
+										className="w-full rounded outline-none border p-2"
+									/>
+								</div>
+							</div>
+						))}
+					</>
 				)}
-				
+
 				{type === 'get' && (
 					<>
 						<div className="font-bold text-center">Shartnoma maʼlumotlari</div>

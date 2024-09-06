@@ -136,7 +136,6 @@ const AdmissionDataCenter = () => {
   }
 
   const searchUserPhysics = (index) => {
-    console.log(index)
     dispatch(getUserByTin({
       pin: employees[index].pin,
       client: 'fiz',
