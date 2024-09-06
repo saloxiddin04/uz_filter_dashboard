@@ -193,7 +193,7 @@ const renderDetail = (
       )
     case 4:
       return (
-        user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" ? <CreateCertification /> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
+        user?.role === "admin" ? <CreateCertification /> : <h1 className="text-center">Shartnoma yuklay olmaysiz</h1>
       )
     default:
       return null
