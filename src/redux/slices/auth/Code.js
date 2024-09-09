@@ -30,22 +30,31 @@ function Code() {
       localStorage.setItem("res", JSON.stringify(res?.payload?.data))
       dispatch(setTinOrPin(res?.payload?.data?.tin_or_pin))
       if (res?.payload?.data?.auth_method !== 'strong') {
-        await dispatch(setAccess(res.payload.data.access))
-        await dispatch(setRefresh(res.payload.data.refresh))
-        let res2 = await dispatch(oneIdGetUserDetail({tin_or_pin: res?.payload?.data?.tin_or_pin, token: res?.payload?.data?.access})).then(({payload}) => {
-          console.log(payload)
+        dispatch(setAccess(res.payload.data.access))
+        dispatch(setRefresh(res.payload.data.refresh))
+        dispatch(oneIdGetUserDetail({tin_or_pin: res?.payload?.data?.tin_or_pin, token: res?.payload?.data?.access})).then(({payload}) => {
+          dispatch(setUser({payload}))
+          if (payload?.role === 'mijoz' || payload === undefined) {
+            alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+            dispatch(logOut({access: res.payload.data.access, access_token: tok, refresh_token: res.payload.data.refresh}))
+            navigate('/login')
+          } else {
+            navigate('/dashboard')
+            window.location.reload()
+          }
         })
-        await dispatch(setUser({payload: res2?.payload}))
-        if (res2?.payload?.role === 'mijoz' || res2?.payload === undefined) {
-          alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
-          await dispatch(logOut({access: res.payload.data.access, access_token: tok, refresh_token: res.payload.data.refresh}))
-          navigate('/login')
-        } else {
-          navigate('/dashboard')
-          window.location.reload()
-        }
+        // await dispatch(setUser({payload: res2?.payload}))
+        // if (res2?.payload?.role === 'mijoz' || res2?.payload === undefined) {
+        //   alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
+        //   await dispatch(logOut({access: res.payload.data.access, access_token: tok, refresh_token: res.payload.data.refresh}))
+        //   navigate('/login')
+        // } else {
+        //   navigate('/dashboard')
+        //   window.location.reload()
+        // }
       } else {
-        navigate('/two-factor')
+        navigate('/login')
+        // navigate('/two-factor')
       }
     } catch (e) {
       console.log(e)
