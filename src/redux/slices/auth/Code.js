@@ -32,7 +32,9 @@ function Code() {
       if (res?.payload?.data?.auth_method !== 'strong') {
         await dispatch(setAccess(res.payload.data.access))
         await dispatch(setRefresh(res.payload.data.refresh))
-        let res2 = await dispatch(oneIdGetUserDetail({tin_or_pin: res?.payload?.data?.tin_or_pin, token: res?.payload?.data?.access}))
+        let res2 = await dispatch(oneIdGetUserDetail({tin_or_pin: res?.payload?.data?.tin_or_pin, token: res?.payload?.data?.access})).then(({payload}) => {
+          console.log(payload)
+        })
         await dispatch(setUser({payload: res2?.payload}))
         if (res2?.payload?.role === 'mijoz' || res2?.payload === undefined) {
           alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
