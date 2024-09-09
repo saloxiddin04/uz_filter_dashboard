@@ -3,7 +3,7 @@ import {Input, Loader, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {ArrowPathIcon, EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {ArrowDownTrayIcon, ArrowPathIcon, EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
   clearLetterDetail,
@@ -317,15 +317,20 @@ const AdmissionDataCenter = () => {
                         }}
                       />
                     </button>
-                    <button className="rounded border-yellow-500 border p-1">
-                      <PencilIcon
-                        className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
-                        onClick={() => {
-                          setId(item?.id)
-                          setDrawer(true)
-                          setType('put')
-                        }}
-                      />
+                    {/*<button className="rounded border-yellow-500 border p-1">*/}
+                    {/*  <PencilIcon*/}
+                    {/*    className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}*/}
+                    {/*    onClick={() => {*/}
+                    {/*      setId(item?.id)*/}
+                    {/*      setDrawer(true)*/}
+                    {/*      setType('put')*/}
+                    {/*    }}*/}
+                    {/*  />*/}
+                    {/*</button>*/}
+                    <button className="p-1 border-yellow-500 border rounded" title="Xat yuklab olish">
+                      <a href={item?.file} target="_blank">
+                        <ArrowDownTrayIcon className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>
+                      </a>
                     </button>
                     <button className="rounded border border-red-500 p-1">
                       <TrashIcon
@@ -345,7 +350,7 @@ const AdmissionDataCenter = () => {
           <>
             <div className="flex items-end gap-4">
               <div className={'w-2/5'}>
-                <Input
+              <Input
                   label={'Shartnoma raqami'}
                   placeholder={'Shartnoma raqami'}
                   type={'text'}
