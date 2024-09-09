@@ -22,7 +22,15 @@ const CreateColocation = () => {
   const {state} = useLocation()
   const {currentColor} = useStateContext();
 
-  const {dataCenterList, dataCenterTariff, calculate, colocationDocument, colocationConfig, loading, colocationFinish} = useSelector((state) => state.createColocation);
+  const {
+    dataCenterList,
+    dataCenterTariff,
+    calculate,
+    colocationDocument,
+    colocationConfig,
+    loading,
+    colocationFinish
+  } = useSelector((state) => state.createColocation);
   const {userByTin} = useSelector((state) => state.userByTin);
   const {sidebar} = useSelector((state) => state.sections);
 
@@ -200,6 +208,7 @@ const CreateColocation = () => {
     const {name, value} = e.target;
     let newData = [...data];
     newData[index] = {...newData[index], [name]: value};
+    newData[index].status = 3
 
     if (name === 'amount') {
       newData[index].amount = Number(value)
@@ -220,9 +229,15 @@ const CreateColocation = () => {
 
   const handleDeleteDataColocation = (i) => {
     const deletedData = [...data]
+    if (code === 1 && (deletedData[i].status === 3 || deletedData[i].status === 4)) {
+      deletedData[i].status = 2
+      setData(deletedData)
+      getCalculateColocation(deletedData)
+    } else {
       deletedData.splice(i, 1)
       setData(deletedData)
       getCalculateColocation(deletedData)
+    }
   }
 
   const handleDataAddColocation = () => {
