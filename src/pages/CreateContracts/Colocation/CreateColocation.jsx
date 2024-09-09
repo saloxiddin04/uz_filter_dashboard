@@ -14,6 +14,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {clearStatesFirstStep, getMfo, getUserByTin} from "../../../redux/slices/contractCreate/FirstStepSlices";
 import moment from "moment/moment";
 import {refreshUserByTin} from "../../../redux/slices/contracts/contractsSlice";
+import {MdOutlineUTurnLeft} from "react-icons/md";
 
 const CreateColocation = () => {
   const dispatch = useDispatch();
@@ -208,7 +209,10 @@ const CreateColocation = () => {
     const {name, value} = e.target;
     let newData = [...data];
     newData[index] = {...newData[index], [name]: value};
-    newData[index].status = 3
+
+    if (code === 1 && newData[index].status === 4) {
+      newData[index].status = 3
+    }
 
     if (name === 'amount') {
       newData[index].amount = Number(value)
@@ -250,16 +254,24 @@ const CreateColocation = () => {
     let combinations = {};
 
     for (let i = 0; i < data.length; i++) {
-      let combination = `${data[i].data_center}-${data[i].mounting_type}`;
-      if (combinations[combination]) {
-        hasDuplicates = true;
-        break;
+      if (data[i].status !== 2) {
+        let combination = `${data[i].data_center}-${data[i].mounting_type}`;
+        if (combinations[combination]) {
+          hasDuplicates = true;
+          break;
+        }
+        combinations[combination] = true;
       }
-      combinations[combination] = true;
     }
 
     return hasDuplicates;
   };
+
+  const recoveryConfig = (i) => {
+    const updatedData = [...data]
+    updatedData[i].status = 3
+    setData(updatedData)
+  }
 
   const handleValidateForCalculate = () => {
     if (checkForDuplicateSelections()) {
@@ -752,75 +764,93 @@ const CreateColocation = () => {
                 {data.map((el, i) => (
                   <div key={i} className="border rounded p-3 mt-4 w-full flex flex-col gap-4">
                     <div className="w-full text-end">
-                      <button
-                        onClick={() => handleDeleteDataColocation(i)}
-                        disabled={data.length === 1}
-                      >
-                        <TrashIcon
-                          color={currentColor}
-                          className="size-6 cursor-pointer"
-                        />
-                      </button>
+                      {el?.status === 2 ? (
+                        <button
+                          onClick={() => recoveryConfig(i)}
+                          disabled={data?.length === 1}
+                          className="rotate-90"
+                        >
+                          <MdOutlineUTurnLeft
+                            color={currentColor}
+                            className="size-6 cursor-pointer"
+                          />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleDeleteDataColocation(i)}
+                          disabled={data.length === 1}
+                        >
+                          <TrashIcon
+                            color={currentColor}
+                            className="size-6 cursor-pointer"
+                          />
+                        </button>
+                      )}
                     </div>
-                    <div className={'flex flex-col'}>
-                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="tariff">Tarif</label>
-                      <select
-                        className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-                        value={el.tariff || ''}
-                        onChange={(e) => handleChangeDataColocation(e, i)}
-                        name="tariff"
-                        id="tariff"
-                      >
-                        <option value={''} disabled={el.tariff}>Tanlang</option>
-                        {dataCenterTariff && dataCenterTariff.map((item, index) => (
-                          <option value={item.id} key={index}>{item.name}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className={'flex flex-col'}>
-                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="address"
-                      >Manzil</label>
-                      <select
-                        className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-                        value={el.data_center}
-                        onChange={(e) => handleChangeDataColocation(e, i)}
-                        name="data_center"
-                        id="address"
-                      >
-                        <option value={''} disabled={el.data_center}>Tanlang</option>
-                        {dataCenterList && dataCenterList.map((item, index) => (
-                          <option value={item.id} key={index}>{item.display_name}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className={'flex flex-col'}>
-                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="mounting_type">Shartnoma
-                        obyekti</label>
-                      <select
-                        className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-                        value={el.mounting_type}
-                        onChange={(e) => handleChangeDataColocation(e, i)}
-                        name="mounting_type"
-                        id="mounting_type"
-                      >
-                        <option value="">Tanlang</option>
-                        <option value="RACK">Rack</option>
-                        <option value="UNIT">Unit</option>
-                      </select>
-                    </div>
-                    <div className={'flex flex-col'}>
-                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-                        Shartnoma obyekti soni
-                      </label>
-                      <input
-                        value={el.amount || ""}
-                        onChange={(e) => handleChangeDataColocation(e, i)}
-                        name="amount"
-                        id="amount"
-                        type="text"
-                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                      />
-                    </div>
+                    {el.status !== 2 && (
+                      <>
+                        <div className={'flex flex-col'}>
+                          <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="tariff"
+                          >Tarif</label>
+                          <select
+                            className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                            value={el.tariff || ''}
+                            onChange={(e) => handleChangeDataColocation(e, i)}
+                            name="tariff"
+                            id="tariff"
+                          >
+                            <option value={''} disabled={el.tariff}>Tanlang</option>
+                            {dataCenterTariff && dataCenterTariff.map((item, index) => (
+                              <option value={item.id} key={index}>{item.name}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className={'flex flex-col'}>
+                          <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="address"
+                          >Manzil</label>
+                          <select
+                            className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                            value={el.data_center}
+                            onChange={(e) => handleChangeDataColocation(e, i)}
+                            name="data_center"
+                            id="address"
+                          >
+                            <option value={''} disabled={el.data_center}>Tanlang</option>
+                            {dataCenterList && dataCenterList.map((item, index) => (
+                              <option value={item.id} key={index}>{item.display_name}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className={'flex flex-col'}>
+                          <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="mounting_type">Shartnoma
+                            obyekti</label>
+                          <select
+                            className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                            value={el.mounting_type}
+                            onChange={(e) => handleChangeDataColocation(e, i)}
+                            name="mounting_type"
+                            id="mounting_type"
+                          >
+                            <option value="">Tanlang</option>
+                            <option value="RACK">Rack</option>
+                            <option value="UNIT">Unit</option>
+                          </select>
+                        </div>
+                        <div className={'flex flex-col'}>
+                          <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                            Shartnoma obyekti soni
+                          </label>
+                          <input
+                            value={el.amount || ""}
+                            onChange={(e) => handleChangeDataColocation(e, i)}
+                            name="amount"
+                            id="amount"
+                            type="text"
+                            className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
                 <div className="w-full">
