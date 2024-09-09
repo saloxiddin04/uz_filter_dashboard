@@ -1303,7 +1303,7 @@ const ShowRack = () => {
                   ?
                   <Loader/>
                   :
-                  unitsData?.sort((rack1, rack2) => rack1.place_number - rack2.place_number)?.map((el) => (
+                  unitsData?.map((el) => (
                     <div className="flex items-center relative mt-2 w-full" key={el.id}>
                       <div
                         className={`w-7 h-7 rounded-full flex items-center justify-center text-lg leading-5 ${el.is_busy ? 'bg-white text-gray-800' : 'text-[#b6b6b6]'} ${el.unit_valid_action ? 'bg-red-500' : ''}`}
