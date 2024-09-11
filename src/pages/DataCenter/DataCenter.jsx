@@ -11,6 +11,8 @@ const DataCenter = () => {
   const {id} = useParams();
   const {loading, dataCenterListDetail} = useSelector(state => state.dataCenter);
 
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   useEffect(() => {
     dispatch(getDataCenterList()).then((res) => {
       if (!id) {
@@ -24,6 +26,14 @@ const DataCenter = () => {
       dispatch(getDataCenterListDetail(id))
     }
   }, [id]);
+
+  useEffect(() => {
+    if (dataCenterListDetail?.background_image) {
+      const img = new Image();
+      img.src = dataCenterListDetail.background_image;
+      img.onload = () => setImageLoaded(true);
+    }
+  }, [dataCenterListDetail]);
 
   const withSort = dataCenterListDetail?.racks?.map(rack => ({...rack}))
     .sort((rack1, rack2) => rack1.place_number - rack2.place_number);
@@ -58,6 +68,7 @@ const DataCenter = () => {
   });
 
   if (loading) return <Loader/>
+  if (!imageLoaded) return <Loader />
 
   if (dataCenterListDetail?.data_center_choice === 'data-center-1') {
     return (
@@ -209,7 +220,7 @@ const DataCenter = () => {
               backgroundRepeat: 'no-repeat'
             }}
           >
-            <div className={'flex items-center justify-evenly pb-8'}>
+            <div className={'flex items-center justify-center pb-8'}>
               <div className="capsula">
                 <div className="text-center">CAPSULA № 1</div>
                 <div className="flex items-center gap-4">
@@ -293,7 +304,7 @@ const DataCenter = () => {
                   </div>
                 </div>
               </div>
-              <div className="capsula ml-10">
+              <div className="capsula ml-32">
                 <div className="text-center">CAPSULA № 2</div>
                 <div className="flex items-center gap-4 mr-36">
                   <div className="flex flex-col">
