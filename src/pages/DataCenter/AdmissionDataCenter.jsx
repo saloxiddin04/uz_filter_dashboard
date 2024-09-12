@@ -177,7 +177,7 @@ const AdmissionDataCenter = () => {
     for (const currentEmployee of employees) {
       if (
         !contract || !contract_number || !letter_number || !letter_date || !file || !employees_count ||
-        !currentEmployee?.pin || !currentEmployee?.pport_no || !currentEmployee?.per_adr || !currentEmployee?.mid_name || !currentEmployee?.sur_name ||
+        !currentEmployee?.pport_no || !currentEmployee?.per_adr || !currentEmployee?.mid_name || !currentEmployee?.sur_name ||
         !currentEmployee?.name || currentEmployee?.admission_type === null || currentEmployee?.admission_time === null || currentEmployee.data_center.length === 0
       ) {
         return true
