@@ -833,7 +833,9 @@ const CreateExpertise = () => {
   return (
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white dark:bg-secondary-dark-bg rounded">
       <Header category="Ekspertiza" title="Shartnomalar yaratish"/>
-      {displayStep(currentStep)}
+      <div className="mt-4">
+        {displayStep(currentStep)}
+      </div>
     </div>
   );
 };

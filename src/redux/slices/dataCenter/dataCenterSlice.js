@@ -460,7 +460,11 @@ const dataCenterSlice = createSlice({
     })
     builder.addCase(getAdmissionSearch.fulfilled, (state, {payload}) => {
       state.loading = false
-      state.admissionLetter = payload
+      if (typeof payload !== "string") {
+        state.admissionLetter = payload
+      } else {
+        toast.error("Dopusk topilmadi!")
+      }
     })
     builder.addCase(getAdmissionSearch.rejected, (state, {payload}) => {
       state.loading = false

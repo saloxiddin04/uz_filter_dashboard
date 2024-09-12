@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Input, Loader, TabsRender} from "../../components";
+import {Header, Input, Loader, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {ArrowDownTrayIcon, ArrowPathIcon, EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {ArrowDownTrayIcon, ArrowPathIcon, EyeIcon, FunnelIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
   clearLetterDetail,
@@ -38,6 +38,8 @@ const AdmissionDataCenter = () => {
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
   // const [openTab, setOpenTab] = useState(2);
 
+  const [handleFilter, setFilter] = useState(false)
+
   const [contract_number, setContractNumber] = useState(null)
   const [contract, setContract] = useState([])
   const [letter_number, setLetterNumber] = useState(null)
@@ -59,7 +61,12 @@ const AdmissionDataCenter = () => {
       additional_info: ''
     }
   ])
-  
+
+  const [filterContractNumber, setFilterContractNumber] = useState(undefined)
+  const [filterLetterNumber, setFilterLetterNumber] = useState(undefined)
+  const [filterPin, setFilterPin] = useState(undefined)
+  const [filterName, setFilterName] = useState(undefined)
+
   const [drawer, setDrawer] = useState(false)
   const [id, setId] = useState(null)
   const [type, setType] = useState(null)
@@ -71,7 +78,7 @@ const AdmissionDataCenter = () => {
       dispatch(getDataCenterList())
     }
   }, [openTab]);
-  
+
   useEffect(() => {
     if (id && drawer) {
       dispatch(getAdmissionDetail(id))
@@ -133,6 +140,16 @@ const AdmissionDataCenter = () => {
     } catch (e) {
       return e
     }
+  }
+
+  const searchLetters = () => {
+    const data = {
+      pin: filterPin,
+      contract_number: filterContractNumber,
+      name: filterName,
+      letter_number: filterLetterNumber,
+    }
+    dispatch(getAdmissionSearch(data))
   }
 
   const searchUserPhysics = (index) => {
@@ -227,36 +244,141 @@ const AdmissionDataCenter = () => {
       case 0:
         return (
           <>
-            <div className="flex items-end gap-4">
-              <div className={'w-2/5'}>
-                <Input
-                  label={'Shartnoma raqami'}
-                  placeholder={'Shartnoma raqami'}
-                  type={'text'}
-                  value={contract_number || ''}
-                  onChange={(e) => setContractNumber(e.target.value.toUpperCase())}
-                />
-              </div>
-              <div className="flex items-end gap-4">
-                <button
-                  className="rounded px-4 py-1.5 mt-5 disabled:opacity-25"
-                  style={{border: `1px solid ${currentColor}`}}
-                  disabled={!contract_number}
-                  onClick={() => dispatch(getAdmissionSearch({contract_number}))}
-                >
-                  <BiSearch className="size-6" color={currentColor}/>
-                </button>
-                <button
-                  className={`px-2 py-1.5 rounded border text-center`}
-                  style={{borderColor: currentColor}}
-                  onClick={() => {
-                    dispatch(getAdmissionLetters())
-                    setContractNumber('')
-                  }}
-                >
-                  <ArrowPathIcon className="size-6" fill={currentColor}/>
-                </button>
-              </div>
+            <div className={`flex justify-between ${handleFilter ? 'items-start' : 'items-center'}`}>
+              <Header category={'Sahifa'} title={'Dopusk'}/>
+              {handleFilter && (
+                <>
+                  <div className="flex gap-4 items-center justify-center w-[90%]">
+                    <div className={'flex flex-col w-[35%]'}>
+                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                        Shartnoma raqami
+                      </label>
+                      <input
+                        value={filterContractNumber || ""}
+                        onChange={(e) => setFilterContractNumber(e.target.value.toUpperCase())}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            if (!filterContractNumber) {
+                              toast.error('Shartnoma raqamini kitiring')
+                            } else {
+                              searchLetters()
+                            }
+                          }
+                        }}
+                        name="amount"
+                        id="amount"
+                        type="text"
+                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                      />
+                    </div>
+                    <div className={'flex flex-col w-[35%]'}>
+                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                        Xat raqami
+                      </label>
+                      <input
+                        value={filterLetterNumber || ""}
+                        onChange={(e) => setFilterLetterNumber(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            if (!filterLetterNumber) {
+                              toast.error('Xat raqamini kitiring')
+                            } else {
+                              searchLetters()
+                            }
+                          }
+                        }}
+                        name="amount"
+                        id="amount"
+                        type="text"
+                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                      />
+                    </div>
+                    <div className={'flex flex-col w-[35%]'}>
+                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                        Ismi
+                      </label>
+                      <input
+                        value={filterName || ""}
+                        onChange={(e) => setFilterName(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            if (!filterName) {
+                              toast.error('Ism kitiring')
+                            } else {
+                              searchLetters()
+                            }
+                          }
+                        }}
+                        name="amount"
+                        id="amount"
+                        type="text"
+                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                      />
+                    </div>
+                    <div className={'flex flex-col w-[35%]'}>
+                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                        Pinfl
+                      </label>
+                      <input
+                        value={filterPin || ""}
+                        onChange={(e) => {
+                          const re = /^[0-9\b]+$/;
+                          if (e.target.value === '' || re.test(e.target.value)) {
+                            setFilterPin(e.target.value);
+                          }
+                        }}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            if (!filterPin) {
+                              toast.error('Pinfl kitiring')
+                            } else {
+                              searchLetters()
+                            }
+                          }
+                        }}
+                        name="amount"
+                        id="amount"
+                        type="text"
+                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                      />
+                    </div>
+                    <button
+                      className="rounded px-4 py-1 mt-5 disabled:opacity-25"
+                      style={{border: `1px solid ${currentColor}`}}
+                      onClick={searchLetters}
+                      disabled={!filterPin && !filterName && !filterLetterNumber && !filterContractNumber}
+                    >
+                      <BiSearch className="size-6" color={currentColor}/>
+                    </button>
+                    <button
+                      className={`rounded px-4 py-1 mt-5 border text-center`}
+                      style={{borderColor: currentColor}}
+                      onClick={() => {
+                        dispatch(getAdmissionLetters())
+                        setFilterContractNumber(undefined)
+                        setFilterLetterNumber(undefined)
+                        setFilterPin(undefined)
+                        setFilterName(undefined)
+                        setFilter(false)
+                      }}
+                    >
+                      <ArrowPathIcon className="size-6" fill={currentColor}/>
+                    </button>
+                  </div>
+                </>
+              )}
+              {!handleFilter && (
+                <>
+                  <button
+                    title="filter"
+                    className="rounded px-4 py-1 border text-center"
+                    onClick={() => setFilter(true)}
+                    style={{borderColor: currentColor}}
+                  >
+                    <FunnelIcon className="size-6" color={currentColor}/>
+                  </button>
+                </>
+              )}
             </div>
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
               <thead
@@ -350,7 +472,7 @@ const AdmissionDataCenter = () => {
           <>
             <div className="flex items-end gap-4">
               <div className={'w-2/5'}>
-              <Input
+                <Input
                   label={'Shartnoma raqami'}
                   placeholder={'Shartnoma raqami'}
                   type={'text'}
