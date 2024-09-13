@@ -34,7 +34,7 @@ function Code() {
         dispatch(setRefresh(res.payload.data.refresh))
         dispatch(oneIdGetUserDetail({tin_or_pin: res?.payload?.data?.tin_or_pin, token: res?.payload?.data?.access})).then(({payload}) => {
           dispatch(setUser({payload}))
-          if (payload?.role === 'mijoz' || payload === undefined) {
+          if (payload?.role === 'mijoz') {
             alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
             dispatch(logOut({access: res.payload.data.access, access_token: tok, refresh_token: res.payload.data.refresh}))
             navigate('/login')
