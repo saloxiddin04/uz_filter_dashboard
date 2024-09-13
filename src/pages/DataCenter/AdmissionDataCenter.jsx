@@ -66,6 +66,7 @@ const AdmissionDataCenter = () => {
   const [filterLetterNumber, setFilterLetterNumber] = useState(undefined)
   const [filterPin, setFilterPin] = useState(undefined)
   const [filterName, setFilterName] = useState(undefined)
+  const [pport_no, setPportNo] = useState(undefined)
 
   const [drawer, setDrawer] = useState(false)
   const [id, setId] = useState(null)
@@ -148,6 +149,7 @@ const AdmissionDataCenter = () => {
       contract_number: filterContractNumber,
       name: filterName,
       letter_number: filterLetterNumber,
+      pport_no
     }
     dispatch(getAdmissionSearch(data))
   }
@@ -317,6 +319,30 @@ const AdmissionDataCenter = () => {
                     </div>
                     <div className={'flex flex-col w-[35%]'}>
                       <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                        Pasport seriya va raqam
+                      </label>
+                      <input
+                        value={pport_no || ""}
+                        onChange={(e) => {
+                            setPportNo(e.target.value);
+                        }}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            if (!pport_no) {
+                              toast.error('Pasport kitiring')
+                            } else {
+                              searchLetters()
+                            }
+                          }
+                        }}
+                        name="amount"
+                        id="amount"
+                        type="text"
+                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                      />
+                    </div>
+                    <div className={'flex flex-col w-[35%]'}>
+                      <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
                         Pinfl
                       </label>
                       <input
@@ -346,7 +372,7 @@ const AdmissionDataCenter = () => {
                       className="rounded px-4 py-1 mt-5 disabled:opacity-25"
                       style={{border: `1px solid ${currentColor}`}}
                       onClick={searchLetters}
-                      disabled={!filterPin && !filterName && !filterLetterNumber && !filterContractNumber}
+                      disabled={!filterPin && !filterName && !filterLetterNumber && !filterContractNumber && !pport_no}
                     >
                       <BiSearch className="size-6" color={currentColor}/>
                     </button>
