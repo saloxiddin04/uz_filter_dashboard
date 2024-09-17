@@ -13,10 +13,9 @@ import {
   CreateCertification,
   DataCenter,
   Registry, CreateRegistry,
-  RegistryDetail, Xizmatlar, AdmissionDataCenter
+  RegistryDetail, Xizmatlar, AdmissionDataCenter, DataCenterDocuments
 } from './pages';
 import ShowRack from "./components/DataCenter/ShowRack";
-import Code from "./redux/slices/auth/Code";
 
 export const routes = [
   { path: '*', element: NotFound },
@@ -38,6 +37,7 @@ export const routes = [
   { path: '/data-center/:id', element: DataCenter },
   { path: 'data-center/:id/rack/:rackId', element: ShowRack },
   { path: '/data-center/data-center-admission', element: AdmissionDataCenter },
+  { path: '/data-center/data-center-documents', element: DataCenterDocuments },
 
   {path: '/shartnomalar/colocation/create', element: CreateColocation },
   {path: '/shartnomalar/vps/create', element: CreateVps },
