@@ -5,6 +5,7 @@ import {toast} from "react-toastify";
 import {BiSearch} from "react-icons/bi";
 import {ArrowPathIcon, EyeIcon, PencilIcon, PlusIcon, TrashIcon} from "@heroicons/react/16/solid";
 import moment from "moment/moment";
+import DataCenterDocumentsDrawer from "../../components/DataCenter/DataCenterDocumentsDrawer";
 
 const tabs = [
   {
@@ -33,6 +34,8 @@ const DataCenterDocuments = () => {
   const {currentColor} = useStateContext();
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
+  const [addDocumentDrawer, setAddDocumentDrawer] = useState(false)
+  
   const stepDisplay = (step) => {
     switch (step) {
       case 0:
@@ -168,6 +171,7 @@ const DataCenterDocuments = () => {
           <button
             className={`rounded px-4 py-1 mt-5 border text-center`}
             style={{backgroundColor: currentColor}}
+            onClick={() => setAddDocumentDrawer(!addDocumentDrawer)}
           >
             <PlusIcon className="size-6" fill={'#fff'}/>
           </button>
@@ -179,6 +183,8 @@ const DataCenterDocuments = () => {
       >
         {stepDisplay(openTab)}
       </div>
+      
+      {addDocumentDrawer && <DataCenterDocumentsDrawer onclose={() => setAddDocumentDrawer(!addDocumentDrawer)} />}
     </>
   );
 };
