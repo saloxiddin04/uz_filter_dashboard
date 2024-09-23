@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useSelector, useDispatch} from "react-redux";
 import {useNavigate, useParams} from 'react-router-dom'
 import {
-  calculateColocation, clearStatesColocation, createColocation,
+  calculateColocation, clearStatesColocation, createAgreementColocation, createColocation,
   getDataCenterList,
   getDataCenterTariff
 } from "../../../redux/slices/contractCreate/Colocation/ColocationSlices";
@@ -12,6 +12,8 @@ import {TrashIcon} from "@heroicons/react/16/solid";
 import {toast} from "react-toastify";
 import instance from "../../../API";
 import {getContractDetail} from "../../../redux/slices/contracts/contractsSlice";
+import {clearStatesFirstStep} from "../../../redux/slices/contractCreate/FirstStepSlices";
+import {MdOutlineUTurnLeft} from "react-icons/md";
 
 const ColocationUpload = () => {
   const dispatch = useDispatch()
@@ -24,6 +26,7 @@ const ColocationUpload = () => {
 
   const {dataCenterList, dataCenterTariff, calculate, colocationConfig, loading} = useSelector((state) => state.createColocation);
 
+  const [code, setCode] = useState(null)
   const [loader, setLoader] = useState(false)
   const [data, setData] = useState([
     {data_center: '', mounting_type: '', amount: '', status: 1, tariff: ''}
@@ -42,10 +45,50 @@ const ColocationUpload = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    dispatch(createAgreementColocation({user: contractDetail?.client?.bank_mfo ? contractDetail?.client?.tin : contractDetail?.client?.pin})).then((res) => {
+      if (res?.payload?.error_code === 3) {
+        toast.error('Bu mijozga shartnoma tuzish mumkin emas!')
+        navigate('/shartnomalar/colocation')
+        dispatch(clearStatesColocation())
+        dispatch(clearStatesFirstStep())
+      } else if (res?.payload?.error_code === 1) return setCode(1)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (code === 1) {
+      const dataObjects = colocationConfig?.colocation?.map((item) => ({
+        data_center: item?.data_center,
+        mounting_type: item?.mounting_type,
+        amount: item?.amount,
+        status: 4,
+        id: item?.id,
+        tariff: item?.tariff === undefined ? '' : item?.tariff
+      }))
+      if (colocationConfig?.colocation?.length !== 0) {
+        setData(dataObjects)
+      }
+    }
+  }, [colocationConfig, code]);
+
+  const timeoutIdColocation = useRef(null)
+  const getCalculateColocation = (data) => {
+    clearTimeout(timeoutIdColocation.current)
+    timeoutIdColocation.current = setTimeout(() => {
+      dispatch(calculateColocation({data, check: handleValidateForCalculate()}))
+    }, 200)
+  }
+
   const handleChangeDataColocation = (e, index) => {
     const {name, value} = e.target;
     let newData = [...data];
+
     newData[index] = {...newData[index], [name]: value};
+
+    if (code === 1 && newData[index].status === 4) {
+      newData[index].status = 3
+    }
 
     if (name === 'amount') {
       newData[index].amount = Number(value)
@@ -61,14 +104,19 @@ const ColocationUpload = () => {
 
     setData(newData);
     setSelectedCombinations(newSelectedCombinations);
-    // getCalculateColocation(newData)
   };
 
   const handleDeleteDataColocation = (i) => {
     const deletedData = [...data]
-    deletedData.splice(i, 1)
-    setData(deletedData)
-    getCalculateColocation(deletedData)
+    if (code === 1 && (deletedData[i].status === 3 || deletedData[i].status === 4)) {
+      deletedData[i].status = 2
+      setData(deletedData)
+      // getCalculateColocation(deletedData)
+    } else {
+      deletedData.splice(i, 1)
+      setData(deletedData)
+      // getCalculateColocation(deletedData)
+    }
   }
 
   const handleDataAddColocation = () => {
@@ -81,16 +129,24 @@ const ColocationUpload = () => {
     let combinations = {};
 
     for (let i = 0; i < data.length; i++) {
-      let combination = `${data[i].data_center}-${data[i].mounting_type}`;
-      if (combinations[combination]) {
-        hasDuplicates = true;
-        break;
+      if (data[i].status !== 2) {
+        let combination = `${data[i].data_center}-${data[i].mounting_type}`;
+        if (combinations[combination]) {
+          hasDuplicates = true;
+          break;
+        }
+        combinations[combination] = true;
       }
-      combinations[combination] = true;
     }
 
     return hasDuplicates;
   };
+
+  const recoveryConfig = (i) => {
+    const updatedData = [...data]
+    updatedData[i].status = 3
+    setData(updatedData)
+  }
 
   const handleValidateForCalculate = () => {
     if (checkForDuplicateSelections()) {
@@ -158,75 +214,93 @@ const ColocationUpload = () => {
           {data.map((el, i) => (
             <div key={i} className="border rounded p-3 mt-4 w-full flex flex-col gap-4">
               <div className="w-full text-end">
-                <button
-                  onClick={() => handleDeleteDataColocation(i)}
-                  disabled={data.length === 1}
-                >
-                  <TrashIcon
-                    color={currentColor}
-                    className="size-6 cursor-pointer"
-                  />
-                </button>
+                {el?.status === 2 ? (
+                  <button
+                    onClick={() => recoveryConfig(i)}
+                    disabled={data?.length === 1}
+                    className="rotate-90"
+                  >
+                    <MdOutlineUTurnLeft
+                      color={currentColor}
+                      className="size-6 cursor-pointer"
+                    />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleDeleteDataColocation(i)}
+                    disabled={data.length === 1}
+                  >
+                    <TrashIcon
+                      color={currentColor}
+                      className="size-6 cursor-pointer"
+                    />
+                  </button>
+                )}
               </div>
-              <div className={'flex flex-col'}>
-                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="tariff">Tarif</label>
-                <select
-                  className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-                  value={el.tariff || ''}
-                  onChange={(e) => handleChangeDataColocation(e, i)}
-                  name="tariff"
-                  id="tariff"
-                >
-                  <option value={''} disabled={el.tariff}>Tanlang</option>
-                  {dataCenterTariff && dataCenterTariff.map((item, index) => (
-                    <option value={item.id} key={index}>{item.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className={'flex flex-col'}>
-                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="address"
-                >Manzil</label>
-                <select
-                  className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-                  value={el.data_center}
-                  onChange={(e) => handleChangeDataColocation(e, i)}
-                  name="data_center"
-                  id="address"
-                >
-                  <option value={''} disabled={el.data_center}>Tanlang</option>
-                  {dataCenterList && dataCenterList.map((item, index) => (
-                    <option value={item.id} key={index}>{item.display_name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className={'flex flex-col'}>
-                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="mounting_type">Shartnoma
-                  obyekti</label>
-                <select
-                  className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-                  value={el.mounting_type}
-                  onChange={(e) => handleChangeDataColocation(e, i)}
-                  name="mounting_type"
-                  id="mounting_type"
-                >
-                  <option value="">Tanlang</option>
-                  <option value="RACK">Rack</option>
-                  <option value="UNIT">Unit</option>
-                </select>
-              </div>
-              <div className={'flex flex-col'}>
-                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-                  Shartnoma obyekti soni
-                </label>
-                <input
-                  value={el.amount || ""}
-                  onChange={(e) => handleChangeDataColocation(e, i)}
-                  name="amount"
-                  id="amount"
-                  type="text"
-                  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                />
-              </div>
+
+              {el?.status !== 2 && (
+                <>
+                  <div className={'flex flex-col'}>
+                    <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="tariff">Tarif</label>
+                    <select
+                      className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                      value={el.tariff || ''}
+                      onChange={(e) => handleChangeDataColocation(e, i)}
+                      name="tariff"
+                      id="tariff"
+                    >
+                      <option value={''} disabled={el.tariff}>Tanlang</option>
+                      {dataCenterTariff && dataCenterTariff.map((item, index) => (
+                        <option value={item.id} key={index}>{item.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className={'flex flex-col'}>
+                    <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="address"
+                    >Manzil</label>
+                    <select
+                      className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                      value={el.data_center}
+                      onChange={(e) => handleChangeDataColocation(e, i)}
+                      name="data_center"
+                      id="address"
+                    >
+                      <option value={''} disabled={el.data_center}>Tanlang</option>
+                      {dataCenterList && dataCenterList.map((item, index) => (
+                        <option value={item.id} key={index}>{item.display_name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className={'flex flex-col'}>
+                    <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="mounting_type">Shartnoma
+                      obyekti</label>
+                    <select
+                      className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                      value={el.mounting_type}
+                      onChange={(e) => handleChangeDataColocation(e, i)}
+                      name="mounting_type"
+                      id="mounting_type"
+                    >
+                      <option value="">Tanlang</option>
+                      <option value="RACK">Rack</option>
+                      <option value="UNIT">Unit</option>
+                    </select>
+                  </div>
+                  <div className={'flex flex-col'}>
+                    <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                      Shartnoma obyekti soni
+                    </label>
+                    <input
+                      value={el.amount || ""}
+                      onChange={(e) => handleChangeDataColocation(e, i)}
+                      name="amount"
+                      id="amount"
+                      type="text"
+                      className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           ))}
           <div className="w-full flex items-center justify-between">
