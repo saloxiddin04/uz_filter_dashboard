@@ -12,7 +12,7 @@ const SignatureContract = ({setOpenTab}) => {
 
   const {currentColor} = useStateContext()
 
-  const {sign, AppLoad} = HooksCommission()
+  const {sign, AppLoad, loader} = HooksCommission()
   const btnRef = useRef(null)
   const optionRef = useRef(null);
 
@@ -55,43 +55,21 @@ const SignatureContract = ({setOpenTab}) => {
     validationKey()
   }
 
-  const confirmContract = async () => {
-    const formData = new FormData()
-    formData.append('comment', selectedFile.comment)
-    formData.append('summary', selectedFile.conclusion)
-    formData.append('contract', contractDetail?.contract?.id)
-    if (formFile) {
-      formData.append('documents', formFile)
-    }
-
-    await instance.post(`${slug}/confirm-contract`, formData, {
-      headers: {'Content-Type': 'multipart/form-data', "PINORTIN": pin_or_tin}
-    }).then(() => {
-      setOpenTab(2)
-    }).catch((e) => toast.error('Xatolik'))
-  }
-
   const confirm = async () => {
     const formData = new FormData()
     formData.append('comment', selectedFile.comment)
     formData.append('summary', selectedFile.conclusion)
     formData.append('contract', contractDetail?.contract?.id)
+    formData.append('action_type', 2)
     if (formFile) {
       formData.append('documents', formFile)
-    }
-
-    const body = {
-      comment: selectedFile.comment,
-      summary: selectedFile.conclusion,
-      documents: formFile,
-      contract: contractDetail?.contract?.id,
     }
 
     sign(
       contractDetail?.contract?.base64file,
       slug,
       contractDetail?.contract?.id,
-      confirmContract
+      formData
     )
   }
 
@@ -100,11 +78,12 @@ const SignatureContract = ({setOpenTab}) => {
     formData.append('comment', selectedFile.comment)
     formData.append('summary', selectedFile.conclusion)
     formData.append('contract', contractDetail?.contract?.id)
+    formData.append('action_type', 0)
     if (formFile) {
       formData.append('documents', formFile)
     }
 
-    await instance.post(`${slug}/confirm-contract`, formData, {
+    await instance.post(`${slug}/confirm-save-pkcs`, formData, {
       headers: {'Content-Type': 'multipart/form-data', "PINORTIN": pin_or_tin}
     }).then(() => {
       setOpenTab(2)
@@ -202,14 +181,14 @@ const SignatureContract = ({setOpenTab}) => {
               />
               <div>
                 <button
-                  className={'px-4 py-2 rounded mx-auto text-white'}
+                  className={'px-4 py-2 rounded mx-auto text-white disabled:opacity-20'}
                   style={{
                     backgroundColor: currentColor,
                   }}
                   onClick={confirm}
-                  disabled={selectedFile.conclusion === 0 || selectedFile.conclusion !== '1'}
+                  disabled={selectedFile.conclusion === 0 || selectedFile.conclusion !== '1' || loader}
                 >
-                  Imzolash
+                  {loader ? 'Imzolanmoqda...' : 'Imzolash'}
                 </button>
               </div>
             </div>

@@ -25,6 +25,8 @@ export function HooksCommission() {
   const [err_msg, setErrMsg] = useState('');
   const [error, setError] = useState(false);
 
+  const [loader, setLoader] = useState(false)
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {pathname} = useLocation();
@@ -179,7 +181,7 @@ export function HooksCommission() {
     }
   };
 
-  const sign = (data_b4, service, contract_id, confirmContract) => {
+  const sign = (data_b4, service, contract_id, formData) => {
     const itm = document.getElementById("S@loxiddin").value;
     if (itm) {
       let id = document.getElementById(itm);
@@ -197,30 +199,29 @@ export function HooksCommission() {
             id,
             data_b4,
             null,
-            function (pkcs7) {
+            async function (pkcs7) {
               setPkcs(pkcs7)
               localStorage.setItem('pkcs7', JSON.stringify(pkcs7))
-              dispatch(
-                savePkcs(
-                  {
-                    pkcs7: pkcs7,
-                    contract_id: contract_id,
-                    service,
-                  },
-                )
-              ).then((res) => {
-                if (!res?.payload?.success) {
-                  toast.error(res?.payload?.err_msg)
-                } else {
-                  confirmContract().then(() => {
+              formData.append('pkcs7', pkcs7)
+              try {
+                setLoader(true)
+                await instance.post(`${service}/confirm-save-pkcs`, formData, {headers: { "Content-Type": "multipart/form-data" }}).then((res) => {
+                  if (!res?.data?.success) {
+                    setLoader(true)
+                    toast.error(res?.data?.err_msg)
+                  } else {
+                    setLoader(false)
                     dispatch(getContractDetail({
                       id: contract_id,
                       slug: service,
                     }))
-                  })
-                  toast.success('Muvoffaqiyatli xulosa berildi')
-                }
-              });
+                    toast.success('Muvoffaqiyatli xulosa berildi')
+                  }
+                });
+              } catch (e) {
+                setLoader(false)
+                toast.error(e?.response?.data?.err_msg)
+              }
             },
             function (e, r) {
               if (r) {
@@ -275,7 +276,10 @@ export function HooksCommission() {
           if (!response?.data?.success) {
             toast.error(response?.data?.err_msg)
           } else {
-            dispatch(oneIdGetUserDetail({tin_or_pin: response?.data?.tin_or_pin, token: response?.data?.access})).then((res) => {
+            dispatch(oneIdGetUserDetail({
+              tin_or_pin: response?.data?.tin_or_pin,
+              token: response?.data?.access
+            })).then((res) => {
               if (res?.payload?.userdata?.role?.name === 'mijoz') {
                 alert('Muvaffaqiyatli avtorizatsiyadan otdingiz. Administrator tomonidan tizimga kirish uchun ruxsat berilishini kutishingizni soraymiz.')
                 dispatch(logOut({access, access_token, refresh_token}))
@@ -366,6 +370,7 @@ export function HooksCommission() {
     err_msg,
     error,
     setError,
-    setErrMsg
+    setErrMsg,
+    loader
   };
 }
