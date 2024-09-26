@@ -6,6 +6,7 @@ import {BiSearch} from "react-icons/bi";
 import {ArrowPathIcon, EyeIcon, PencilIcon, PlusIcon, TrashIcon} from "@heroicons/react/16/solid";
 import moment from "moment/moment";
 import DataCenterDocumentsDrawer from "../../components/DataCenter/DataCenterDocumentsDrawer";
+import {useNavigate} from "react-router-dom";
 
 const tabs = [
   {
@@ -43,6 +44,7 @@ const akt = [
 ]
 
 const DataCenterDocuments = () => {
+  const navigate = useNavigate()
   const {currentColor} = useStateContext();
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
@@ -107,6 +109,7 @@ const DataCenterDocuments = () => {
                       <PencilIcon
                         className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
                         onClick={() => {
+                          navigate(`faza/${item?.id}`)
                           // setId(item?.id)
                           // setDrawer(true)
                           // setType('put')
@@ -182,6 +185,7 @@ const DataCenterDocuments = () => {
                       <PencilIcon
                         className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
                         onClick={() => {
+                          navigate(`akt/${item?.id}`)
                           // setId(item?.id)
                           // setDrawer(true)
                           // setType('put')
