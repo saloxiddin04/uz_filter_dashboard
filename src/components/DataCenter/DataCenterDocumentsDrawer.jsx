@@ -2,9 +2,88 @@ import React from 'react';
 import {Input} from "../index";
 import {useStateContext} from "../../contexts/ContextProvider";
 
-const DataCenterDocumentsDrawer = ({onclose}) => {
+const DataCenterDocumentsDrawer = ({onclose, step}) => {
 	const {currentColor} = useStateContext();
 	
+	const displayStep = () => {
+		switch (step) {
+			case 0:
+				return (
+					<>
+						<div className="w-full my-4 flex flex-wrap gap-4">
+							<div className="w-full">
+								<Input label={'Nomlanishi'}/>
+							</div>
+							<div className="w-full">
+								<Input label={'Shartnoma sanasi'}/>
+							</div>
+							
+							<div className="w-full flex items-center justify-between">
+								<button className="py-2 px-1 rounded"
+								        style={{border: `1px solid ${currentColor}`, color: currentColor}}>Saqlash
+								</button>
+								<button
+									className="py-2 px-1 rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white duration-500">Bekor
+									qilish
+								</button>
+							</div>
+						</div>
+					</>
+				)
+			case 1:
+				return (
+					<>
+						<div className="w-full my-4 flex flex-wrap gap-4">
+							<div className="w-full flex items-end gap-2">
+								<div className="w-3/4">
+									<Input label={'Shartnoma raqami'}/>
+								</div>
+								<button
+									className="w-1/4 px-1 py-2 rounded text-white"
+									style={{
+										backgroundColor: currentColor
+									}}
+								>
+									Izlash
+								</button>
+							</div>
+							<div className="w-full flex flex-wrap justify-between gap-2">
+								<div className={'w-[49%]'}>
+									<Input label={'Mijoz'}/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input label={'STIR'}/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input label={'Rack soni'}/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input label={"Rack qoldig'i"}/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input label={'Akt raqami'}/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input label={"Akt sanasi"}/>
+								</div>
+							</div>
+							
+							<div className="w-full flex items-center justify-between">
+								<button className="py-2 px-1 rounded"
+								        style={{border: `1px solid ${currentColor}`, color: currentColor}}>Saqlash
+								</button>
+								<button
+									className="py-2 px-1 rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white duration-500">Bekor
+									qilish
+								</button>
+							</div>
+						</div>
+					</>
+				)
+			default:
+				return null
+		}
+	}
 	return (
 		<div
 			className="fixed top-0 right-0 w-full h-screen z-50 bg-[rgba(0,0,0,0.5)]"
@@ -21,19 +100,7 @@ const DataCenterDocumentsDrawer = ({onclose}) => {
 					</button>
 				</div>
 				
-				<div className="w-full my-4 flex flex-wrap gap-4">
-					<div className="w-full">
-						<Input label={'Nomlanishi'} />
-					</div>
-					<div className="w-full">
-						<Input label={'Shartnoma sanasi'} />
-					</div>
-					
-					<div className="w-full flex items-center justify-between">
-						<button className="py-2 px-1 rounded" style={{border: `1px solid ${currentColor}`, color: currentColor}}>Saqlash</button>
-						<button className="py-2 px-1 rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white duration-500">Bekor qilish</button>
-					</div>
-				</div>
+				{displayStep()}
 			</div>
 		
 		</div>
