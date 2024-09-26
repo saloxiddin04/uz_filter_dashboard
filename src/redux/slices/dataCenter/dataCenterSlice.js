@@ -277,6 +277,18 @@ export const getAdmissionDetail = createAsyncThunk(
   }
 )
 
+export const createAktAndFaza = createAsyncThunk(
+  "dataCenter/createAktAndFaza",
+  async (data) => {
+    try {
+      const response = await  instance.post('/colocation/documets/list-create', data)
+      return response.data
+    } catch (e) {
+      return e
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -486,6 +498,16 @@ const dataCenterSlice = createSlice({
       state.admissionLetterDetail = null
     })
 
+    // createAktAndFaza
+    builder.addCase(createAktAndFaza.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(createAktAndFaza.fulfilled, (state) => {
+      state.loading = false
+    })
+    builder.addCase(createAktAndFaza.rejected, (state) => {
+      state.loading = false
+    })
   }
 })
 
