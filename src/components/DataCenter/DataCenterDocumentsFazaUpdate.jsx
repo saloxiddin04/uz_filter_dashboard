@@ -169,6 +169,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 										<option value="0">Tanlang</option>
 										<option value="1">Cloud</option>
 										<option value="2">Bare metal</option>
+										<option value="2">Infratuzilma</option>
 									</select>
 								</div>
 								

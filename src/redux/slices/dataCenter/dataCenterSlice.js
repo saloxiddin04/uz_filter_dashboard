@@ -17,7 +17,8 @@ const initialState = {
   updateRack: null,
   admissionLetter: null,
   admissionEmployee: null,
-  admissionLetterDetail: null
+  admissionLetterDetail: null,
+  aktAndFaza: null
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -289,6 +290,18 @@ export const createAktAndFaza = createAsyncThunk(
   }
 )
 
+export const getListAktAndFaza = createAsyncThunk(
+  "dataCenter/getListAktAndFaza",
+  async (params) => {
+    try {
+      const response = await instance.get('/colocation/documets/list-create', {params})
+      return response.data
+    } catch (e) {
+      return e
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -507,6 +520,19 @@ const dataCenterSlice = createSlice({
     })
     builder.addCase(createAktAndFaza.rejected, (state) => {
       state.loading = false
+    })
+    
+    // getListAktAndFaza
+    builder.addCase(getListAktAndFaza.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getListAktAndFaza.fulfilled, (state, {payload}) => {
+      state.aktAndFaza = payload
+      state.loading = false
+    })
+    builder.addCase(getListAktAndFaza.rejected, (state) => {
+      state.loading = false
+      state.aktAndFaza = null
     })
   }
 })
