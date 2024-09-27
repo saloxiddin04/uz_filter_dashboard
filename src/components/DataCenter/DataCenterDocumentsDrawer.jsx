@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Input, Loader} from "../index";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
-import {createAktAndFaza} from "../../redux/slices/dataCenter/dataCenterSlice";
+import {createAktAndFaza, getRackContractInfo} from "../../redux/slices/dataCenter/dataCenterSlice";
 import {toast} from "react-toastify";
 
 const DataCenterDocumentsDrawer = ({onclose, step}) => {
@@ -26,7 +26,30 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 				setDocumentNumber('')
 				setDocumentDate('')
 			} else {
-				toast.error('Xatolik')
+				return toast.error('Xatolik')
+			}
+		})
+	}
+	
+	// akt state
+	const [contract_number, setContractNumber] = useState('')
+	const [akt_document_number, setAktDocumentNumber] = useState('')
+	const [akt_document_date, setAktDocumentDate] = useState('')
+	
+	const createAkt = () => {
+		dispatch(createAktAndFaza({
+			document_date: new Date(akt_document_date),
+			document_number: akt_document_number,
+			type_of_document: 2
+		})).then((res) => {
+			if (res?.payload?.id) {
+				toast.success("Muvofaqqiyatli yaratildi!")
+				onclose()
+				setContractNumber('')
+				setAktDocumentNumber('')
+				setAktDocumentDate('')
+			} else {
+				return toast.error('Xatolik')
 			}
 		})
 	}
@@ -77,13 +100,19 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 						<div className="w-full my-4 flex flex-wrap gap-4">
 							<div className="w-full flex items-end gap-2">
 								<div className="w-3/4">
-									<Input label={'Shartnoma raqami'}/>
+									<Input
+										value={contract_number}
+										onChange={(e) => setContractNumber(e.target.value?.toUpperCase())}
+										label={'Shartnoma raqami'}
+									/>
 								</div>
 								<button
-									className="w-1/4 px-1 py-2 rounded text-white"
+									className="w-1/4 px-1 py-2 rounded text-white disabled:opacity-25"
 									style={{
 										backgroundColor: currentColor
 									}}
+									disabled={!contract_number}
+									onClick={() => dispatch(getRackContractInfo({contract_number}))}
 								>
 									Izlash
 								</button>
@@ -102,10 +131,19 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 									<Input label={"Rack qoldig'i"}/>
 								</div>
 								<div className={'w-[49%]'}>
-									<Input label={'Akt raqami'}/>
+									<Input
+										value={akt_document_number}
+										onChange={(e) => setAktDocumentNumber(e.target.value)}
+										label={'Akt raqami'}
+									/>
 								</div>
 								<div className={'w-[49%]'}>
-									<Input label={"Akt sanasi"}/>
+									<Input
+										value={akt_document_date}
+										onChange={(e) => setAktDocumentDate(e.target.value)}
+										type={'date'}
+										label={"Akt sanasi"}
+									/>
 								</div>
 							</div>
 							
