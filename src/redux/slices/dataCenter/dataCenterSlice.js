@@ -18,7 +18,8 @@ const initialState = {
   admissionLetter: null,
   admissionEmployee: null,
   admissionLetterDetail: null,
-  aktAndFaza: null
+  aktAndFaza: null,
+  contractData: null
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -302,6 +303,18 @@ export const getListAktAndFaza = createAsyncThunk(
   }
 )
 
+export const getContractData = createAsyncThunk(
+  "dataCenter/getContractData",
+  async (params) => {
+    try {
+      const response = await instance.get('/colocation/get-contract', {params})
+      return response.data
+    } catch (e) {
+      return e
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -310,6 +323,9 @@ const dataCenterSlice = createSlice({
     clearLetterDetail: (state) => {
       state.admissionLetterDetail = null
       state.dataCenterList = null
+    },
+    clearContractData: (state) => {
+      state.contractData = null
     }
   },
   extraReducers: (builder) => {
@@ -534,8 +550,21 @@ const dataCenterSlice = createSlice({
       state.loading = false
       state.aktAndFaza = null
     })
+    
+    // getContractData
+    builder.addCase(getContractData.pending, (state) => {
+      // state.loading  = true
+    })
+    builder.addCase(getContractData.fulfilled, (state, {payload}) => {
+      state.contractData = payload
+      state.loading = false
+    })
+    builder.addCase(getContractData.rejected, (state) => {
+      state.loading = false
+      state.contractData = null
+    })
   }
 })
 
-export const {clearDataCenter, clearLetterDetail} = dataCenterSlice.actions
+export const {clearDataCenter, clearLetterDetail, clearContractData} = dataCenterSlice.actions
 export default dataCenterSlice.reducer;

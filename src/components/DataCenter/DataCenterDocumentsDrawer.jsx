@@ -2,13 +2,18 @@ import React, {useState} from 'react';
 import {Input, Loader} from "../index";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
-import {createAktAndFaza, getRackContractInfo} from "../../redux/slices/dataCenter/dataCenterSlice";
+import {
+	clearContractData,
+	createAktAndFaza,
+	getContractData,
+	getRackContractInfo
+} from "../../redux/slices/dataCenter/dataCenterSlice";
 import {toast} from "react-toastify";
 
 const DataCenterDocumentsDrawer = ({onclose, step}) => {
 	const {currentColor} = useStateContext();
 	const dispatch = useDispatch()
-	const {loading} = useSelector((state) => state.dataCenter)
+	const {loading, contractData} = useSelector((state) => state.dataCenter)
 	
 	// faza state
 	const [document_number, setDocumentNumber] = useState('')
@@ -40,6 +45,7 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 		dispatch(createAktAndFaza({
 			document_date: new Date(akt_document_date),
 			document_number: akt_document_number,
+			contract: contractData?.data?.id,
 			type_of_document: 2
 		})).then((res) => {
 			if (res?.payload?.id) {
@@ -48,10 +54,16 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 				setContractNumber('')
 				setAktDocumentNumber('')
 				setAktDocumentDate('')
+				dispatch(clearContractData())
 			} else {
 				return toast.error('Xatolik')
 			}
 		})
+	}
+	
+	const handleValidateAkt = () => {
+		if (!contract_number || !contractData?.data?.id || !akt_document_number || !akt_document_date) return true
+		else return false
 	}
 	
 	const displayStep = () => {
@@ -112,23 +124,53 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 										backgroundColor: currentColor
 									}}
 									disabled={!contract_number}
-									onClick={() => dispatch(getRackContractInfo({contract_number}))}
+									onClick={() => dispatch(getContractData({contract_number}))}
 								>
 									Izlash
 								</button>
 							</div>
 							<div className="w-full flex flex-wrap justify-between gap-2">
 								<div className={'w-[49%]'}>
-									<Input label={'Mijoz'}/>
+									<Input
+										value={contractData?.data?.client?.full_name || ''}
+										label={'Mijoz'}
+										disabled={true}
+									/>
 								</div>
 								<div className={'w-[49%]'}>
-									<Input label={'STIR'}/>
+									<Input
+										value={contractData?.data?.client?.pin || contractData?.data?.client?.tin || ''}
+										label={'STIR'}
+										disabled={true}
+									/>
 								</div>
 								<div className={'w-[49%]'}>
-									<Input label={'Rack soni'}/>
+									<Input
+										label={'Rack soni'}
+										value={contractData?.data?.rack_count || ''}
+										disabled={true}
+									/>
 								</div>
 								<div className={'w-[49%]'}>
-									<Input label={"Rack qoldig'i"}/>
+									<Input
+										label={"Rack qoldig'i"}
+										value={contractData?.data?.rack_quota || ''}
+										disabled={true}
+									/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input
+										label={'Unit soni'}
+										value={contractData?.data?.unit_count || ''}
+										disabled={true}
+									/>
+								</div>
+								<div className={'w-[49%]'}>
+									<Input
+										label={"Unit qoldig'i"}
+										value={contractData?.data?.unit_quota || ''}
+										disabled={true}
+									/>
 								</div>
 								<div className={'w-[49%]'}>
 									<Input
@@ -148,12 +190,17 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 							</div>
 							
 							<div className="w-full flex items-center justify-between">
-								<button className="py-2 px-1 rounded"
-								        style={{border: `1px solid ${currentColor}`, color: currentColor}}>Saqlash
-								</button>
 								<button
 									className="py-2 px-1 rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white duration-500">Bekor
 									qilish
+								</button>
+								<button
+									className="py-2 px-1 rounded disabled:opacity-25"
+									style={{border: `1px solid ${currentColor}`, color: currentColor}}
+									disabled={handleValidateAkt()}
+									onClick={createAkt}
+								>
+									Saqlash
 								</button>
 							</div>
 						</div>
@@ -164,7 +211,7 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 		}
 	}
 	
-	if (loading) return <Loader />
+	// if (loading) return <Loader />
 	
 	return (
 		<div

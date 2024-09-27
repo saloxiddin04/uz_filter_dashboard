@@ -140,17 +140,17 @@ const DataCenterDocuments = () => {
 							>
 							<tr>
 								<th scope="col" className="px-3 py-3"></th>
-								<th scope="col" className="px-4 py-3">Nomlanishi</th>
 								<th scope="col" className="px-6 py-3">Xujjat raqami</th>
 								<th scope="col" className="px-8 py-3">Xujjat sanasi</th>
 								<th scope="col" className="px-8 py-3">Infratuzilma qurilmalar soni</th>
 								<th scope="col" className="px-6 py-3">Cloud qurilmalar soni</th>
+								<th scope="col" className="px-6 py-3">Bare metal qurilmalar soni</th>
 								<th scope="col" className="px-6 py-3">Xolati</th>
 								<th scope="col" className="px-6 py-3">Boshqarish</th>
 							</tr>
 							</thead>
 							<tbody>
-							{akt && akt?.map((item, index) => (
+							{aktAndFaza && aktAndFaza?.map((item, index) => (
 								<tr
 									className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
 									key={item?.id}
@@ -159,20 +159,22 @@ const DataCenterDocuments = () => {
 										{index + 1}
 									</td>
 									<td className={'px-4 py-2'}>
-										{item?.name}
+										{item?.document_number}
 									</td>
 									<td className={'px-4 py-2'}>
-										{item?.code}
-									</td>
-									<td className={'px-4 py-2'}>
-										{item?.date}
+										{moment(item?.document_date).format('DD-MM-YYYY')}
 									</td>
 									<td className={'px-4 py-2 text-center'}>
-										{item?.device_count}
+										0
+										{/*{item?.date}*/}
 									</td>
 									<td className={'px-4 py-2 text-center'}>
-										{/*{moment(item?.letter_date).format('DD-MM-YYYY')}*/}
-										{item?.cloud_count}
+										0
+										{/*{item?.device_count}*/}
+									</td>
+									<td className={'px-4 py-2 text-center'}>
+										0
+										{/*{item?.cloud_count}*/}
 									</td>
 									<td className={'px-4 py-2'}>
 										{item?.status}
