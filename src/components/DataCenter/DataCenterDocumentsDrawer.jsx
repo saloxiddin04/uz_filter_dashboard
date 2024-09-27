@@ -62,15 +62,15 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 						<div className="w-full my-4 flex flex-wrap gap-4">
 							<div className="w-full">
 								<Input
-									label={'Nomlanishi'}
+									label={'Xujjat raqami'}
 									value={document_number}
-									onChange={(e) => setDocumentNumber(e.target.value)}
+									onChange={(e) => setDocumentNumber(e.target.value?.toUpperCase())}
 									type={'text'}
 								/>
 							</div>
 							<div className="w-full">
 								<Input
-									label={'Shartnoma sanasi'}
+									label={'Xujjat sanasi'}
 									value={document_date || ''}
 									onChange={(e) => setDocumentDate(e.target.value)}
 									type={'date'}
