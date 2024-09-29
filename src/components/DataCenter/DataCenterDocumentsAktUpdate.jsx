@@ -14,11 +14,11 @@ const DataCenterDocumentsAktUpdate = () => {
 	
 	const [devices, setDevices] = useState([
 		{
-			type: '',
-			device_publisher: '',
-			device_class: '',
-			model: '',
-			serial_number: '',
+			device: "",
+			device_publisher: "",
+			device_model: "",
+			device_number: "",
+			device_type: "",
 			serial_location: ''
 		}
 	])
@@ -29,11 +29,11 @@ const DataCenterDocumentsAktUpdate = () => {
 	
 	const handleAdd = () => {
 		const value = [...devices, {
-			type: '',
-			device_publisher: '',
-			device_class: '',
-			model: '',
-			serial_number: '',
+			device: "",
+			device_publisher: "",
+			device_model: "",
+			device_number: "",
+			device_type: "",
 			serial_location: ''
 		}]
 		setDevices(value)
@@ -142,14 +142,14 @@ const DataCenterDocumentsAktUpdate = () => {
 								</div>
 								<div className="w-full flex items-center justify-between gap-4 flex-wrap">
 									<div className={'flex flex-col w-[30%]'}>
-										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="type">Qurilma
+										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device">Qurilma
 											turi</label>
 										<select
 											className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-											value={item?.type}
+											value={item?.device}
 											onChange={(e) => handleChange(e, index)}
-											name="type"
-											id="type"
+											name="device"
+											id="device"
 										>
 											<option value="0">Tanlang</option>
 											{listProvider && listProvider?.device?.map((item) => (
@@ -158,15 +158,15 @@ const DataCenterDocumentsAktUpdate = () => {
 										</select>
 									</div>
 									<div className={'flex flex-col w-[30%]'}>
-										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="publisher">Qurilma
+										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_publisher">Qurilma
 											ishlab
 											chiqaruvchisi</label>
 										<select
 											className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
 											value={item?.device_publisher}
 											onChange={(e) => handleChange(e, index)}
-											name="publisher"
-											id="publisher"
+											name="device_publisher"
+											id="device_publisher"
 										>
 											<option value="0">Tanlang</option>
 											{listProvider && listProvider?.device_publisher?.map((item) => (
@@ -175,14 +175,14 @@ const DataCenterDocumentsAktUpdate = () => {
 										</select>
 									</div>
 									<div className={'flex flex-col w-[30%]'}>
-										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_class">Qurilma
+										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_type">Qurilma
 											klassi</label>
 										<select
 											className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-											value={item?.device_class}
+											value={item?.device_type}
 											onChange={(e) => handleChange(e, index)}
-											name="device_class"
-											id="device_class"
+											name="device_type"
+											id="device_type"
 										>
 											<option value="0">Tanlang</option>
 											<option value="1">Cloud</option>
@@ -192,27 +192,27 @@ const DataCenterDocumentsAktUpdate = () => {
 									</div>
 									
 									<div className={'flex flex-col w-[30%]'}>
-										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="model">
+										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_model">
 											Qurilma modeli
 										</label>
 										<input
-											value={item?.model}
+											value={item?.device_model}
 											onChange={(e) => handleChange(e, index)}
-											name='model'
-											id="model"
+											name='device_model'
+											id="device_model"
 											type="text"
 											className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 										/>
 									</div>
 									<div className={'flex flex-col w-[30%]'}>
-										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="serial_number">
+										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_number">
 											Qurilma seriya raqami
 										</label>
 										<input
-											value={item?.serial_number}
+											value={item?.device_number}
 											onChange={(e) => handleChange(e, index)}
-											name='serial_number'
-											id="serial_number"
+											name='device_number'
+											id="device_number"
 											type="text"
 											className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 										/>
