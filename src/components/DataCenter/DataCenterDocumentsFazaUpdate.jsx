@@ -2,15 +2,16 @@ import React, {useEffect, useState} from 'react';
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
-import {getListProvider} from "../../redux/slices/dataCenter/dataCenterSlice";
+import {createDeviceForAktAndFaza, getListProvider} from "../../redux/slices/dataCenter/dataCenterSlice";
 import instance from "../../API";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 
 const DataCenterDocumentsFazaUpdate = () => {
 	const {currentColor} = useStateContext();
 	const dispatch = useDispatch()
 	const {id} = useParams()
+	const navigate = useNavigate()
 	
 	const {listProvider, loading} = useSelector((state) => state.dataCenter)
 	
@@ -65,13 +66,6 @@ const DataCenterDocumentsFazaUpdate = () => {
 				[name]: e.target.files[0]
 			}
 			setFiles(updateFiles)
-			uploadFile(i, {name: updateFiles[i]?.name, file: updateFiles[i]?.file}).then((res) => {
-				if (res?.id) {
-					updateFiles[i].uploaded = true
-					setFiles(updateFiles)
-					toast.success('Muvufaqqiyatli yuklandi')
-				}
-			})
 		} else {
 			updateFiles[i] = {
 				...updateFiles[i],
@@ -81,12 +75,23 @@ const DataCenterDocumentsFazaUpdate = () => {
 		}
 	}
 	
-	const uploadFile = async (i, data) => {
+	const uploadFile = async (i) => {
 		try {
-			const response = await instance.post(`/colocation/documets/list-create/files/${id}`, data, {
+			const response = await instance.post(`/colocation/documets/list-create/files/${id}`, {
+				name: files[i].name,
+				file: files[i].file
+			}, {
 				headers: {
-				'Content-type': 'multipart/form-data'
-			}})
+					'Content-type': 'multipart/form-data'
+				}
+			})
+			if (response.data?.id) {
+				const updateFiles = [...files]
+				updateFiles[i].uploaded = true
+				setFiles(updateFiles)
+				toast.success('Muvufaqqiyatli yuklandi')
+				handleAddFiles()
+			}
 			return response.data
 		} catch (e) {
 			toast.error('Xatolik')
@@ -99,20 +104,38 @@ const DataCenterDocumentsFazaUpdate = () => {
 		data.splice(i, 1)
 		setFiles(data)
 	}
+	
 	const handleChange = (e, i) => {
 		const {name, value} = e.target;
 		const updateDevice = [...devices]
-		updateDevice[i] = {
-			...updateDevice[i],
-			[name]: value
+		if (name === 'device_type') {
+			updateDevice[i] = {
+				...updateDevice[i],
+				[name]: Number(value)
+			}
+			setDevices(updateDevice)
+		} else {
+			updateDevice[i] = {
+				...updateDevice[i],
+				[name]: value
+			}
+			setDevices(updateDevice)
 		}
-		setDevices(updateDevice)
 	}
 	
 	const handleDelete = (i) => {
 		const value = [...devices]
 		value.splice(i, 1)
 		setDevices(value)
+	}
+	
+	const validateDevices = () => {
+		for (const item of devices) {
+			if (!item?.device || !item?.device_publisher || !item?.device_number || !item?.device_model || !item?.device_type) {
+				return true
+			}
+		}
+		return false
 	}
 	
 	return (
@@ -192,6 +215,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 								<div className={'flex flex-col w-[49%]'}>
 									<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="name">Hujjat nomi</label>
 									<input
+										style={{opacity: item.uploaded ? 0.5 : 1}}
 										disabled={item?.uploaded}
 										value={item?.name}
 										onChange={(e) => changeFiles(e, index)}
@@ -201,16 +225,28 @@ const DataCenterDocumentsFazaUpdate = () => {
 										className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1 disabled:opacity-25"
 									/>
 								</div>
-								<div className={'flex flex-col w-[49%]'}>
-									<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">Fayl</label>
-									<input
-										disabled={!item?.name || item?.uploaded}
-										onChange={(e) => changeFiles(e, index)}
-										name="file"
-										id="file"
-										type="file"
-										className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 disabled:opacity-25 border mb-1"
-									/>
+								<div className={'flex w-[49%] items-end justify-between'}>
+									<div className="w-[85%] flex flex-col">
+										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">Fayl</label>
+										<input
+											style={{opacity: item.uploaded ? 0.5 : 1}}
+											disabled={item?.uploaded}
+											onChange={(e) => changeFiles(e, index)}
+											name="file"
+											id="file"
+											type="file"
+											className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 disabled:opacity-25 border mb-1"
+										/>
+									</div>
+									<button
+										className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+										style={{backgroundColor: currentColor}}
+										disabled={item?.uploaded || !item?.name || !item?.file}
+										// disabled={handleValidateSecond()}
+										onClick={() => uploadFile(index)}
+									>
+										Saqlash
+									</button>
 								</div>
 							</div>
 						</div>
@@ -228,7 +264,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 					</button>
 				</div>
 				
-				<div className="w-full flex flex-wrap gap-4 my-2">
+				<div className="w-full flex flex-wrap gap-4 my-2 border rounded p-2">
 					{devices && devices?.map((item, index) => (
 						<div key={index} className="border-dashed border p-2 w-full flex flex-col gap-4">
 							<div className="w-full text-end">
@@ -287,9 +323,9 @@ const DataCenterDocumentsFazaUpdate = () => {
 										id="device_type"
 									>
 										<option value="0">Tanlang</option>
-										<option value="1">Cloud</option>
-										<option value="2">Bare metal</option>
-										<option value="2">Infratuzilma</option>
+										<option value={1}>Cloud</option>
+										<option value={2}>Bare metal</option>
+										<option value={3}>Infratuzilma</option>
 									</select>
 								</div>
 								
@@ -300,7 +336,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 									<input
 										value={item?.device_model}
 										onChange={(e) => handleChange(e, index)}
-										name='device_model'
+										name="device_model"
 										id="device_model"
 										type="text"
 										className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
@@ -313,7 +349,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 									<input
 										value={item?.device_number}
 										onChange={(e) => handleChange(e, index)}
-										name='device_number'
+										name="device_number"
 										id="device_number"
 										type="text"
 										className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
@@ -327,7 +363,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 									<input
 										value={item?.serial_location}
 										onChange={(e) => handleChange(e, index)}
-										name='serial_location'
+										name="serial_location"
 										id="serial_location"
 										type="text"
 										className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
@@ -336,16 +372,45 @@ const DataCenterDocumentsFazaUpdate = () => {
 							</div>
 						</div>
 					))}
-				</div>
-				<div className="w-full py-2 text-center">
-					<button
-						className={`px-4 py-2 rounded text-white`}
-						style={{backgroundColor: currentColor}}
-						// disabled={handleValidateSecond()}
-						onClick={() => handleAdd()}
-					>
-						Qo'shish
-					</button>
+					
+					<div className="w-full py-2 text-center">
+						<button
+							className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+							style={{backgroundColor: currentColor}}
+							disabled={validateDevices()}
+							onClick={() => handleAdd()}
+						>
+							Qo'shish
+						</button>
+					</div>
+					
+					<div className="w-full py-2 flex justify-between text-end">
+						<button
+							className={`px-4 py-2 rounded border text-white`}
+							style={{color: currentColor, borderColor: currentColor}}
+							// disabled={handleValidateSecond()}
+							onClick={() => navigate(-1)}
+						>
+							Bekor qilish
+						</button>
+						<button
+							className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+							style={{backgroundColor: currentColor}}
+							disabled={validateDevices()}
+							onClick={() =>
+									dispatch(createDeviceForAktAndFaza({
+									id,
+									data: devices
+								})).then((res) => {
+									if(res?.meta?.requestStatus){
+										toast.success("Muvofaqqiyatli yaratildi")
+									}
+								})
+							}
+						>
+							Saqlash
+						</button>
+					</div>
 				</div>
 			</div>
 		</>

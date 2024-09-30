@@ -315,6 +315,18 @@ export const getContractData = createAsyncThunk(
   }
 )
 
+export const createDeviceForAktAndFaza = createAsyncThunk(
+  "dataCenter/createDeviceForAktAndFaza",
+  async (data) => {
+    try {
+      const response = await instance.post(`/colocation/documets/list-create/devices/${data?.id}`, data?.data)
+      return response.data
+    } catch (e) {
+      return e
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -563,6 +575,11 @@ const dataCenterSlice = createSlice({
       state.loading = false
       state.contractData = null
     })
+    
+    // createDeviceForAktAndFaza
+    builder.addCase(createDeviceForAktAndFaza.pending, (state) => { state.loading = true })
+    builder.addCase(createDeviceForAktAndFaza.fulfilled, (state) => { state.loading = false })
+    builder.addCase(createDeviceForAktAndFaza.rejected, (state) => { state.loading = false })
   }
 })
 

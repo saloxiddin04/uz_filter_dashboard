@@ -212,6 +212,7 @@ const authSlice = createSlice({
       state.access_token = null
       state.refresh_token = null
       localStorage.clear()
+      window.location.reload()
     }
   },
   // extraReducers: (builder) => {
