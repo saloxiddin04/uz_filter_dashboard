@@ -106,6 +106,9 @@ const DataCenterDocuments = () => {
                       <EyeIcon
                         style={{color: currentColor}}
                         className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
+                        onClick={() => {
+	                        navigate(`faza/${item?.id}`, {state: {detail: true}})
+                        }}
                       />
                     </button>
                     <button className="rounded border-yellow-500 border p-1">
@@ -184,6 +187,9 @@ const DataCenterDocuments = () => {
 											<EyeIcon
 												style={{color: currentColor}}
 												className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
+												onClick={() => {
+													navigate(`akt/${item?.id}`, {state: {detail: true}})
+												}}
 											/>
 										</button>
 										<button className="rounded border-yellow-500 border p-1">

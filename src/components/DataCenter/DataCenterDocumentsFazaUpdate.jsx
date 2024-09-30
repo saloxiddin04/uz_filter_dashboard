@@ -2,9 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
-import {createDeviceForAktAndFaza, getListProvider} from "../../redux/slices/dataCenter/dataCenterSlice";
+import {
+	createDeviceForAktAndFaza,
+	getDocumentDetail,
+	getListProvider
+} from "../../redux/slices/dataCenter/dataCenterSlice";
 import instance from "../../API";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 
 const DataCenterDocumentsFazaUpdate = () => {
@@ -12,6 +16,10 @@ const DataCenterDocumentsFazaUpdate = () => {
 	const dispatch = useDispatch()
 	const {id} = useParams()
 	const navigate = useNavigate()
+	
+	const location = useLocation()
+	
+	console.log(location?.state?.detail)
 	
 	const {listProvider, loading} = useSelector((state) => state.dataCenter)
 	
@@ -35,6 +43,12 @@ const DataCenterDocumentsFazaUpdate = () => {
 	useEffect(() => {
 		dispatch(getListProvider())
 	}, [dispatch]);
+	
+	useEffect(() => {
+		if (location?.state?.detail) {
+			dispatch(getDocumentDetail(id))
+		}
+	}, [id, dispatch, location]);
 	
 	const handleAdd = () => {
 		const value = [...devices, {
