@@ -10,6 +10,7 @@ import {
 import instance from "../../API";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
+import moment from "moment";
 
 const DataCenterDocumentsFazaUpdate = () => {
 	const {currentColor} = useStateContext();
@@ -21,7 +22,12 @@ const DataCenterDocumentsFazaUpdate = () => {
 	
 	console.log(location?.state?.detail)
 	
-	const {listProvider, loading} = useSelector((state) => state.dataCenter)
+	const {listProvider, loading, documentDetail} = useSelector((state) => state.dataCenter)
+	
+	const [status, setStatus] = useState('')
+	const [name, setName] = useState('')
+	const [created_date, setCreatedDate] = useState('')
+	const [description, setDescription] = useState('')
 	
 	const [devices, setDevices] = useState([
 		{
@@ -46,7 +52,12 @@ const DataCenterDocumentsFazaUpdate = () => {
 	
 	useEffect(() => {
 		if (location?.state?.detail) {
-			dispatch(getDocumentDetail(id))
+			dispatch(getDocumentDetail(id)).then((res) => {
+				setName(res?.payload?.document_number)
+				setCreatedDate(moment(res?.payload?.created_time).format('DD-MM-YYYY'))
+				setDescription(res?.payload?.description)
+				setStatus(res?.payload?.status === 'Yangi' ? 1 : res?.payload?.status === 'Aktiv' ? 3 : res?.payload?.status === 'Rad etilgan' ? 4 : res?.payload?.status === 'Bekor qilingan' ? 5 : 6)
+			})
 		}
 	}, [id, dispatch, location]);
 	
@@ -163,8 +174,8 @@ const DataCenterDocumentsFazaUpdate = () => {
 							Nomi
 						</label>
 						<input
-							// value={item?.serial_location}
-							// onChange={(e) => handleChange(e, index)}
+							value={name || ''}
+							disabled={true}
 							name="name"
 							id="name"
 							type="text"
@@ -177,11 +188,12 @@ const DataCenterDocumentsFazaUpdate = () => {
 							Shartnoma sanasi
 						</label>
 						<input
-							// value={item?.serial_location}
+							value={created_date || ''}
+							disabled={true}
 							// onChange={(e) => handleChange(e, index)}
 							name="name"
 							id="name"
-							type="date"
+							type="text"
 							className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 						/>
 					</div>
@@ -190,14 +202,17 @@ const DataCenterDocumentsFazaUpdate = () => {
 						<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="status">Xolati</label>
 						<select
 							className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-							// value={item?.device_class}
-							// onChange={(e) => handleChange(e, index)}
+							value={status || ''}
+							onChange={(e) => setStatus(Number(e.target.value))}
 							name="status"
 							id="status"
 						>
 							<option value="0">Tanlang</option>
-							<option value="1">Aktiv</option>
-							<option value="2">Bekor qilingan</option>
+							<option value={1}>Yangi</option>
+							<option value={3}>Aktiv</option>
+							<option value={4}>Rad etilgan</option>
+							<option value={5}>Bekor qilingan</option>
+							<option value={6}>Yakunlangan</option>
 						</select>
 					</div>
 					
@@ -205,7 +220,15 @@ const DataCenterDocumentsFazaUpdate = () => {
 						<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="data">
 							Qo'shimcha ma'lumot
 						</label>
-						<textarea name="data" id="data" cols="20" rows="10" className="rounded border focus:outline-none px-2"/>
+						<textarea
+							name="data"
+							id="data"
+							cols="20"
+							rows="10"
+							className="rounded border focus:outline-none px-2"
+							value={description || ''}
+							onChange={(e) => setDescription(e.target.value)}
+						/>
 					</div>
 				</div>
 				
