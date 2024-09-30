@@ -340,6 +340,18 @@ export const getDocumentDetail = createAsyncThunk(
   }
 )
 
+export const patchDocument = createAsyncThunk(
+  "dataCenter/patchDocument",
+  async (data) => {
+    try {
+      const response = await instance.patch(`/colocation/documets/update/${data.id}`, data.data)
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -605,6 +617,17 @@ const dataCenterSlice = createSlice({
     builder.addCase(getDocumentDetail.rejected, (state) => {
       state.loading = false
       state.documentDetail = null
+    })
+    
+    // patchDocument
+    builder.addCase(patchDocument.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(patchDocument.fulfilled, (state) => {
+      state.loading = false
+    })
+    builder.addCase(patchDocument.rejected, (state) => {
+      state.loading = false
     })
   }
 })

@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {TrashIcon} from "@heroicons/react/16/solid";
+import {PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {
 	createDeviceForAktAndFaza,
 	getDocumentDetail,
-	getListProvider
+	getListProvider, patchDocument
 } from "../../redux/slices/dataCenter/dataCenterSlice";
 import instance from "../../API";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 import moment from "moment";
+import {AiOutlineCloudDownload} from "react-icons/ai";
 
 const DataCenterDocumentsFazaUpdate = () => {
 	const {currentColor} = useStateContext();
@@ -20,14 +21,12 @@ const DataCenterDocumentsFazaUpdate = () => {
 	
 	const location = useLocation()
 	
-	console.log(location?.state?.detail)
-	
 	const {listProvider, loading, documentDetail} = useSelector((state) => state.dataCenter)
 	
-	const [status, setStatus] = useState('')
+	const [status, setStatus] = useState(undefined)
 	const [name, setName] = useState('')
 	const [created_date, setCreatedDate] = useState('')
-	const [description, setDescription] = useState('')
+	const [description, setDescription] = useState(undefined)
 	
 	const [devices, setDevices] = useState([
 		{
@@ -48,6 +47,12 @@ const DataCenterDocumentsFazaUpdate = () => {
 	
 	useEffect(() => {
 		dispatch(getListProvider())
+		dispatch(getDocumentDetail(id)).then((res) => {
+			setName(res?.payload?.document_number)
+			setCreatedDate(moment(res?.payload?.created_time).format('DD-MM-YYYY'))
+			setDescription(res?.payload?.description)
+			setStatus(res?.payload?.status === 'Yangi' ? 1 : res?.payload?.status === 'Aktiv' ? 3 : res?.payload?.status === 'Rad etilgan' ? 4 : res?.payload?.status === 'Bekor qilingan' ? 5 : 6)
+		})
 	}, [dispatch]);
 	
 	useEffect(() => {
@@ -57,6 +62,24 @@ const DataCenterDocumentsFazaUpdate = () => {
 				setCreatedDate(moment(res?.payload?.created_time).format('DD-MM-YYYY'))
 				setDescription(res?.payload?.description)
 				setStatus(res?.payload?.status === 'Yangi' ? 1 : res?.payload?.status === 'Aktiv' ? 3 : res?.payload?.status === 'Rad etilgan' ? 4 : res?.payload?.status === 'Bekor qilingan' ? 5 : 6)
+				
+				const devicesObjects = res?.payload?.document_devices?.map((item) => ({
+					device: item?.device?.id,
+					device_publisher: item?.device_publisher?.id,
+					device_model: item?.device_model,
+					device_number: item?.device_number,
+					device_type: item?.device_type === 'Cloud' ? 1 : item?.device_type === 'Bare metal' ? 2 : 3,
+					serial_location: ''
+				}))
+				setDevices(devicesObjects)
+				
+				const filesObjects = res?.payload?.document_files?.map((item) => ({
+					name: item?.name,
+					file: null,
+					uploaded: true,
+					url: item?.file
+				}))
+				setFiles(filesObjects)
 			})
 		}
 	}, [id, dispatch, location]);
@@ -156,11 +179,23 @@ const DataCenterDocumentsFazaUpdate = () => {
 	
 	const validateDevices = () => {
 		for (const item of devices) {
-			if (!item?.device || !item?.device_publisher || !item?.device_number || !item?.device_model || !item?.device_type) {
+			if (location?.state?.detail || !item?.device || !item?.device_publisher || !item?.device_number || !item?.device_model || !item?.device_type) {
 				return true
 			}
 		}
 		return false
+	}
+	
+	const patchDocumentFunc = () => {
+		dispatch(patchDocument({
+			id,
+			data: {status, description}
+		})).then((res) => {
+			if (res?.payload?.id) {
+				toast.success('Muvofaqqiyatli saqlandi')
+				dispatch(getDocumentDetail(id))
+			}
+		})
 	}
 	
 	return (
@@ -168,7 +203,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 			<div
 				className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-secondary-dark-bg rounded"
 			>
-				<div className="w-full flex justify-between flex-wrap">
+				<div className="w-full flex justify-between flex-wrap border p-2 rounded">
 					<div className={'flex flex-col w-[30%]'}>
 						<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="name">
 							Nomi
@@ -230,6 +265,16 @@ const DataCenterDocumentsFazaUpdate = () => {
 							onChange={(e) => setDescription(e.target.value)}
 						/>
 					</div>
+					
+					<button
+						className={`px-4 py-2 rounded text-white disabled:opacity-25 my-4 ml-auto`}
+						style={{backgroundColor: currentColor}}
+						// disabled={item?.uploaded || !item?.name || !item?.file}
+						// disabled={handleValidateSecond()}
+						onClick={patchDocumentFunc}
+					>
+						Saqlash
+					</button>
 				</div>
 				
 				<div className="w-full flex flex-wrap gap-4 my-2">
@@ -275,15 +320,28 @@ const DataCenterDocumentsFazaUpdate = () => {
 											className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 disabled:opacity-25 border mb-1"
 										/>
 									</div>
-									<button
-										className={`px-4 py-2 rounded text-white disabled:opacity-25`}
-										style={{backgroundColor: currentColor}}
-										disabled={item?.uploaded || !item?.name || !item?.file}
-										// disabled={handleValidateSecond()}
-										onClick={() => uploadFile(index)}
-									>
-										Saqlash
-									</button>
+									<div className="mb-1 flex items-center gap-1 ml-1">
+										{item?.url ? (
+											<button className="rounded border-yellow-500 border p-1">
+												<AiOutlineCloudDownload
+													className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
+													onClick={() => {
+														window.open(item?.url, '_blank')
+													}}
+												/>
+											</button>
+										) : (
+											<button
+												className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+												style={{backgroundColor: currentColor}}
+												disabled={item?.uploaded || !item?.name || !item?.file}
+												// disabled={handleValidateSecond()}
+												onClick={() => uploadFile(index)}
+											>
+												Saqlash
+											</button>
+										)}
+									</div>
 								</div>
 							</div>
 						</div>
