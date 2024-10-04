@@ -181,7 +181,7 @@ export function HooksCommission() {
     }
   };
 
-  const sign = (data_b4, service, contract_id, formData) => {
+  const sign = (data_b4, service, contract_id, formData, confirmContract) => {
     const itm = document.getElementById("S@loxiddin").value;
     if (itm) {
       let id = document.getElementById(itm);
@@ -203,24 +203,48 @@ export function HooksCommission() {
               setPkcs(pkcs7)
               localStorage.setItem('pkcs7', JSON.stringify(pkcs7))
               formData.append('pkcs7', pkcs7)
-              try {
-                setLoader(true)
-                await instance.post(`${service}/confirm-save-pkcs`, formData, {headers: { "Content-Type": "multipart/form-data" }}).then((res) => {
-                  if (!res?.data?.success) {
-                    setLoader(true)
-                    toast.error(res?.data?.err_msg)
+              if (service === 'e-xat') {
+                try {
+                  setLoader(true)
+                  await instance.post(`${service}/confirm-save-pkcs`, formData, {headers: { "Content-Type": "multipart/form-data" }}).then((res) => {
+                    if (!res?.data?.success) {
+                      setLoader(true)
+                      toast.error(res?.data?.err_msg)
+                    } else {
+                      setLoader(false)
+                      dispatch(getContractDetail({
+                        id: contract_id,
+                        slug: service,
+                      }))
+                      toast.success('Muvoffaqiyatli xulosa berildi')
+                    }
+                  });
+                } catch (e) {
+                  setLoader(false)
+                  toast.error(e?.response?.data?.err_msg)
+                }
+              } else {
+                dispatch(
+                  savePkcs(
+                    {
+                      pkcs7: pkcs7,
+                      contract_id: contract_id,
+                      service,
+                    },
+                  )
+                ).then((res) => {
+                  if (!res?.payload?.success) {
+                    toast.error(res?.payload?.err_msg)
                   } else {
-                    setLoader(false)
-                    dispatch(getContractDetail({
-                      id: contract_id,
-                      slug: service,
-                    }))
+                    confirmContract().then(() => {
+                      dispatch(getContractDetail({
+                        id: contract_id,
+                        slug: service,
+                      }))
+                    })
                     toast.success('Muvoffaqiyatli xulosa berildi')
                   }
                 });
-              } catch (e) {
-                setLoader(false)
-                toast.error(e?.response?.data?.err_msg)
               }
             },
             function (e, r) {

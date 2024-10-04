@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {APIS} from "../../../config";
 import axios from "axios";
-import {toast} from "react-toastify";
 import {clearSidebar} from "../sections/sectionSlice";
 import instance from "../../../API";
 

@@ -54,6 +54,22 @@ const SignatureContract = ({setOpenTab}) => {
   ) {
     validationKey()
   }
+  
+  const confirmContract = async () => {
+    const formData = new FormData()
+    formData.append('comment', selectedFile.comment)
+    formData.append('summary', selectedFile.conclusion)
+    formData.append('contract', contractDetail?.contract?.id)
+    if (formFile) {
+      formData.append('documents', formFile)
+    }
+    
+    await instance.post(`${slug}/confirm-contract`, formData, {
+      headers: {'Content-Type': 'multipart/form-data', "PINORTIN": pin_or_tin}
+    }).then(() => {
+      setOpenTab(2)
+    }).catch((e) => toast.error('Xatolik'))
+  }
 
   const confirm = async () => {
     const formData = new FormData()
@@ -69,7 +85,8 @@ const SignatureContract = ({setOpenTab}) => {
       contractDetail?.contract?.base64file,
       slug,
       contractDetail?.contract?.id,
-      formData
+      formData,
+      confirmContract
     )
   }
 
