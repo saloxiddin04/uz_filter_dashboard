@@ -7,14 +7,14 @@ import Loader from './components/Loader';
 import MainLayout from './Layout/MainLayout';
 import AuthLayout from './Layout/AuthLayout';
 import ProtectedRoutes from './utils/ProtectedRoutes';
-import {Login, NotFound} from './pages';
+import {Login} from './pages';
 import Code from './redux/slices/auth/Code';
 import {routes} from "./routes";
 import TwoFactor from "./pages/Auth/TwoFactor";
 
 const App = () => {
   const { setCurrentColor, setCurrentMode, currentMode } = useStateContext();
-  const { loading, one_id } = useSelector((state) => state.user);
+  const { loading, one_id, access, access_token } = useSelector((state) => state.user);
 
   if (loading) return <Loader />;
 
@@ -26,30 +26,34 @@ const App = () => {
       setCurrentMode(currentThemeMode);
     }
   }, []);
-
+  
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
       <BrowserRouter>
         <Routes>
-          <Route element={<ProtectedRoutes />}>
-            <Route element={<MainLayout />}>
-              {routes && routes.map((item, index) => {
-                return (
-                  <Route
-                    key={index}
-                    path={item.path}
-                    element={<item.element />}
-                  />
-                )
-              })}
+          {
+            access || access_token ? <Route element={<ProtectedRoutes />}>
+              <Route element={<MainLayout />}>
+                <Route path="login" element={<Navigate to={'/dashboard'}/>} />
+                {routes && routes.map((item, index) => {
+                  return (
+                    <Route
+                      key={index}
+                      path={item.path}
+                      element={<item.element />}
+                    />
+                  )
+                })}
+                
+              </Route>
+            </Route> : <Route element={<AuthLayout />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/code" element={<Code />} />
+              <Route path="/two-factor" element={<TwoFactor />} />
+              <Route path="/" element={one_id ? <Loader /> : <Navigate to="login" replace />} />
+              <Route path="*" element={<Navigate to={'/login'}/>} />
             </Route>
-          </Route>
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/code" element={<Code />} />
-            <Route path="/two-factor" element={<TwoFactor />} />
-            <Route path="/" element={one_id ? <Loader /> : <Navigate to="login" replace />} />
-          </Route>
+          }
         </Routes>
       </BrowserRouter>
     </div>

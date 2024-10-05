@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Input, TabsRender} from "../../components";
+import {Button, Input} from "../../components";
 import Logo from "../../assets/images/logo";
 import AuthLogo from "../../assets/images/AuthLogo";
 import {useNavigate} from "react-router-dom";
