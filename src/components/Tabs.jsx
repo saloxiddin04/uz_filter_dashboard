@@ -1,8 +1,21 @@
-import React from "react";
-import {useLocation} from "react-router-dom";
+import React, {useEffect} from "react";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 
-const Tabs = ({ color, tabs, openTab, setOpenTab }) => {
+const Tabs = ({ color, tabs, openTab, setOpenTab, isQuery }) => {
   const {pathname} = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    if (isQuery) {
+      const typeOfDocument = searchParams.get('type_of_document');
+      if (typeOfDocument) {
+        const index = typeOfDocument === '1' ? 0 : 1;
+        setOpenTab(index);
+      }
+    }
+  }, [searchParams, isQuery]);
+  
   return (
     <>
       <div className="flex flex-wrap">
@@ -28,6 +41,12 @@ const Tabs = ({ color, tabs, openTab, setOpenTab }) => {
                     if (pathname === '/application') {
                       localStorage.setItem('tabIndex', idx)
                     }
+                    
+                    if (isQuery) {
+                      setSearchParams({
+                        type_of_document: idx === 0 ? 1 : 2,
+                      });
+                    }
                   }}
                   data-toggle="tab"
                   href={`#link${idx}`}
@@ -44,8 +63,8 @@ const Tabs = ({ color, tabs, openTab, setOpenTab }) => {
   );
 };
 
-export default function TabsRender({ color, tabs, openTab, setOpenTab }) {
+export default function TabsRender({ color, tabs, openTab, setOpenTab, isQuery }) {
   return (
-    <Tabs color={color} tabs={tabs} openTab={openTab} setOpenTab={setOpenTab} />
+    <Tabs color={color} tabs={tabs} openTab={openTab} setOpenTab={setOpenTab} isQuery={isQuery} />
   );
 }

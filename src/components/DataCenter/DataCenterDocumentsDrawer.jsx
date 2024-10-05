@@ -5,15 +5,19 @@ import {useDispatch, useSelector} from "react-redux";
 import {
 	clearContractData,
 	createAktAndFaza,
-	getContractData,
+	getContractData, getListAktAndFaza,
 	getRackContractInfo
 } from "../../redux/slices/dataCenter/dataCenterSlice";
 import {toast} from "react-toastify";
+import {useSearchParams} from "react-router-dom";
 
 const DataCenterDocumentsDrawer = ({onclose, step}) => {
 	const {currentColor} = useStateContext();
 	const dispatch = useDispatch()
 	const {loading, contractData} = useSelector((state) => state.dataCenter)
+	
+	const [searchParams] = useSearchParams();
+	const type_of_document = searchParams.get('type_of_document')
 	
 	// faza state
 	const [document_number, setDocumentNumber] = useState('')
@@ -30,6 +34,7 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 				onclose()
 				setDocumentNumber('')
 				setDocumentDate('')
+				dispatch(getListAktAndFaza({type_of_document}))
 			} else {
 				return toast.error('Xatolik')
 			}
@@ -55,6 +60,7 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 				setAktDocumentNumber('')
 				setAktDocumentDate('')
 				dispatch(clearContractData())
+				dispatch(getListAktAndFaza({type_of_document}))
 			} else {
 				return toast.error('Xatolik')
 			}

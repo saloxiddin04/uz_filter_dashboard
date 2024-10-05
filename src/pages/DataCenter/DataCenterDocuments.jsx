@@ -6,7 +6,7 @@ import {BiSearch} from "react-icons/bi";
 import {ArrowPathIcon, EyeIcon, PencilIcon, PlusIcon, TrashIcon} from "@heroicons/react/16/solid";
 import moment from "moment/moment";
 import DataCenterDocumentsDrawer from "../../components/DataCenter/DataCenterDocumentsDrawer";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getListAktAndFaza} from "../../redux/slices/dataCenter/dataCenterSlice";
 
@@ -37,18 +37,16 @@ const DataCenterDocuments = () => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 	const {currentColor} = useStateContext();
+	const [searchParams] = useSearchParams();
+	const type_of_document = searchParams.get('type_of_document')
 	const {loading, aktAndFaza} = useSelector((state) => state.dataCenter)
 	const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 	
 	const [addDocumentDrawer, setAddDocumentDrawer] = useState(false)
 	
 	useEffect(() => {
-		if (openTab === 0) {
-			dispatch(getListAktAndFaza({type_of_document: 1}))
-		} else {
-      dispatch(getListAktAndFaza({type_of_document: 2}))
-    }
-	}, [openTab]);
+		dispatch(getListAktAndFaza({type_of_document}))
+	}, [dispatch, type_of_document]);
 	
 	const stepDisplay = (step) => {
 		switch (step) {
@@ -232,6 +230,7 @@ const DataCenterDocuments = () => {
 					color={currentColor}
 					openTab={openTab}
 					setOpenTab={setOpenTab}
+					isQuery={true}
 				/>
 				<div className="flex items-center justify-end gap-4 w-2/4">
 					<div className={'flex flex-col w-[35%]'}>
