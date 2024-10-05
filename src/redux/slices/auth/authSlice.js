@@ -157,6 +157,9 @@ export const logOut = createAsyncThunk(
     } catch (e) {
       dispatch(setLogout())
       dispatch(clearSidebar())
+    } finally {
+      dispatch(setLogout())
+      dispatch(clearSidebar())
     }
   }
 )

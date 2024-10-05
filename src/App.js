@@ -44,14 +44,13 @@ const App = () => {
                     />
                   )
                 })}
-                
               </Route>
             </Route> : <Route element={<AuthLayout />}>
+              <Route path="*" element={<Navigate to={'/login'}/>} />
               <Route path="/login" element={<Login />} />
               <Route path="/code" element={<Code />} />
               <Route path="/two-factor" element={<TwoFactor />} />
               <Route path="/" element={one_id ? <Loader /> : <Navigate to="login" replace />} />
-              <Route path="*" element={<Navigate to={'/login'}/>} />
             </Route>
           }
         </Routes>
