@@ -32,7 +32,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           {
-            access || access_token ? <Route element={<ProtectedRoutes />}>
+            access ? <Route element={<ProtectedRoutes />}>
               <Route element={<MainLayout />}>
                 <Route path="login" element={<Navigate to={'/dashboard'}/>} />
                 {routes && routes.map((item, index) => {

@@ -19,7 +19,7 @@ const UserProfile = ({onClose}) => {
 
   const handleLogout = async () => {
     await dispatch(logOut({access, access_token, refresh_token}))
-    navigate('/login')
+    navigate('/login', {replace: true})
   }
 
   useEffect(() => {

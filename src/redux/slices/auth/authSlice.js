@@ -217,29 +217,28 @@ const authSlice = createSlice({
       // window.location.reload()
     }
   },
-  // extraReducers: (builder) => {
-  //   builder.addCase(logOut.pending, (state, _) => {
-  //     state.loading = true
-  //   })
-  //   builder.addCase(logOut.fulfilled, (state, _) => {
-  //     state.user = null
-  //     state.loading = false
-  //     state.error = null
-  //     state.oneIdCode = null
-  //     state.access = null
-  //     state.access_token = null
-  //     state.refresh_token = null
-  //   })
-  //   builder.addCase(logOut.rejected, (state, _) => {
-  //     state.user = null
-  //     state.loading = false
-  //     state.error = null
-  //     state.oneIdCode = null
-  //     state.access = null
-  //     state.access_token = null
-  //     state.refresh_token = null
-  //   })
-  // }
+  extraReducers: (builder) => {
+    builder.addCase(logOut.fulfilled, (state) => {
+      state.user = null
+      state.loading = false
+      state.error = null
+      state.oneIdCode = null
+      state.access = null
+      state.access_token = null
+      state.refresh_token = null
+      localStorage.clear()
+    })
+    builder.addCase(logOut.rejected, (state) => {
+      state.user = null
+      state.loading = false
+      state.error = null
+      state.oneIdCode = null
+      state.access = null
+      state.access_token = null
+      state.refresh_token = null
+      localStorage.clear()
+    })
+  }
 })
 
 export const {
