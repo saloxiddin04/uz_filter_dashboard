@@ -325,6 +325,7 @@ const DataCenterDocumentsAktUpdate = () => {
 							className={`px-4 py-2 mt-2 rounded ml-auto text-white disabled:opacity-25`}
 							style={{backgroundColor: currentColor}}
 							onClick={patchDocumentFunc}
+							disabled={location?.state?.detail}
 							// disabled={item?.uploaded || !item?.name || !item?.file}
 							// disabled={handleValidateSecond()}
 							// onClick={() => uploadFile(index)}
@@ -341,7 +342,7 @@ const DataCenterDocumentsAktUpdate = () => {
 									<div className="w-full text-end">
 										<button
 											onClick={() => deleteFiles(index)}
-											disabled={files.length === 1}
+											disabled={files.length === 1 || location?.state?.detail}
 										>
 											<TrashIcon
 												color={currentColor}
@@ -356,7 +357,7 @@ const DataCenterDocumentsAktUpdate = () => {
 											nomi</label>
 										<input
 											style={{opacity: item.uploaded ? 0.5 : 1}}
-											disabled={item?.uploaded}
+											disabled={item?.uploaded || location?.state?.detail}
 											value={item?.name}
 											onChange={(e) => changeFiles(e, index)}
 											name="name"
@@ -371,7 +372,7 @@ const DataCenterDocumentsAktUpdate = () => {
 												<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">Fayl</label>
 												<input
 													style={{opacity: item.uploaded ? 0.5 : 1}}
-													disabled={item?.uploaded}
+													disabled={item?.uploaded || location?.state?.detail}
 													onChange={(e) => changeFiles(e, index)}
 													name="file"
 													id="file"
@@ -382,7 +383,7 @@ const DataCenterDocumentsAktUpdate = () => {
 										)}
 										<div className="mb-1 flex items-center gap-1 ml-1">
 											{item?.url ? (
-												<button className="rounded border-yellow-500 border p-1">
+												<button disabled={location?.state?.detail} className="disabled:opacity-25 rounded border-yellow-500 border p-1">
 													<AiOutlineCloudDownload
 														className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
 														onClick={() => {
@@ -394,7 +395,7 @@ const DataCenterDocumentsAktUpdate = () => {
 												<button
 													className={`px-4 py-2 rounded text-white disabled:opacity-25`}
 													style={{backgroundColor: currentColor}}
-													disabled={item?.uploaded || !item?.name || !item?.file}
+													disabled={item?.uploaded || !item?.name || !item?.file || location?.state?.detail}
 													// disabled={handleValidateSecond()}
 													onClick={() => uploadFile(index)}
 												>
@@ -414,7 +415,7 @@ const DataCenterDocumentsAktUpdate = () => {
 								<div className="w-full text-end">
 									<button
 										onClick={() => handleDelete(index)}
-										disabled={devices.length === 1}
+										disabled={devices.length === 1 || location?.state?.detail}
 									>
 										<TrashIcon
 											color={currentColor}
@@ -429,6 +430,7 @@ const DataCenterDocumentsAktUpdate = () => {
 										<select
 											className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
 											value={item?.device}
+											disabled={location?.state?.detail}
 											onChange={(e) => handleChange(e, index)}
 											name="device"
 											id="device"
@@ -449,6 +451,7 @@ const DataCenterDocumentsAktUpdate = () => {
 											onChange={(e) => handleChange(e, index)}
 											name="device_publisher"
 											id="device_publisher"
+											disabled={location?.state?.detail}
 										>
 											<option value="0">Tanlang</option>
 											{listProvider && listProvider?.device_publisher?.map((item) => (
@@ -465,6 +468,7 @@ const DataCenterDocumentsAktUpdate = () => {
 											onChange={(e) => handleChange(e, index)}
 											name="device_type"
 											id="device_type"
+											disabled={location?.state?.detail}
 										>
 											<option value="0">Tanlang</option>
 											<option value={1}>Cloud</option>
@@ -478,6 +482,7 @@ const DataCenterDocumentsAktUpdate = () => {
 											Qurilma modeli
 										</label>
 										<input
+											disabled={location?.state?.detail}
 											value={item?.device_model}
 											onChange={(e) => handleChange(e, index)}
 											name="device_model"
@@ -491,6 +496,7 @@ const DataCenterDocumentsAktUpdate = () => {
 											Qurilma seriya raqami
 										</label>
 										<input
+											disabled={location?.state?.detail}
 											value={item?.device_number}
 											onChange={(e) => handleChange(e, index)}
 											name="device_number"
