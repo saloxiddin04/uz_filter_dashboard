@@ -229,7 +229,7 @@ const RackDrawer = ({onClose, type}) => {
             <textarea
               cols="30"
               rows="10"
-              value={comment}
+              value={comment || ''}
               onChange={(e) => setComment(e.target.value)}
               className="rounded w-full border outline-none p-4 dark:text-black"
             />
@@ -264,7 +264,7 @@ const RackDrawer = ({onClose, type}) => {
                   name="client"
                   id="client"
                   className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
-                  value={connectMethod}
+                  value={connectMethod || ''}
                   onChange={(e) => setConnectMethod(e.target.value)}
                 >
                   <option value="" disabled={connectMethod}>Tanlang...</option>
@@ -480,7 +480,7 @@ const RackDrawer = ({onClose, type}) => {
             <textarea
               cols="30"
               rows="10"
-              value={comment}
+              value={comment || ''}
               onChange={(e) => setComment(e.target.value)}
               className="rounded w-full border outline-none p-4 dark:text-black"
             />
@@ -515,7 +515,7 @@ const RackDrawer = ({onClose, type}) => {
                   name="client"
                   id="client"
                   className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
-                  value={connectMethod}
+                  value={connectMethod || ''}
                   onChange={(e) => setConnectMethod(e.target.value)}
                 >
                   <option value="" disabled={connectMethod}>Tanlang...</option>

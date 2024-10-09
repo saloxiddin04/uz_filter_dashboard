@@ -100,9 +100,7 @@ const ShowRack = () => {
       }
     })
   }, [rack_detail, selectedUnits, drawer])
-
-  console.log(unitsData)
-
+  
   let arr = selectedUnits?.filter((obj, index, self) => index === self.findIndex((t) => t.unit === obj.unit))
 
   const increment = () => {
@@ -251,7 +249,7 @@ const ShowRack = () => {
         setDeviceModel(res?.payload?.device_general_info?.device_model)
         setDeviceNumber(res?.payload?.device_general_info?.device_number)
         setElectricityValue(res?.payload?.device_general_info?.electricity)
-        setComment(res?.payload?.device_colocation?.description)
+        setComment(res?.payload?.device_colocation?.description || '')
         setOdfCount(res?.payload?.device_colocation?.odf_count)
       })
     }
@@ -703,7 +701,7 @@ const ShowRack = () => {
                       <textarea
                         cols="30"
                         rows="10"
-                        value={comment}
+                        value={comment || ''}
                         onChange={(e) => setComment(e.target.value)}
                         className="rounded w-full border outline-none p-4 dark:text-black"
                       />
@@ -1039,7 +1037,7 @@ const ShowRack = () => {
                     <textarea
                       cols="30"
                       rows="10"
-                      value={comment}
+                      value={comment || ''}
                       onChange={(e) => setComment(e.target.value)}
                       className="rounded w-full border outline-none p-4 dark:text-black"
                     />

@@ -241,6 +241,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 							onChange={(e) => setStatus(Number(e.target.value))}
 							name="status"
 							id="status"
+							disabled={location.state?.detail}
 						>
 							<option value="0">Tanlang</option>
 							<option value={1}>Yangi</option>
@@ -262,6 +263,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 							rows="10"
 							className="rounded border focus:outline-none px-2"
 							value={description || ''}
+							disabled={location.state?.detail}
 							onChange={(e) => setDescription(e.target.value)}
 						/>
 					</div>
@@ -272,6 +274,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 						// disabled={item?.uploaded || !item?.name || !item?.file}
 						// disabled={handleValidateSecond()}
 						onClick={patchDocumentFunc}
+						disabled={location.state?.detail}
 					>
 						Saqlash
 					</button>
@@ -298,7 +301,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 									<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="name">Hujjat nomi</label>
 									<input
 										style={{opacity: item.uploaded ? 0.5 : 1}}
-										disabled={item?.uploaded}
+										disabled={item?.uploaded || location.state?.detail}
 										value={item?.name}
 										onChange={(e) => changeFiles(e, index)}
 										name="name"
@@ -312,7 +315,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 										<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">Fayl</label>
 										<input
 											style={{opacity: item.uploaded ? 0.5 : 1}}
-											disabled={item?.uploaded}
+											disabled={item?.uploaded || location.state?.detail}
 											onChange={(e) => changeFiles(e, index)}
 											name="file"
 											id="file"
@@ -322,7 +325,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 									</div>
 									<div className="mb-1 flex items-center gap-1 ml-1">
 										{item?.url ? (
-											<button className="rounded border-yellow-500 border p-1">
+											<button disabled={location.state?.detail} className="rounded border-yellow-500 border p-1 disabled:opacity-25">
 												<AiOutlineCloudDownload
 													className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
 													onClick={() => {
@@ -334,7 +337,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 											<button
 												className={`px-4 py-2 rounded text-white disabled:opacity-25`}
 												style={{backgroundColor: currentColor}}
-												disabled={item?.uploaded || !item?.name || !item?.file}
+												disabled={item?.uploaded || !item?.name || !item?.file || location.state?.detail}
 												// disabled={handleValidateSecond()}
 												onClick={() => uploadFile(index)}
 											>
@@ -350,10 +353,11 @@ const DataCenterDocumentsFazaUpdate = () => {
 				
 				<div className="w-full py-2 text-center">
 					<button
-						className={`px-4 py-2 rounded text-white`}
+						className={`px-4 py-2 rounded text-white disabled:opacity-25`}
 						style={{backgroundColor: currentColor}}
 						// disabled={handleValidateSecond()}
 						onClick={() => handleAddFiles()}
+						disabled={location.state?.detail}
 					>
 						Qo'shish
 					</button>
@@ -365,7 +369,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 							<div className="w-full text-end">
 								<button
 									onClick={() => handleDelete(index)}
-									disabled={devices.length === 1}
+									disabled={devices.length === 1 || location?.state?.detail}
 								>
 									<TrashIcon
 										color={currentColor}
@@ -383,6 +387,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 										onChange={(e) => handleChange(e, index)}
 										name="device"
 										id="device"
+										disabled={location.state?.detail}
 									>
 										<option value="0">Tanlang</option>
 										{listProvider && listProvider?.device?.map((item) => (
@@ -400,6 +405,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 										onChange={(e) => handleChange(e, index)}
 										name="device_publisher"
 										id="device_publisher"
+										disabled={location.state?.detail}
 									>
 										<option value="0">Tanlang</option>
 										{listProvider && listProvider?.device_publisher?.map((item) => (
@@ -416,6 +422,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 										onChange={(e) => handleChange(e, index)}
 										name="device_type"
 										id="device_type"
+										disabled={location.state?.detail}
 									>
 										<option value="0">Tanlang</option>
 										<option value={1}>Cloud</option>
@@ -434,6 +441,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 										name="device_model"
 										id="device_model"
 										type="text"
+										disabled={location.state?.detail}
 										className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 									/>
 								</div>
@@ -447,6 +455,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 										name="device_number"
 										id="device_number"
 										type="text"
+										disabled={location.state?.detail}
 										className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 									/>
 								</div>
@@ -456,6 +465,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 										Qurilma joylashuvi
 									</label>
 									<input
+										disabled={true}
 										value={item?.serial_location}
 										onChange={(e) => handleChange(e, index)}
 										name="serial_location"
@@ -472,7 +482,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 						<button
 							className={`px-4 py-2 rounded text-white disabled:opacity-25`}
 							style={{backgroundColor: currentColor}}
-							disabled={validateDevices()}
+							disabled={validateDevices() || location.state?.detail}
 							onClick={() => handleAdd()}
 						>
 							Qo'shish
@@ -491,7 +501,7 @@ const DataCenterDocumentsFazaUpdate = () => {
 						<button
 							className={`px-4 py-2 rounded text-white disabled:opacity-25`}
 							style={{backgroundColor: currentColor}}
-							disabled={validateDevices()}
+							disabled={validateDevices() || location.state?.detail}
 							onClick={() =>
 									dispatch(createDeviceForAktAndFaza({
 									id,
