@@ -408,8 +408,7 @@ const DataCenterDocumentsAktUpdate = () => {
 											)}
 											<div className="mb-1 flex items-center gap-1 ml-1">
 												{item?.url ? (
-													<button disabled={location?.state?.detail}
-													        className="disabled:opacity-25 rounded border-yellow-500 border p-1">
+													<button className="disabled:opacity-25 rounded border-yellow-500 border p-1">
 														<AiOutlineCloudDownload
 															className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
 															onClick={() => {
