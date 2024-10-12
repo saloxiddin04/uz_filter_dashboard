@@ -24,6 +24,7 @@ export {default as CreateCertification} from './CreateContracts/Certification/Cr
 export {default as DataCenter} from './DataCenter/DataCenter'
 export {default as AdmissionDataCenter} from './DataCenter/AdmissionDataCenter'
 export {default as DataCenterDocuments} from './DataCenter/DataCenterDocuments'
+export {default as TechHelp} from './DataCenter/TechHelp'
 export {default as DataCenterDocumentsFazaUpdate} from '../components/DataCenter/DataCenterDocumentsFazaUpdate'
 export {default as DataCenterDocumentsAktUpdate} from '../components/DataCenter/DataCenterDocumentsAktUpdate'
 

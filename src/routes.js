@@ -14,7 +14,7 @@ import {
   DataCenter,
   Registry, CreateRegistry,
   RegistryDetail, Xizmatlar, AdmissionDataCenter, DataCenterDocuments,
-  DataCenterDocumentsFazaUpdate, DataCenterDocumentsAktUpdate
+  DataCenterDocumentsFazaUpdate, DataCenterDocumentsAktUpdate, TechHelp
 } from './pages';
 import ShowRack from "./components/DataCenter/ShowRack";
 
@@ -39,6 +39,7 @@ export const routes = [
   { path: 'data-center/:id/rack/:rackId', element: ShowRack },
   { path: '/data-center/data-center-admission', element: AdmissionDataCenter },
   { path: '/data-center/data-center-documents', element: DataCenterDocuments },
+  { path: '/data-center/tech_help', element: TechHelp },
   { path: '/data-center/data-center-documents/faza/:id', element: DataCenterDocumentsFazaUpdate },
   { path: '/data-center/data-center-documents/akt/:id', element: DataCenterDocumentsAktUpdate },
 

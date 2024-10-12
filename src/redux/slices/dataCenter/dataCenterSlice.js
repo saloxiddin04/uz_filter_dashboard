@@ -20,7 +20,8 @@ const initialState = {
   admissionLetterDetail: null,
   aktAndFaza: null,
   contractData: null,
-  documentDetail: null
+  documentDetail: null,
+  techHelp: null
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -352,6 +353,18 @@ export const patchDocument = createAsyncThunk(
   }
 )
 
+export const getTechHelp = createAsyncThunk(
+  "dataCenter/TechHelp",
+  async () => {
+    try {
+      const response = await instance.get('/purchase-note/purchase-note')
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -627,6 +640,19 @@ const dataCenterSlice = createSlice({
       state.loading = false
     })
     builder.addCase(patchDocument.rejected, (state) => {
+      state.loading = false
+    })
+    
+    // getTechHelp
+    builder.addCase(getTechHelp.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getTechHelp.fulfilled, (state, {payload}) => {
+      state.techHelp = payload
+      state.loading = false
+    })
+    builder.addCase(getTechHelp.rejected, (state) => {
+      state.techHelp = null
       state.loading = false
     })
   }
