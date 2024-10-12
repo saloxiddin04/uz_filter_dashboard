@@ -49,7 +49,6 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 	const createAkt = () => {
 		dispatch(createAktAndFaza({
 			document_date: new Date(akt_document_date),
-			document_number: akt_document_number,
 			contract: contractData?.data?.id,
 			type_of_document: 2
 		})).then((res) => {
@@ -57,7 +56,6 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 				toast.success("Muvofaqqiyatli yaratildi!")
 				onclose()
 				setContractNumber('')
-				setAktDocumentNumber('')
 				setAktDocumentDate('')
 				dispatch(clearContractData())
 				dispatch(getListAktAndFaza({type_of_document}))
@@ -68,7 +66,7 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 	}
 	
 	const handleValidateAkt = () => {
-		if (!contract_number || !contractData?.data?.id || !akt_document_number || !akt_document_date) return true
+		if (!contract_number || !contractData?.data?.id || !akt_document_date) return true
 		else return false
 	}
 	
@@ -176,13 +174,6 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 										label={"Unit qoldig'i"}
 										value={contractData?.data?.unit_quota || ''}
 										disabled={true}
-									/>
-								</div>
-								<div className={'w-[49%]'}>
-									<Input
-										value={akt_document_number}
-										onChange={(e) => setAktDocumentNumber(e.target.value)}
-										label={'Akt raqami'}
 									/>
 								</div>
 								<div className={'w-[49%]'}>

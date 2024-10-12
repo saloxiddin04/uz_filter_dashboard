@@ -98,7 +98,7 @@ const TechHelp = () => {
 											style={{color: currentColor}}
 											className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
 											onClick={() => {
-												navigate(`techHelp/${item?.id}`, {state: {detail: true}})
+												navigate(`${item?.id}`, {state: {detail: true}})
 											}}
 										/>
 									</button>
@@ -106,7 +106,7 @@ const TechHelp = () => {
 										<PencilIcon
 											className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
 											onClick={() => {
-												navigate(`techHelp/${item?.id}`)
+												navigate(`${item?.id}`)
 												// setId(item?.id)
 												// setDrawer(true)
 												// setType('put')

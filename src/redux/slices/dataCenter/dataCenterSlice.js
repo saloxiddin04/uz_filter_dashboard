@@ -21,7 +21,8 @@ const initialState = {
   aktAndFaza: null,
   contractData: null,
   documentDetail: null,
-  techHelp: null
+  techHelp: null,
+  techHelpDetail: null,
 }
 
 export const getDataCenterList = createAsyncThunk(

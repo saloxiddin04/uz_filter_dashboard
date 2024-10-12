@@ -45,8 +45,14 @@ const DataCenterDocuments = () => {
 	const [addDocumentDrawer, setAddDocumentDrawer] = useState(false)
 	
 	useEffect(() => {
-		dispatch(getListAktAndFaza({type_of_document}))
+		if(type_of_document) {
+			dispatch(getListAktAndFaza({type_of_document}))
+		} else {
+			dispatch(getListAktAndFaza({type_of_document: 1}))
+		}
 	}, [dispatch, type_of_document]);
+	
+	console.log(type_of_document)
 	
 	const stepDisplay = (step) => {
 		switch (step) {

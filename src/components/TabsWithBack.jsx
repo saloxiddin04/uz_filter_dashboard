@@ -24,7 +24,7 @@ const Tabs = ({ color, tabs, openTab, setOpenTab, isQuery }) => {
 			<div className="flex items-center flex-wrap w-full gap-4">
 				<div className="cursor-pointer flex flex-col items-center w-[5%] border-r border-gray-200" onClick={() => navigate(-1)}>
 					<HiArrowUturnUp style={{color: currentColor}} className="size-6"/>
-					<span className={'text-xs mt-1'}>orqaga</span>
+					<span className={'text-xs mt-1 dark:text-white'}>orqaga</span>
 				</div>
 				<div className="w-2/4">
 					<ul

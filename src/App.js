@@ -35,7 +35,7 @@ const App = () => {
             access ? <Route element={<ProtectedRoutes />}>
               <Route element={<MainLayout />}>
                 <Route path="login" element={<Navigate to={'/dashboard'}/>} />
-                <Route path="/*" element={<Navigate to={'/dashboard'}/>} />
+                <Route path="/" element={<Navigate to={'/dashboard'}/>} />
                 {routes && routes.map((item, index) => {
                   return (
                     <Route
