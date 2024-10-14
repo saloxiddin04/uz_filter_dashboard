@@ -80,7 +80,7 @@ const TechHelpDetail = () => {
 										}
 									}}
 									label={'Tashkilotning STIR raqami'}
-									className={`${stir.length === 9 ? 'border border-green-500' : ''}`}
+									disabled={location.state?.detail}
 								/>
 							</div>
 							<div className="w-[49%]">
@@ -89,6 +89,7 @@ const TechHelpDetail = () => {
 									onChange={(e) => setContractNumber(e.target.value)}
 									type={'text'}
 									label={'Shartnoma raqami'}
+									disabled={location.state?.detail}
 								/>
 							</div>
 							<div className="w-[49%]">
@@ -97,6 +98,7 @@ const TechHelpDetail = () => {
 									onChange={(e) => setStartDate(e.target.value)}
 									type={'date'}
 									label={'Shartnoma sanasi'}
+									disabled={location.state?.detail}
 								/>
 							</div>
 							<div className="w-[49%]">
@@ -105,6 +107,7 @@ const TechHelpDetail = () => {
 									onChange={(e) => setEndDate(e.target.value)}
 									type={'date'}
 									label={'Amal qilish sanasi'}
+									disabled={location.state?.detail}
 								/>
 							</div>
 							<div className="w-[49%] my-4">
@@ -118,6 +121,7 @@ const TechHelpDetail = () => {
 									}}
 									type={'text'}
 									label={"To'lov miqdori"}
+									disabled={location.state?.detail}
 								/>
 							</div>
 							<div className="w-[49%] my-4">
@@ -131,6 +135,7 @@ const TechHelpDetail = () => {
 									}}
 									type={'text'}
 									label={"Oylik to'lov miqdori"}
+									disabled={location.state?.detail}
 								/>
 							</div>
 							<div className="w-full">
@@ -146,6 +151,7 @@ const TechHelpDetail = () => {
 									className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
 									value={payment_type}
 									onChange={(e) => setPaymentType(Number(e.target.value))}
+									disabled={location.state?.detail}
 								>
 									<option value="" disabled={payment_type}>Tanlang...</option>
 									<option value="1">1 martalik</option>
@@ -165,6 +171,7 @@ const TechHelpDetail = () => {
 									className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
 									value={payment_status}
 									onChange={(e) => setPaymentStatus(Number(e.target.value))}
+									disabled={location.state?.detail}
 								>
 									<option value="" disabled={payment_status}>Tanlang...</option>
 									<option value="1">Aktiv</option>
@@ -187,6 +194,7 @@ const TechHelpDetail = () => {
 									className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
 									value={reminder_type}
 									onChange={(e) => setReminderType(Number(e.target.value))}
+									disabled={location.state?.detail}
 								>
 									<option value="" disabled={reminder_type}>Tanlang...</option>
 									<option value="1">1 martalik</option>
@@ -199,6 +207,7 @@ const TechHelpDetail = () => {
 									onChange={(e) => setReminderOnceDate(e.target.value)}
 									type={'date'}
 									label={'Eslatma sanasi'}
+									disabled={location.state?.detail}
 								/>
 							</div>
 						</div>
