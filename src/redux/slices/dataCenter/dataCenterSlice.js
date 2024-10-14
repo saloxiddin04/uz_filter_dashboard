@@ -378,6 +378,18 @@ export const createTechHelp = createAsyncThunk(
   }
 )
 
+export const getTechHelpDetail = createAsyncThunk(
+  "dataCenter/getTechHelpDetail",
+  async (params) => {
+    try {
+      const response = await instance.get(`/purchase-note/purchase-note-detail/${params}`)
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -678,6 +690,19 @@ const dataCenterSlice = createSlice({
     })
     builder.addCase(createTechHelp.rejected, (state) => {
       state.loading = false
+    })
+    
+    // getTechHelpDetail
+    builder.addCase(getTechHelpDetail.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getTechHelpDetail.fulfilled, (state, {payload}) => {
+      state.techHelpDetail = payload
+      state.loading = false
+    })
+    builder.addCase(getTechHelpDetail.rejected, (state, {payload}) => {
+      state.loading = false
+      state.techHelpDetail = null
     })
   }
 })

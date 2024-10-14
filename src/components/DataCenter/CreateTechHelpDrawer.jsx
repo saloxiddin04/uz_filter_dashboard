@@ -22,6 +22,8 @@ const CreateTechHelpDrawer = ({onclose}) => {
 	const [pay_amount_month, setPayAmountMonth] = useState('')
 	const [payment_type, setPaymentType] = useState('')
 	const [payment_status, setPaymentStatus] = useState('')
+	const [reminder_type, setReminderType] = useState('')
+	const [reminder_once_date, setReminderOnceDate] = useState('')
 	
 	const searchUserJuridic = () => {
 		dispatch(getUserByTin({stir, client: 'yur'})).then((res) => {
@@ -39,13 +41,15 @@ const CreateTechHelpDrawer = ({onclose}) => {
 		setPayAmountMonth('')
 		setPaymentType('')
 		setPaymentStatus('')
+		setReminderOnceDate('')
+		setReminderType('')
 		dispatch(clearStatesFirstStep())
 		onclose()
 	}
 	
 	const handleValidate = () => {
 		return !stir || !name || !contract_number || !start_date || !end_date || !pay_amount ||
-			!pay_amount_month || !payment_status || !payment_type;
+			!pay_amount_month || !payment_status || !payment_type || !reminder_type || !reminder_once_date;
 	}
 	
 	const createTech = () => {
@@ -57,7 +61,10 @@ const CreateTechHelpDrawer = ({onclose}) => {
 			payment_type,
 			payment_status,
 			pay_amount,
-			pay_amount_month
+			pay_amount_month,
+			reminder_type,
+			reminder_once_date: new Date(reminder_once_date).toISOString(),
+			reminder_monthly_date: new Date(reminder_once_date).toISOString()
 		}
 		dispatch(createTechHelp(data)).then((res) => {
 			if (res?.payload?.id) {
@@ -206,6 +213,34 @@ const CreateTechHelpDrawer = ({onclose}) => {
 									<option value="3">Bekor qilingan</option>
 									<option value="4">Muddati o'tgan</option>
 								</select>
+							</div>
+							
+							<div className="w-full">
+								<label
+									htmlFor="payment_type"
+									className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+								>
+									Eslatma turi
+								</label>
+								<select
+									name="reminder_type"
+									id="reminder_type"
+									className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
+									value={reminder_type}
+									onChange={(e) => setReminderType(Number(e.target.value))}
+								>
+									<option value="" disabled={reminder_type}>Tanlang...</option>
+									<option value="1">1 martalik</option>
+									<option value="2">Har oylik</option>
+								</select>
+							</div>
+							<div className="w-full my-4">
+								<Input
+									value={reminder_once_date || ''}
+									onChange={(e) => setReminderOnceDate(e.target.value)}
+									type={'date'}
+									label={'Eslatma sanasi'}
+								/>
 							</div>
 						</div>
 						
