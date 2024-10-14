@@ -25,7 +25,7 @@ const TechHelpDetail = () => {
 	const location = useLocation()
 	const {id} = useParams()
 	
-	const {loading} = useSelector(state => state.dataCenter)
+	const {loading, techHelpDetail} = useSelector(state => state.dataCenter)
 	
 	const [stir, setStir] = useState('');
 	const [name, setName] = useState('')
@@ -215,7 +215,11 @@ const TechHelpDetail = () => {
 				)
 			case 1:
 				return (
-					<></>
+					<>
+						{techHelpDetail && location.state?.detail && techHelpDetail?.files?.length === 0 ? <h1 className="dark:text-white text-center w-full">Fayllar mavjud emas!</h1> : (
+							<></>
+						)}
+					</>
 				)
 			default:
 				return null
