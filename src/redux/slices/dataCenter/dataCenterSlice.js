@@ -404,6 +404,18 @@ export const createTechHelpFile = createAsyncThunk(
   }
 )
 
+export const deleteTechHelp = createAsyncThunk(
+  "dataCenter/deleteTechHelp",
+  async (id) => {
+    try {
+      const response = await instance.delete(`/purchase-note/purchase_note/${id}/delete`)
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -727,6 +739,17 @@ const dataCenterSlice = createSlice({
       state.loading = false
     })
     builder.addCase(createTechHelpFile.rejected, (state, {payload}) => {
+      state.loading = false
+    })
+    
+    // deleteTechHelp
+    builder.addCase(deleteTechHelp.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(deleteTechHelp.fulfilled, (state) => {
+      state.loading = false
+    })
+    builder.addCase(deleteTechHelp.rejected, (state) => {
       state.loading = false
     })
   }

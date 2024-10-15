@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import moment from "moment";
-import {EyeIcon, PencilIcon} from "@heroicons/react/16/solid";
+import {EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {useDispatch, useSelector} from "react-redux";
 import {Loader} from "../../components";
-import {getTechHelp} from "../../redux/slices/dataCenter/dataCenterSlice";
+import {deleteTechHelp, getTechHelp} from "../../redux/slices/dataCenter/dataCenterSlice";
 import {useNavigate} from "react-router-dom";
 import {useStateContext} from "../../contexts/ContextProvider";
 import CreateTechHelpDrawer from "../../components/DataCenter/CreateTechHelpDrawer";
+import {toast} from "react-toastify";
 
 const TechHelp = () => {
 	const dispatch = useDispatch()
@@ -113,11 +114,25 @@ const TechHelp = () => {
 											}}
 										/>
 									</button>
-									{/*<button className="rounded border border-red-500 p-1">*/}
-									{/*	<TrashIcon*/}
-									{/*		className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}*/}
-									{/*	/>*/}
-									{/*</button>*/}
+									<button
+										className="rounded border border-red-500 p-1"
+										onClick={() => {
+											dispatch(deleteTechHelp(item?.id)).then(({payload}) => {
+												if (payload?.detail) {
+													toast.success("Muvofaqqiyatli o'chirildi")
+													dispatch(getTechHelp())
+												} else {
+													return toast.error("Xatolik")
+												}
+											}).catch(() => {
+												return toast.error("XAtolik")
+											})
+										}}
+									>
+										<TrashIcon
+											className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
+										/>
+									</button>
 								</td>
 							</tr>
 						))}
