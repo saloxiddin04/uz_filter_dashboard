@@ -4,7 +4,7 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import TabsWithBack from "../../components/TabsWithBack";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {Input, Loader} from "../../components";
-import {createTechHelpFile, getTechHelpDetail} from "../../redux/slices/dataCenter/dataCenterSlice";
+import {createTechHelpFile, getTechHelpDetail, updateTechHelp} from "../../redux/slices/dataCenter/dataCenterSlice";
 import moment from "moment";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {AiOutlineCloudDownload} from "react-icons/ai";
@@ -153,6 +153,24 @@ const TechHelpDetail = () => {
 		})
 	}
 	
+	const updateTech = () => {
+		const data = {
+			payment_status,
+			reminder_type,
+			reminder_once_date: new Date(reminder_once_date).toISOString()
+		}
+		dispatch(updateTechHelp({id, data})).then(({payload}) => {
+			if (payload?.ok) {
+				toast.success("Muvofaqqiyatli o'zgartirildi")
+				dispatch(getTechHelpDetail(id))
+			} else {
+				return toast.error("Xatolik")
+			}
+		}).catch(() => {
+			return toast.error("Xatolik")
+		})
+	}
+	
 	const displayStep = () => {
 		switch (openTab) {
 			case 0:
@@ -176,7 +194,7 @@ const TechHelpDetail = () => {
 										}
 									}}
 									label={'Tashkilotning STIR raqami'}
-									disabled={location.state?.detail}
+									disabled={true}
 								/>
 							</div>
 							<div className="w-[49%]">
@@ -185,7 +203,7 @@ const TechHelpDetail = () => {
 									onChange={(e) => setContractNumber(e.target.value)}
 									type={'text'}
 									label={'Shartnoma raqami'}
-									disabled={location.state?.detail}
+									disabled={true}
 								/>
 							</div>
 							<div className="w-[49%]">
@@ -194,7 +212,7 @@ const TechHelpDetail = () => {
 									onChange={(e) => setStartDate(e.target.value)}
 									type={'date'}
 									label={'Shartnoma sanasi'}
-									disabled={location.state?.detail}
+									disabled={true}
 								/>
 							</div>
 							<div className="w-[49%]">
@@ -203,7 +221,7 @@ const TechHelpDetail = () => {
 									onChange={(e) => setEndDate(e.target.value)}
 									type={'date'}
 									label={'Amal qilish sanasi'}
-									disabled={location.state?.detail}
+									disabled={true}
 								/>
 							</div>
 							<div className="w-[49%] my-4">
@@ -217,7 +235,7 @@ const TechHelpDetail = () => {
 									}}
 									type={'text'}
 									label={"To'lov miqdori"}
-									disabled={location.state?.detail}
+									disabled={true}
 								/>
 							</div>
 							<div className="w-[49%] my-4">
@@ -231,7 +249,7 @@ const TechHelpDetail = () => {
 									}}
 									type={'text'}
 									label={"Oylik to'lov miqdori"}
-									disabled={location.state?.detail}
+									disabled={true}
 								/>
 							</div>
 							<div className="w-full">
@@ -247,7 +265,7 @@ const TechHelpDetail = () => {
 									className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
 									value={payment_type}
 									onChange={(e) => setPaymentType(Number(e.target.value))}
-									disabled={location.state?.detail}
+									disabled={true}
 								>
 									<option value="" disabled={payment_type}>Tanlang...</option>
 									<option value="1">1 martalik</option>
@@ -307,6 +325,15 @@ const TechHelpDetail = () => {
 								/>
 							</div>
 						</div>
+						
+						<button
+							className={`px-4 py-2 rounded text-white disabled:opacity-25 ml-auto`}
+							style={{backgroundColor: currentColor}}
+							// disabled={handleValidate()}
+							onClick={updateTech}
+						>
+							Saqlash
+						</button>
 					</>
 				)
 			case 1:
@@ -315,7 +342,7 @@ const TechHelpDetail = () => {
 						{techHelpDetail && location.state?.detail && techHelpDetail?.files?.length === 0 ?
 							<h1 className="dark:text-white text-center w-full">Fayllar mavjud emas!</h1> : (
 								<>
-									<div className="w-full flex flex-wrap gap-4 my-2">
+								<div className="w-full flex flex-wrap gap-4 my-2">
 										{files && files?.map((item, index) => (
 											<div key={index} className="border-dashed border p-2 w-full flex flex-col gap-4">
 												{/*{!item?.uploaded && (*/}

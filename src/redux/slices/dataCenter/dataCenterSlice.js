@@ -416,6 +416,18 @@ export const deleteTechHelp = createAsyncThunk(
   }
 )
 
+export const updateTechHelp = createAsyncThunk(
+  "dataCenter/updateTechHelp",
+  async (params) => {
+    try {
+      const response = await instance.patch(`/purchase-note/purchase_note/${params?.id}/update`, params?.data)
+      return {data: response.data, ok: true}
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -750,6 +762,17 @@ const dataCenterSlice = createSlice({
       state.loading = false
     })
     builder.addCase(deleteTechHelp.rejected, (state) => {
+      state.loading = false
+    })
+    
+    // updateTechHelp
+    builder.addCase(updateTechHelp.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(updateTechHelp.fulfilled, (state) => {
+      state.loading = false
+    })
+    builder.addCase(updateTechHelp.rejected, (state) => {
       state.loading = false
     })
   }
