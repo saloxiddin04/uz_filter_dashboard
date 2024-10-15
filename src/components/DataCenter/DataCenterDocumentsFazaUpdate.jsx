@@ -302,14 +302,113 @@ const DataCenterDocumentsFazaUpdate = () => {
 			case 1:
 				return (
 					<>
-						<div className="w-full flex flex-wrap gap-4 my-2">
-							{files && files?.map((item, index) => (
-								<div key={index} className="border-dashed border p-2 w-full flex flex-col gap-4">
-									{!item?.uploaded && (
+						{documentDetail && location.state?.detail && documentDetail?.document_files?.length === 0 ? (
+							<>
+								<h1 className="text-center w-full dark:text-white">Fayllar mavjud emas!</h1>
+							</>
+						) : (
+							<>
+								<div className="w-full flex flex-wrap gap-4 my-2">
+									{files && files?.map((item, index) => (
+										<div key={index} className="border-dashed border p-2 w-full flex flex-col gap-4">
+											{!item?.uploaded && (
+												<div className="w-full text-end">
+													<button
+														onClick={() => deleteFiles(index)}
+														disabled={files.length === 1}
+													>
+														<TrashIcon
+															color={currentColor}
+															className="size-6 cursor-pointer"
+														/>
+													</button>
+												</div>
+											)}
+											<div className="w-full flex items-center justify-between gap-4 flex-wrap">
+												<div className={'flex flex-col w-[49%]'}>
+													<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="name">Hujjat
+														nomi</label>
+													<input
+														style={{opacity: item.uploaded ? 0.5 : 1}}
+														disabled={item?.uploaded || location.state?.detail}
+														value={item?.name}
+														onChange={(e) => changeFiles(e, index)}
+														name="name"
+														id="name"
+														type="text"
+														className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1 disabled:opacity-25"
+													/>
+												</div>
+												<div className={'flex w-[49%] items-end justify-between'}>
+													<div className="w-[85%] flex flex-col">
+														<label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+														       htmlFor="file">Fayl</label>
+														<input
+															style={{opacity: item.uploaded ? 0.5 : 1}}
+															disabled={item?.uploaded || location.state?.detail}
+															onChange={(e) => changeFiles(e, index)}
+															name="file"
+															id="file"
+															type="file"
+															className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 disabled:opacity-25 border mb-1"
+														/>
+													</div>
+													<div className="mb-1 flex items-center gap-1 ml-1">
+														{item?.url ? (
+															<button className="rounded border-yellow-500 border p-1 disabled:opacity-25">
+																<AiOutlineCloudDownload
+																	className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
+																	onClick={() => {
+																		window.open(item?.url, '_blank')
+																	}}
+																/>
+															</button>
+														) : (
+															<button
+																className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+																style={{backgroundColor: currentColor}}
+																disabled={item?.uploaded || !item?.name || !item?.file || location.state?.detail}
+																// disabled={handleValidateSecond()}
+																onClick={() => uploadFile(index)}
+															>
+																Saqlash
+															</button>
+														)}
+													</div>
+												</div>
+											</div>
+										</div>
+									))}
+								</div>
+								
+								<div className="w-full py-2 text-center">
+									<button
+										className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+										style={{backgroundColor: currentColor}}
+										// disabled={handleValidateSecond()}
+										onClick={() => handleAddFiles()}
+										disabled={location.state?.detail}
+									>
+										Qo'shish
+									</button>
+								</div>
+							</>
+						)}
+					</>
+				)
+			case 2:
+				return (
+					<>
+						{documentDetail && location.state?.detail && documentDetail?.document_devices?.length === 0 ? (
+							<h1 className="text-center w-full dark:text-white">Qurilmalar mavjud emas!</h1>
+						) : (
+							<div className="w-full flex flex-wrap gap-4 my-2 border rounded p-2">
+								{devices && devices?.map((item, index) => (
+									<div key={index} className="border-dashed border p-2 w-full flex flex-col gap-4">
 										<div className="w-full text-end">
 											<button
-												onClick={() => deleteFiles(index)}
-												disabled={files.length === 1}
+												onClick={() => handleDelete(index)}
+												disabled={devices.length === 1 || location?.state?.detail}
 											>
 												<TrashIcon
 													color={currentColor}
@@ -317,234 +416,147 @@ const DataCenterDocumentsFazaUpdate = () => {
 												/>
 											</button>
 										</div>
-									)}
-									<div className="w-full flex items-center justify-between gap-4 flex-wrap">
-										<div className={'flex flex-col w-[49%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="name">Hujjat
-												nomi</label>
-											<input
-												style={{opacity: item.uploaded ? 0.5 : 1}}
-												disabled={item?.uploaded || location.state?.detail}
-												value={item?.name}
-												onChange={(e) => changeFiles(e, index)}
-												name="name"
-												id="name"
-												type="text"
-												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1 disabled:opacity-25"
-											/>
-										</div>
-										<div className={'flex w-[49%] items-end justify-between'}>
-											<div className="w-[85%] flex flex-col">
-												<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="file">Fayl</label>
+										<div className="w-full flex items-center justify-between gap-4 flex-wrap">
+											<div className={'flex flex-col w-[30%]'}>
+												<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device">Qurilma
+													turi</label>
+												<select
+													className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+													value={item?.device}
+													onChange={(e) => handleChange(e, index)}
+													name="device"
+													id="device"
+													disabled={location.state?.detail}
+												>
+													<option value="0">Tanlang</option>
+													{listProvider && listProvider?.device?.map((item) => (
+														<option key={item?.id} value={item?.id}>{item?.name}</option>
+													))}
+												</select>
+											</div>
+											<div className={'flex flex-col w-[30%]'}>
+												<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_publisher">Qurilma
+													ishlab
+													chiqaruvchisi</label>
+												<select
+													className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+													value={item?.device_publisher}
+													onChange={(e) => handleChange(e, index)}
+													name="device_publisher"
+													id="device_publisher"
+													disabled={location.state?.detail}
+												>
+													<option value="0">Tanlang</option>
+													{listProvider && listProvider?.device_publisher?.map((item) => (
+														<option key={item?.id} value={item?.id}>{item?.name}</option>
+													))}
+												</select>
+											</div>
+											<div className={'flex flex-col w-[30%]'}>
+												<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_type">Qurilma
+													klassi</label>
+												<select
+													className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+													value={item?.device_type}
+													onChange={(e) => handleChange(e, index)}
+													name="device_type"
+													id="device_type"
+													disabled={location.state?.detail}
+												>
+													<option value="0">Tanlang</option>
+													<option value={1}>Cloud</option>
+													<option value={2}>Bare metal</option>
+													<option value={3}>Infratuzilma</option>
+												</select>
+											</div>
+											
+											<div className={'flex flex-col w-[30%]'}>
+												<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_model">
+													Qurilma modeli
+												</label>
 												<input
-													style={{opacity: item.uploaded ? 0.5 : 1}}
-													disabled={item?.uploaded || location.state?.detail}
-													onChange={(e) => changeFiles(e, index)}
-													name="file"
-													id="file"
-													type="file"
-													className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 disabled:opacity-25 border mb-1"
+													value={item?.device_model}
+													onChange={(e) => handleChange(e, index)}
+													name="device_model"
+													id="device_model"
+													type="text"
+													disabled={location.state?.detail}
+													className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
 												/>
 											</div>
-											<div className="mb-1 flex items-center gap-1 ml-1">
-												{item?.url ? (
-													<button disabled={location.state?.detail}
-													        className="rounded border-yellow-500 border p-1 disabled:opacity-25">
-														<AiOutlineCloudDownload
-															className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
-															onClick={() => {
-																window.open(item?.url, '_blank')
-															}}
-														/>
-													</button>
-												) : (
-													<button
-														className={`px-4 py-2 rounded text-white disabled:opacity-25`}
-														style={{backgroundColor: currentColor}}
-														disabled={item?.uploaded || !item?.name || !item?.file || location.state?.detail}
-														// disabled={handleValidateSecond()}
-														onClick={() => uploadFile(index)}
-													>
-														Saqlash
-													</button>
-												)}
+											<div className={'flex flex-col w-[30%]'}>
+												<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_number">
+													Qurilma seriya raqami
+												</label>
+												<input
+													value={item?.device_number}
+													onChange={(e) => handleChange(e, index)}
+													name="device_number"
+													id="device_number"
+													type="text"
+													disabled={location.state?.detail}
+													className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+												/>
+											</div>
+											
+											<div className={'flex flex-col w-[30%]'}>
+												<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="serial_location">
+													Qurilma joylashuvi
+												</label>
+												<input
+													disabled={true}
+													value={item?.serial_location}
+													onChange={(e) => handleChange(e, index)}
+													name="serial_location"
+													id="serial_location"
+													type="text"
+													className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+												/>
 											</div>
 										</div>
 									</div>
+								))}
+								
+								<div className="w-full py-2 text-center">
+									<button
+										className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+										style={{backgroundColor: currentColor}}
+										disabled={validateDevices() || location.state?.detail}
+										onClick={() => handleAdd()}
+									>
+										Qo'shish
+									</button>
 								</div>
-							))}
-						</div>
-						
-						<div className="w-full py-2 text-center">
-							<button
-								className={`px-4 py-2 rounded text-white disabled:opacity-25`}
-								style={{backgroundColor: currentColor}}
-								// disabled={handleValidateSecond()}
-								onClick={() => handleAddFiles()}
-								disabled={location.state?.detail}
-							>
-								Qo'shish
-							</button>
-						</div>
-					</>
-				)
-			case 2:
-				return (
-					<>
-						<div className="w-full flex flex-wrap gap-4 my-2 border rounded p-2">
-							{devices && devices?.map((item, index) => (
-								<div key={index} className="border-dashed border p-2 w-full flex flex-col gap-4">
-									<div className="w-full text-end">
-										<button
-											onClick={() => handleDelete(index)}
-											disabled={devices.length === 1 || location?.state?.detail}
-										>
-											<TrashIcon
-												color={currentColor}
-												className="size-6 cursor-pointer"
-											/>
-										</button>
-									</div>
-									<div className="w-full flex items-center justify-between gap-4 flex-wrap">
-										<div className={'flex flex-col w-[30%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device">Qurilma
-												turi</label>
-											<select
-												className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-												value={item?.device}
-												onChange={(e) => handleChange(e, index)}
-												name="device"
-												id="device"
-												disabled={location.state?.detail}
-											>
-												<option value="0">Tanlang</option>
-												{listProvider && listProvider?.device?.map((item) => (
-													<option key={item?.id} value={item?.id}>{item?.name}</option>
-												))}
-											</select>
-										</div>
-										<div className={'flex flex-col w-[30%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_publisher">Qurilma
-												ishlab
-												chiqaruvchisi</label>
-											<select
-												className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-												value={item?.device_publisher}
-												onChange={(e) => handleChange(e, index)}
-												name="device_publisher"
-												id="device_publisher"
-												disabled={location.state?.detail}
-											>
-												<option value="0">Tanlang</option>
-												{listProvider && listProvider?.device_publisher?.map((item) => (
-													<option key={item?.id} value={item?.id}>{item?.name}</option>
-												))}
-											</select>
-										</div>
-										<div className={'flex flex-col w-[30%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_type">Qurilma
-												klassi</label>
-											<select
-												className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-												value={item?.device_type}
-												onChange={(e) => handleChange(e, index)}
-												name="device_type"
-												id="device_type"
-												disabled={location.state?.detail}
-											>
-												<option value="0">Tanlang</option>
-												<option value={1}>Cloud</option>
-												<option value={2}>Bare metal</option>
-												<option value={3}>Infratuzilma</option>
-											</select>
-										</div>
-										
-										<div className={'flex flex-col w-[30%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_model">
-												Qurilma modeli
-											</label>
-											<input
-												value={item?.device_model}
-												onChange={(e) => handleChange(e, index)}
-												name="device_model"
-												id="device_model"
-												type="text"
-												disabled={location.state?.detail}
-												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-											/>
-										</div>
-										<div className={'flex flex-col w-[30%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="device_number">
-												Qurilma seriya raqami
-											</label>
-											<input
-												value={item?.device_number}
-												onChange={(e) => handleChange(e, index)}
-												name="device_number"
-												id="device_number"
-												type="text"
-												disabled={location.state?.detail}
-												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-											/>
-										</div>
-										
-										<div className={'flex flex-col w-[30%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="serial_location">
-												Qurilma joylashuvi
-											</label>
-											<input
-												disabled={true}
-												value={item?.serial_location}
-												onChange={(e) => handleChange(e, index)}
-												name="serial_location"
-												id="serial_location"
-												type="text"
-												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-											/>
-										</div>
-									</div>
+								
+								<div className="w-full py-2 flex justify-between text-end">
+									<button
+										className={`px-4 py-2 rounded border text-white`}
+										style={{color: currentColor, borderColor: currentColor}}
+										// disabled={handleValidateSecond()}
+										onClick={() => navigate(-1)}
+									>
+										Bekor qilish
+									</button>
+									<button
+										className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+										style={{backgroundColor: currentColor}}
+										disabled={validateDevices() || location.state?.detail}
+										onClick={() =>
+											dispatch(createDeviceForAktAndFaza({
+												id,
+												data: devices
+											})).then((res) => {
+												if (res?.meta?.requestStatus) {
+													toast.success("Muvofaqqiyatli yaratildi")
+												}
+											})
+										}
+									>
+										Saqlash
+									</button>
 								</div>
-							))}
-							
-							<div className="w-full py-2 text-center">
-								<button
-									className={`px-4 py-2 rounded text-white disabled:opacity-25`}
-									style={{backgroundColor: currentColor}}
-									disabled={validateDevices() || location.state?.detail}
-									onClick={() => handleAdd()}
-								>
-									Qo'shish
-								</button>
 							</div>
-							
-							<div className="w-full py-2 flex justify-between text-end">
-								<button
-									className={`px-4 py-2 rounded border text-white`}
-									style={{color: currentColor, borderColor: currentColor}}
-									// disabled={handleValidateSecond()}
-									onClick={() => navigate(-1)}
-								>
-									Bekor qilish
-								</button>
-								<button
-									className={`px-4 py-2 rounded text-white disabled:opacity-25`}
-									style={{backgroundColor: currentColor}}
-									disabled={validateDevices() || location.state?.detail}
-									onClick={() =>
-										dispatch(createDeviceForAktAndFaza({
-											id,
-											data: devices
-										})).then((res) => {
-											if (res?.meta?.requestStatus) {
-												toast.success("Muvofaqqiyatli yaratildi")
-											}
-										})
-									}
-								>
-									Saqlash
-								</button>
-							</div>
-						</div>
+						)}
 					</>
 				)
 			default:

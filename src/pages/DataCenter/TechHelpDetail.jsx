@@ -4,8 +4,11 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import TabsWithBack from "../../components/TabsWithBack";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {Input, Loader} from "../../components";
-import {getTechHelpDetail} from "../../redux/slices/dataCenter/dataCenterSlice";
+import {createTechHelpFile, getTechHelpDetail} from "../../redux/slices/dataCenter/dataCenterSlice";
 import moment from "moment";
+import {TrashIcon} from "@heroicons/react/16/solid";
+import {AiOutlineCloudDownload} from "react-icons/ai";
+import {toast} from "react-toastify";
 
 const tabs = [
 	{
@@ -41,6 +44,13 @@ const TechHelpDetail = () => {
 	
 	const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 	
+	const [files, setFiles] = useState([{
+		filename: '',
+		file: null,
+		uploaded: false,
+		type: ''
+	}])
+	
 	useEffect(() => {
 		dispatch(getTechHelpDetail(id)).then(({payload}) => {
 			setStir(payload?.user?.tin)
@@ -54,8 +64,94 @@ const TechHelpDetail = () => {
 			setPaymentStatus(payload?.payment_status)
 			setReminderType(payload?.reminder_type)
 			setReminderOnceDate(moment(payload?.reminder_once_date).format('YYYY-MM-DD'))
+			
+			if (location.state?.detail) {
+				const filesObjects = payload?.files?.map((item) => ({
+					filename: item?.filename,
+					file: null,
+					uploaded: true,
+					type: item?.type,
+					get_file: item?.get_file
+				}))
+				setFiles(filesObjects)
+			}
 		})
-	}, [id]);
+	}, [id, dispatch]);
+	
+	// useEffect(() => {
+	// 	if (location.state?.detail) {
+	// 		dispatch(getTechHelpDetail(id)).then(({payload}) => {
+	// 			setStir(payload?.user?.tin)
+	// 			setName(payload?.user?.name)
+	// 			setContractNumber(payload?.contract_number)
+	// 			setStartDate(moment(payload?.start_date).format('YYYY-MM-DD'))
+	// 			setEndDate(moment(payload?.end_date).format('YYYY-MM-DD'))
+	// 			setPayAmount(payload?.pay_amount)
+	// 			setPayAmountMonth(payload?.pay_amount_month)
+	// 			setPaymentType(payload?.payment_type)
+	// 			setPaymentStatus(payload?.payment_status)
+	// 			setReminderType(payload?.reminder_type)
+	// 			setReminderOnceDate(moment(payload?.reminder_once_date).format('YYYY-MM-DD'))
+	// 		})
+	// 	}
+	// }, [id, location, dispatch]);
+	
+	const handleAddFiles = () => {
+		const value = [...files, {
+			filename: '',
+			file: null,
+			uploaded: false,
+			type: ''
+		}]
+		setFiles(value)
+	}
+	
+	const changeFiles = (e, i) => {
+		const {name, value} = e.target
+		const updateFiles = [...files]
+		if (name === 'file') {
+			updateFiles[i] = {
+				...updateFiles[i],
+				[name]: e.target.files[0]
+			}
+			setFiles(updateFiles)
+		} else {
+			updateFiles[i] = {
+				...updateFiles[i],
+				[name]: value
+			}
+			setFiles(updateFiles)
+		}
+	}
+	
+	const deleteFiles = i => {
+		const data = [...files]
+		data.splice(i, 1)
+		setFiles(data)
+	}
+	
+	const uploadFile = (i) => {
+		const data = {
+			purchase_note: id,
+			contract_number,
+			filename: files[i].filename,
+			file: files[i].file,
+			type: Number(files[i].type)
+		}
+		dispatch(createTechHelpFile(data)).then(({payload}) => {
+			if (payload?.id) {
+				const updateFiles = [...files]
+				updateFiles[i].uploaded = true
+				setFiles(updateFiles)
+				toast.success("Muvofaqqiyatli qo'shildi")
+				handleAddFiles()
+			} else {
+				return toast.error("Xatolik")
+			}
+		}).catch(() => {
+			return toast.error('Xatolik')
+		})
+	}
 	
 	const displayStep = () => {
 		switch (openTab) {
@@ -216,9 +312,108 @@ const TechHelpDetail = () => {
 			case 1:
 				return (
 					<>
-						{techHelpDetail && location.state?.detail && techHelpDetail?.files?.length === 0 ? <h1 className="dark:text-white text-center w-full">Fayllar mavjud emas!</h1> : (
-							<></>
-						)}
+						{techHelpDetail && location.state?.detail && techHelpDetail?.files?.length === 0 ?
+							<h1 className="dark:text-white text-center w-full">Fayllar mavjud emas!</h1> : (
+								<>
+									<div className="w-full flex flex-wrap gap-4 my-2">
+										{files && files?.map((item, index) => (
+											<div key={index} className="border-dashed border p-2 w-full flex flex-col gap-4">
+												{/*{!item?.uploaded && (*/}
+												{/*	<div className="w-full text-end">*/}
+												{/*		<button*/}
+												{/*			onClick={() => deleteFiles(index)}*/}
+												{/*			disabled={files.length === 1}*/}
+												{/*		>*/}
+												{/*			<TrashIcon*/}
+												{/*				color={currentColor}*/}
+												{/*				className="size-6 cursor-pointer"*/}
+												{/*			/>*/}
+												{/*		</button>*/}
+												{/*	</div>*/}
+												{/*)}*/}
+												<div className="w-full flex items-center justify-between gap-4 flex-wrap">
+													<div className="w-[49%] flex justify-between">
+														<div className="w-[49%]">
+															<label
+																htmlFor="type"
+																className={'block text-gray-700 text-sm font-bold mb-1 ml-3'}
+															>
+																Hujjat turi
+															</label>
+															<select
+																disabled={item.uploaded}
+																name="type"
+																id="type"
+																className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1 disabled:opacity-25`}
+																value={item?.type}
+																onChange={(e) => changeFiles(e, index)}
+															>
+																<option value="" disabled={item?.type}>Tanlang...</option>
+																<option value="1">Bildirgi</option>
+																<option value="2">Hisob faktura</option>
+																<option value="3">Shartnoma</option>
+															</select>
+														</div>
+														<div className={'flex flex-col w-[49%]'}>
+															<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="filename">Hujjat
+																nomi</label>
+															<input
+																style={{opacity: item.uploaded ? 0.5 : 1}}
+																disabled={item?.uploaded || location.state?.detail}
+																value={item?.filename}
+																onChange={(e) => changeFiles(e, index)}
+																name="filename"
+																id="filename"
+																type="text"
+																className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1 disabled:opacity-25"
+															/>
+														</div>
+													</div>
+													<div className={'flex w-[49%] items-end justify-between'}>
+														{!item?.uploaded && <div className="w-[85%] flex flex-col">
+															<label className="block text-gray-700 text-sm font-bold mb-1 ml-3"
+															       htmlFor="file">Fayl</label>
+															<input
+																style={{opacity: item.uploaded ? 0.5 : 1}}
+																disabled={item?.uploaded || location.state?.detail}
+																onChange={(e) => changeFiles(e, index)}
+																name="file"
+																id="file"
+																type="file"
+																className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 disabled:opacity-25 border mb-1"
+															/>
+														</div>}
+														<div className="mb-1 flex items-center gap-1 ml-1">
+															{item?.get_file ? (
+																<button className="rounded border-yellow-500 mt-5 border p-1 disabled:opacity-25">
+																	<AiOutlineCloudDownload
+																		className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}
+																		onClick={() => {
+																			window.open(item?.get_file, '_blank')
+																		}}
+																	/>
+																</button>
+															) : (
+																<>
+																	<button
+																		className={`px-4 py-2 rounded text-white disabled:opacity-25`}
+																		style={{backgroundColor: currentColor}}
+																		disabled={item?.uploaded || !item?.filename || !item?.file || !item?.type || location.state?.detail}
+																		// disabled={handleValidateSecond()}
+																		onClick={() => uploadFile(index)}
+																	>
+																		Saqlash
+																	</button>
+																</>
+															)}
+														</div>
+													</div>
+												</div>
+											</div>
+										))}
+									</div>
+								</>
+							)}
 					</>
 				)
 			default:

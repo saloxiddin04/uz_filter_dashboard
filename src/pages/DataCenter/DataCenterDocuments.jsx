@@ -52,8 +52,6 @@ const DataCenterDocuments = () => {
 		}
 	}, [dispatch, type_of_document]);
 	
-	console.log(type_of_document)
-	
 	const stepDisplay = (step) => {
 		switch (step) {
 			case 0:

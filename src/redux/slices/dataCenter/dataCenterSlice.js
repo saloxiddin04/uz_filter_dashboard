@@ -390,6 +390,20 @@ export const getTechHelpDetail = createAsyncThunk(
   }
 )
 
+export const createTechHelpFile = createAsyncThunk(
+  "dataCenter/createTechHelpFile",
+  async (data) => {
+    try {
+      const response = await instance.post('/purchase-note/purchase-note-files', data, {
+        headers: { "Content-type": 'multipart/form-data' }
+      })
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const dataCenterSlice = createSlice({
   name: "dataCenter",
   initialState,
@@ -703,6 +717,17 @@ const dataCenterSlice = createSlice({
     builder.addCase(getTechHelpDetail.rejected, (state, {payload}) => {
       state.loading = false
       state.techHelpDetail = null
+    })
+    
+    // createTechHelpFile
+    builder.addCase(createTechHelpFile.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(createTechHelpFile.fulfilled, (state, {payload}) => {
+      state.loading = false
+    })
+    builder.addCase(createTechHelpFile.rejected, (state, {payload}) => {
+      state.loading = false
     })
   }
 })
