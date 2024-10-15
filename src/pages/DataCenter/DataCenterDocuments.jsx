@@ -66,9 +66,7 @@ const DataCenterDocuments = () => {
 								{/*<th scope="col" className="px-4 py-3">Nomlanishi</th>*/}
 								<th scope="col" className="px-6 py-3">Xujjat raqami</th>
 								<th scope="col" className="px-8 py-3">Xujjat sanasi</th>
-								<th scope="col" className="px-8 py-3">Infratuzilma qurilmalar soni</th>
 								<th scope="col" className="px-6 py-3">Cloud qurilmalar soni</th>
-								<th scope="col" className="px-6 py-3">Bare metal qurilmalar soni</th>
 								<th scope="col" className="px-6 py-3">Xolati</th>
 								<th scope="col" className="px-6 py-3">Boshqarish</th>
 							</tr>
@@ -91,13 +89,7 @@ const DataCenterDocuments = () => {
                   <td className={'px-4 py-2'}>
                     {moment(item?.document_date).format('DD-MM-YYYY')}
                   </td>
-                  <td className={'px-4 py-2 text-center'}>
-                    0
-                  </td>
-                  <td className={'px-4 py-2 text-center'}>
-                    0
-                  </td>
-                  <td className={'px-4 py-2 text-center'}>
+                  <td className={'px-4 py-2'}>
                     0
                   </td>
                   <td className={'px-4 py-2'}>
@@ -147,9 +139,7 @@ const DataCenterDocuments = () => {
 								<th scope="col" className="px-3 py-3"></th>
 								<th scope="col" className="px-6 py-3">Xujjat raqami</th>
 								<th scope="col" className="px-8 py-3">Xujjat sanasi</th>
-								<th scope="col" className="px-8 py-3">Infratuzilma qurilmalar soni</th>
 								<th scope="col" className="px-6 py-3">Cloud qurilmalar soni</th>
-								<th scope="col" className="px-6 py-3">Bare metal qurilmalar soni</th>
 								<th scope="col" className="px-6 py-3">Xolati</th>
 								<th scope="col" className="px-6 py-3">Boshqarish</th>
 							</tr>
@@ -169,15 +159,7 @@ const DataCenterDocuments = () => {
 									<td className={'px-4 py-2'}>
 										{moment(item?.document_date).format('DD-MM-YYYY')}
 									</td>
-									<td className={'px-4 py-2 text-center'}>
-										0
-										{/*{item?.date}*/}
-									</td>
-									<td className={'px-4 py-2 text-center'}>
-										0
-										{/*{item?.device_count}*/}
-									</td>
-									<td className={'px-4 py-2 text-center'}>
+									<td className={'px-4 py-2'}>
 										0
 										{/*{item?.cloud_count}*/}
 									</td>
