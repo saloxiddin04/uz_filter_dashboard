@@ -36,6 +36,7 @@ const Tabs = ({ color, tabs, openTab, setOpenTab, isQuery }) => {
                     borderBottom: idx === openTab ? `1px solid ${color}` : ''
                   }}
                   onClick={e => {
+                    localStorage.setItem('currentPage', '1')
                     e.preventDefault();
                     setOpenTab(idx);
                     if (pathname === '/application') {

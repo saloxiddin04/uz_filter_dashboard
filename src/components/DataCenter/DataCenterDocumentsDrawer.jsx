@@ -34,7 +34,7 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 				onclose()
 				setDocumentNumber('')
 				setDocumentDate('')
-				dispatch(getListAktAndFaza({type_of_document: 1}))
+				dispatch(getListAktAndFaza({type_of_document: 1, page_size: 1}))
 			} else {
 				return toast.error('Xatolik')
 			}
@@ -58,7 +58,7 @@ const DataCenterDocumentsDrawer = ({onclose, step}) => {
 				setContractNumber('')
 				setAktDocumentDate('')
 				dispatch(clearContractData())
-				dispatch(getListAktAndFaza({type_of_document: 2}))
+				dispatch(getListAktAndFaza({type_of_document: 2, page_size: 1}))
 			} else {
 				return toast.error('Xatolik')
 			}

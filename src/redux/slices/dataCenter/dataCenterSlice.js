@@ -299,6 +299,7 @@ export const getListAktAndFaza = createAsyncThunk(
   async (params) => {
     try {
       const response = await instance.get('/colocation/documets/list-create', {params})
+      console.log(params)
       return response.data
     } catch (e) {
       return e
