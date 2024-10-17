@@ -82,7 +82,7 @@ const TechHelp = () => {
 									{moment(item?.end_date).format('DD-MM-YYYY')}
 								</td>
 								<td className={'px-4 py-2 text-center'}>
-									{item?.payment_type}
+									{item?.payment_type === 1 ? '1 martalik' : 'Har oylik'}
 								</td>
 								<td className={'px-4 py-2'}>
 									{item?.status}
