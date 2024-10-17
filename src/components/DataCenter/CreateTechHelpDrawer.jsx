@@ -49,7 +49,7 @@ const CreateTechHelpDrawer = ({onclose}) => {
 	
 	const handleValidate = () => {
 		return !stir || !name || !contract_number || !start_date || !end_date || !pay_amount ||
-			!pay_amount_month || !payment_status || !payment_type || !reminder_type || !reminder_once_date;
+			(payment_type !== 1 && !pay_amount_month) || !payment_status || !payment_type || !reminder_type || !reminder_once_date;
 	}
 	
 	const createTech = () => {
@@ -172,6 +172,7 @@ const CreateTechHelpDrawer = ({onclose}) => {
 									}}
 									type={'text'}
 									label={"Oylik to'lov miqdori"}
+									disabled={payment_type === 1}
 								/>
 							</div>
 							<div className="w-full">
@@ -186,7 +187,11 @@ const CreateTechHelpDrawer = ({onclose}) => {
 									id="payment_type"
 									className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
 									value={payment_type}
-									onChange={(e) => setPaymentType(Number(e.target.value))}
+									onChange={(e) => {
+										setPaymentType(Number(e.target.value))
+										setPayAmountMonth(null)
+										setReminderType('1')
+									}}
 								>
 									<option value="" disabled={payment_type}>Tanlang...</option>
 									<option value="1">1 martalik</option>
@@ -228,6 +233,7 @@ const CreateTechHelpDrawer = ({onclose}) => {
 									className={`w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1`}
 									value={reminder_type}
 									onChange={(e) => setReminderType(Number(e.target.value))}
+									disabled={payment_type === 1}
 								>
 									<option value="" disabled={reminder_type}>Tanlang...</option>
 									<option value="1">1 martalik</option>
