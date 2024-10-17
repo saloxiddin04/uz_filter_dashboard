@@ -54,6 +54,7 @@ const TechHelp = () => {
 							<th scope="col" className="px-6 py-3">Status</th>
 							<th scope="col" className="px-6 py-3">To'lov miqdori</th>
 							<th scope="col" className="px-6 py-3">Oylik to'lov miqdori</th>
+							<th scope="col" className="px-6 py-3">Qolgan vaqt</th>
 							<th scope="col" className="px-6 py-3">Boshqaruv</th>
 						</tr>
 						</thead>
@@ -92,6 +93,9 @@ const TechHelp = () => {
 								</td>
 								<td className={'px-4 py-2 text-center'}>
 									{item?.pay_amount_month}
+								</td>
+								<td className={'px-4 py-2 text-center'}>
+									{item?.remaining_time}
 								</td>
 								<td className="px-4 py-2 flex gap-2">
 									<button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
