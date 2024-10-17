@@ -88,12 +88,12 @@ const Monitoring = () => {
         <thead className={'text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded'}>
         <tr>
           <th className="px-3 py-3">Oy</th>
+          <th className="px-3 py-3">Balansdan yechilgan qiymat</th>
           <th className="px-3 py-3">To’langan qiymat</th>
-          <th className="px-3 py-3">To’lov</th>
           <th className="px-3 py-3">To’lov (%)</th>
-          <th className="px-3 py-3">Sana (yil.oy.sana)</th>
-          <th className="px-3 py-3">Invoys</th>
-          <th className="px-3 py-3">Balans</th>
+          <th className="px-3 py-3">To'lov sanasi (yil.oy.sana)</th>
+          <th className="px-3 py-3">Hisob-faktura</th>
+          <th className="px-3 py-3">Qoldiq balans</th>
         </tr>
         </thead>
         <tbody>
