@@ -63,6 +63,7 @@ const TechHelp = () => {
 							<tr
 								className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
 								key={item?.id}
+								style={{backgroundColor: item?.is_job_done ? '' : 'rgb(55 65 81)'}}
 							>
 								<td scope="row" className="px-6 py-4 font-medium border-b-1">
 									{index + 1}

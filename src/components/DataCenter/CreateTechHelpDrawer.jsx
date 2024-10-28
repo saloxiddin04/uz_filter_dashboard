@@ -26,6 +26,7 @@ const CreateTechHelpDrawer = ({onclose}) => {
 	const [payment_status, setPaymentStatus] = useState('')
 	const [reminder_type, setReminderType] = useState('')
 	const [reminder_once_date, setReminderOnceDate] = useState('')
+	const [email, setEmail] = useState('')
 	
 	const searchUserJuridic = () => {
 		dispatch(getUserByTin({stir, client: 'yur'})).then((res) => {
@@ -45,13 +46,14 @@ const CreateTechHelpDrawer = ({onclose}) => {
 		setPaymentStatus('')
 		setReminderOnceDate('')
 		setReminderType('')
+		setEmail('')
 		dispatch(clearStatesFirstStep())
 		onclose()
 	}
 	
 	const handleValidate = () => {
 		return !stir || !name || !contract_number || !start_date || !end_date || !pay_amount ||
-			(payment_type !== 1 && !pay_amount_month) || !payment_status || !payment_type || !reminder_type || !reminder_once_date;
+			(payment_type !== 1 && !pay_amount_month) || !payment_status || !payment_type || !reminder_type || !reminder_once_date || !email;
 	}
 	
 	const createTech = () => {
@@ -66,7 +68,8 @@ const CreateTechHelpDrawer = ({onclose}) => {
 			pay_amount_month,
 			reminder_type,
 			reminder_once_date: new Date(reminder_once_date).toISOString(),
-			reminder_monthly_date: new Date(reminder_once_date).toISOString()
+			reminder_monthly_date: new Date(reminder_once_date).toISOString(),
+			email
 		}
 		dispatch(createTechHelp(data)).then((res) => {
 			if (res?.payload?.id) {
@@ -249,6 +252,14 @@ const CreateTechHelpDrawer = ({onclose}) => {
 										onChange={(e) => setReminderOnceDate(e.target.value)}
 										type={'date'}
 										label={'Eslatma sanasi'}
+									/>
+								</div>
+								<div className="w-full">
+									<Input
+										value={email || ''}
+										onChange={(e) => setEmail(e.target.value)}
+										type={'mail'}
+										label={'Email'}
 									/>
 								</div>
 							</div>

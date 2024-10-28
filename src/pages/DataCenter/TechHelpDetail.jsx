@@ -379,6 +379,7 @@ const TechHelpDetail = () => {
 																<option value="1">Bildirgi</option>
 																<option value="2">Hisob faktura</option>
 																<option value="3">Shartnoma</option>
+																<option value="4">Ish bajarildi</option>
 															</select>
 														</div>
 														<div className={'flex flex-col w-[49%]'}>
