@@ -37,6 +37,14 @@ const tabs = [
   {
     title: "Eski shartnomalar",
     active: false
+  },
+  {
+    title: "Biriktirilgan xat",
+    active: false
+  },
+  {
+    title: "Lot qo'shish",
+    active: false
   }
 ];
 
@@ -285,10 +293,65 @@ const renderDetail = (
           ))}
         </>
       )
+    case 6:
+      return (
+        data?.signed_letter?.id ? (
+          <>
+            <table className={'w-full'}>
+              <tbody className="dark:text-white">
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Xat raqami</th>
+                <td className={'text-center px-2 py-2'}>{data?.signed_letter?.letter_number}</td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Xat sanasi</th>
+                <td
+                  className={'text-center px-2 py-2'}>{moment(data?.signed_letter?.letter_date).format('DD-MM-YYYY')}</td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Ijrochi</th>
+                <td
+                  className={'text-center px-2 py-2'}>{data?.signed_letter?.performer_full_name}</td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+              >
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Ijrochi telefon raqami</th>
+                <td
+                  className={'text-center px-2 py-2'}>{data?.signed_letter?.performer_phone_number}</td>
+              </tr>
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Fayl yuklab olish</th>
+                <td className={'text-center px-2 py-2 cursor-pointer'}>
+                  <AiOutlineCloudDownload
+                    className={`size-6 m-auto`}
+                    onClick={() => {
+                      window.open(data?.signed_letter?.file, '_blank')
+                    }}
+                  />
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </>
+        ) : <h1 className="text-center dark:text-white">Xat mavjud emas</h1>
+      )
+    case 7:
+      return (
+        user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" ? (<></>) :
+          <h1 className="text-center dark:text-white">Lot qo'sha olmaysiz</h1>
+      )
     default:
       return null
   }
-
+  
 }
 
 export default EmailDetail;
