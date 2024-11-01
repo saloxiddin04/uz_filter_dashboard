@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Header, Input, Loader, TabsRender} from "../../components";
+import {Header, Input, Loader, Pagination, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
@@ -240,6 +240,10 @@ const AdmissionDataCenter = () => {
       dispatch(getAdmissionLetters())
     })
   }
+  
+  const handlePageChange = (page) => {
+    dispatch(getAdmissionLetters({page_size: page}))
+  }
 
   const displayStep = (step) => {
     switch (step) {
@@ -324,7 +328,7 @@ const AdmissionDataCenter = () => {
                       <input
                         value={pport_no || ""}
                         onChange={(e) => {
-                            setPportNo(e.target.value);
+                          setPportNo(e.target.value);
                         }}
                         onKeyPress={(e) => {
                           if (e.key === "Enter") {
@@ -423,7 +427,7 @@ const AdmissionDataCenter = () => {
               </tr>
               </thead>
               <tbody>
-              {admissionLetter && admissionLetter?.map((item, index) => (
+              {admissionLetter && admissionLetter?.result?.map((item, index) => (
                 <tr
                   className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
                   key={item?.id}
@@ -491,6 +495,14 @@ const AdmissionDataCenter = () => {
               ))}
               </tbody>
             </table>
+            
+            <div className="w-full flex justify-end">
+              <Pagination
+                totalItems={admissionLetter?.count}
+                itemsPerPage={10}
+                onPageChange={handlePageChange}
+              />
+            </div>
           </>
         )
       case 1:

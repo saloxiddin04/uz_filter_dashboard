@@ -223,9 +223,9 @@ export const patchDeviceConfig = createAsyncThunk(
 
 export const getAdmissionLetters = createAsyncThunk(
   "dataCenter/getAdmissionLetters",
-  async () => {
+  async (params) => {
     try {
-      const response = await instance.get('/dispatcher/admission-employee-letters')
+      const response = await instance.get('/dispatcher/admission-employee-letters', {params})
       return response.data
     } catch (e) {
       return e.message
