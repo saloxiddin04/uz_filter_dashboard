@@ -114,6 +114,15 @@ const renderDetail = (
                 ? data?.contract?.contract_status?.name
                 : data?.contract?.contract_status}</td>
             </tr>
+            {data?.contract?.pay_choose === 1 && (
+              <tr
+                className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
+                <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Lot raqami</th>
+                <td className={'text-center px-2 py-2'}>{data?.contract?.lot_number
+                  ? data?.contract?.lot_number
+                  : '-'}</td>
+              </tr>
+            )}
             <tr
               className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Amal qilish muddati</th>
@@ -189,12 +198,12 @@ const renderDetail = (
     case 2:
       return (
         <>
-          <Participants />
+          <Participants/>
         </>
       )
     case 3:
       return (
-        <SignatureContract setOpenTab={setOpenTab} />
+        <SignatureContract setOpenTab={setOpenTab}/>
       )
     case 4:
       return (
