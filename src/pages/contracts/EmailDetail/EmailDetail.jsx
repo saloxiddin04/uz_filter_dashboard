@@ -295,7 +295,7 @@ const renderDetail = (
       )
     case 6:
       return (
-        data?.signed_letter?.id ? (
+        data?.signed_letter?.signed_letter?.id ? (
           <>
             <table className={'w-full'}>
               <tbody className="dark:text-white">
@@ -303,28 +303,28 @@ const renderDetail = (
                 className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
               >
                 <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Xat raqami</th>
-                <td className={'text-center px-2 py-2'}>{data?.signed_letter?.letter_number}</td>
+                <td className={'text-center px-2 py-2'}>{data?.signed_letter?.signed_letter?.letter_number}</td>
               </tr>
               <tr
                 className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
               >
                 <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Xat sanasi</th>
                 <td
-                  className={'text-center px-2 py-2'}>{moment(data?.signed_letter?.letter_date).format('DD-MM-YYYY')}</td>
+                  className={'text-center px-2 py-2'}>{moment(data?.signed_letter?.signed_letter?.letter_date).format('DD-MM-YYYY')}</td>
               </tr>
               <tr
                 className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
               >
                 <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Ijrochi</th>
                 <td
-                  className={'text-center px-2 py-2'}>{data?.signed_letter?.performer_full_name}</td>
+                  className={'text-center px-2 py-2'}>{data?.signed_letter?.signed_letter?.performer_full_name}</td>
               </tr>
               <tr
                 className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
               >
                 <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Ijrochi telefon raqami</th>
                 <td
-                  className={'text-center px-2 py-2'}>{data?.signed_letter?.performer_phone_number}</td>
+                  className={'text-center px-2 py-2'}>{data?.signed_letter?.signed_letter?.performer_phone_number}</td>
               </tr>
               <tr
                 className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
@@ -333,13 +333,61 @@ const renderDetail = (
                   <AiOutlineCloudDownload
                     className={`size-6 m-auto`}
                     onClick={() => {
-                      window.open(data?.signed_letter?.file, '_blank')
+                      window.open(data?.signed_letter?.signed_letter?.file, '_blank')
                     }}
                   />
                 </td>
               </tr>
               </tbody>
             </table>
+            
+            {data?.signed_letter?.signed_letter_ownership?.map((el, index) => (
+              <table key={el?.id} className={'w-full my-5'}>
+                <thead className="my-4">
+                <tr>
+                  <td className="font-bold">Xodim {index + 1}</td>
+                </tr>
+                </thead>
+                <tbody className="border dark:text-white">
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+                >
+                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Ism</th>
+                  <td className={'text-center px-2 py-2'}>{el?.full_name}</td>
+                </tr>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+                >
+                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Passport seriyasi</th>
+                  <td className={'text-center px-2 py-2'}>{el?.passport_number}</td>
+                </tr>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+                >
+                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>JShShIR</th>
+                  <td className={'text-center px-2 py-2'}>{el?.pin}</td>
+                </tr>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+                >
+                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Lavozim</th>
+                  <td className={'text-center px-2 py-2'}>{el?.position}</td>
+                </tr>
+                <tr
+                  className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
+                  <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Fayl yuklab olish</th>
+                  <td className={'text-center px-2 py-2 cursor-pointer'}>
+                    <AiOutlineCloudDownload
+                      className={`size-6 m-auto`}
+                      onClick={() => {
+                        window.open(el?.file, '_blank')
+                      }}
+                    />
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            ))}
           </>
         ) : <h1 className="text-center dark:text-white">Xat mavjud emas</h1>
       )
