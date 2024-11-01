@@ -1,9 +1,7 @@
 import {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-// import {clearSavedContractDetails, savePkcs} from "../store/actions/contractActions";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {EIMZOClient, dates} from './eSignClient';
-// import {axios2} from "../axios";
 import instance from '../../API';
 import {toast} from "react-toastify";
 import {
@@ -15,7 +13,6 @@ import {
   setUser
 } from "../../redux/slices/auth/authSlice";
 import {api_url, APIS} from "../../config";
-import axios from "axios";
 import {getContractDetail, savePkcs} from "../../redux/slices/contracts/contractsSlice";
 
 export function HooksCommission() {
@@ -292,6 +289,7 @@ export function HooksCommission() {
       const challenge = localStorage.getItem('challenge')
 
       const postChallenge = async (pkcs7) => {
+        setLoader(true)
         try {
           const response = await instance.post(`${APIS.eriLogin}`, {pkcs7, is_client: 1})
           instance.defaults.headers.common = {Authorization: `Bearer ${response?.data?.access}`};
@@ -299,6 +297,7 @@ export function HooksCommission() {
           dispatch(setTinOrPin(response?.data?.tin_or_pin))
           if (!response?.data?.success) {
             toast.error(response?.data?.err_msg)
+            setLoader(false)
           } else {
             dispatch(oneIdGetUserDetail({
               tin_or_pin: response?.data?.tin_or_pin,
@@ -309,11 +308,13 @@ export function HooksCommission() {
                 dispatch(logOut({access, access_token, refresh_token}))
                 dispatch(setLogout())
                 navigate('/login')
+                setLoader(false)
               } else {
                 dispatch(setUser(res))
                 dispatch(setAccess(response?.data?.access))
                 dispatch(setAccessToken(response?.data?.access))
                 dispatch(setRefresh(response?.data?.refresh))
+                setLoader(false)
                 navigate('/dashboard')
                 window.location.reload()
               }
@@ -333,6 +334,7 @@ export function HooksCommission() {
           }
         } catch (e) {
           console.log(e)
+          setLoader(false)
         }
       }
 

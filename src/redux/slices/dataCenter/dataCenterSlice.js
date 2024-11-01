@@ -356,9 +356,9 @@ export const patchDocument = createAsyncThunk(
 
 export const getTechHelp = createAsyncThunk(
   "dataCenter/TechHelp",
-  async () => {
+  async (params) => {
     try {
-      const response = await instance.get('/purchase-note/purchase-note')
+      const response = await instance.get('/purchase-note/purchase-note', {params})
       return response.data
     } catch (e) {
       return e;

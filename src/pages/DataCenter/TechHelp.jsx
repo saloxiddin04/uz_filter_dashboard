@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import moment from "moment";
 import {EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {useDispatch, useSelector} from "react-redux";
-import {Loader} from "../../components";
+import {Loader, Pagination} from "../../components";
 import {deleteTechHelp, getTechHelp} from "../../redux/slices/dataCenter/dataCenterSlice";
 import {useNavigate} from "react-router-dom";
 import {useStateContext} from "../../contexts/ContextProvider";
@@ -19,8 +19,12 @@ const TechHelp = () => {
 	const [createHelp, setCreateHelp] = useState(false)
 	
 	useEffect(() => {
-		dispatch(getTechHelp())
+		dispatch(getTechHelp({page_size: 1}))
 	}, [dispatch]);
+	
+	const handlePageChange = (page) => {
+		dispatch(getTechHelp({page_size: page}))
+	}
 	
 	return (
 		<>
@@ -36,9 +40,9 @@ const TechHelp = () => {
 				</button>
 			</div>
 			<div
-				className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 flex items-center justify-between bg-white dark:bg-secondary-dark-bg rounded"
+				className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 flex items-center justify-between flex-wrap bg-white dark:bg-secondary-dark-bg rounded"
 			>
-				{loading ? <Loader /> : (
+				{loading ? <Loader/> : (
 					<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
 						<thead
 							className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
@@ -59,7 +63,7 @@ const TechHelp = () => {
 						</tr>
 						</thead>
 						<tbody>
-						{techHelp && techHelp?.map((item, index) => (
+						{techHelp && techHelp?.result?.map((item, index) => (
 							<tr
 								className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
 								key={item?.id}
@@ -144,6 +148,14 @@ const TechHelp = () => {
 						</tbody>
 					</table>
 				)}
+				
+				<div className="w-full flex justify-end">
+					<Pagination
+						totalItems={techHelp?.count}
+						itemsPerPage={10}
+						onPageChange={handlePageChange}
+					/>
+				</div>
 			</div>
 			
 			{createHelp && <CreateTechHelpDrawer onclose={() => setCreateHelp(!createHelp)}/>}

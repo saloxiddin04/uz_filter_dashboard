@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Input} from "../../components";
+import {Button, Input, Loader} from "../../components";
 import Logo from "../../assets/images/logo";
 import AuthLogo from "../../assets/images/AuthLogo";
 import {useNavigate} from "react-router-dom";
@@ -32,7 +32,7 @@ const tabs = [
 ];
 
 const Login = () => {
-	const {signIn, AppLoad} = HooksCommission()
+	const {signIn, AppLoad, loader} = HooksCommission()
 	
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -114,7 +114,7 @@ const Login = () => {
 						/>
 						<div className={'w-full flex justify-center'}>
 							<Button
-								text={'Kirish'}
+								text={loader ? 'Loading...' : 'Kirish'}
 								color={'white'}
 								className={'bg-blue-600 w-full rounded mt-2 mx-auto text-center disabled:opacity-25'}
 								width={'24'}
@@ -159,6 +159,8 @@ const Login = () => {
 				return null
 		}
 	}
+	
+	if (loader) return <Loader />
 	
 	return (
 		<>
