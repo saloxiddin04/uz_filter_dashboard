@@ -17,6 +17,10 @@ const CreateLot = () => {
 	const [lot_number, setLotNumber] = useState('')
 	const [contract_date, setContractDate] = useState('')
 	
+	const oneMonthAgo = new Date();
+	oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+	const minDate = oneMonthAgo.toISOString().split('T')[0];
+	
 	const createLot = async () => {
 		try {
 			setLoader(true)
@@ -56,6 +60,7 @@ const CreateLot = () => {
 					sanasi</label>
 				<input
 					value={contract_date}
+					min={minDate}
 					onChange={(e) => setContractDate(e.target.value)}
 					name="contract_date"
 					id="contract_date"
