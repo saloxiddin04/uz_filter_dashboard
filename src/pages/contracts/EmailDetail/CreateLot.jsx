@@ -15,12 +15,12 @@ const CreateLot = () => {
 	const [loader, setLoader] = useState(false)
 	
 	const [lot_number, setLotNumber] = useState('')
-	const [contact_date, setContractDate] = useState('')
+	const [contract_date, setContractDate] = useState('')
 	
 	const createLot = async () => {
 		try {
 			setLoader(true)
-			const response = await instance.post(`e-xat/enter-lot-number/${id}`, {lot_number, contact_date: new Date(contact_date)?.toISOString()})
+			const response = await instance.post(`e-xat/enter-lot-number/${id}`, {lot_number, contract_date: new Date(contract_date).toISOString()})
 			if (response?.data?.id) {
 				toast.success("Muvofaqqiyatli qo'shildi")
 				dispatch(getContractDetail({id, slug}))
@@ -55,7 +55,7 @@ const CreateLot = () => {
 				<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="contract_date">Shartnoma
 					sanasi</label>
 				<input
-					value={contact_date}
+					value={contract_date}
 					onChange={(e) => setContractDate(e.target.value)}
 					name="contract_date"
 					id="contract_date"
@@ -68,7 +68,7 @@ const CreateLot = () => {
 				<button
 					className={`px-4 py-2 rounded text-white disabled:opacity-25`}
 					style={{backgroundColor: currentColor}}
-					disabled={!lot_number || !contact_date}
+					disabled={!lot_number || !contract_date}
 					onClick={createLot}
 				>
 					Saqlash
