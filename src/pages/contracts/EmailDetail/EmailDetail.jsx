@@ -12,6 +12,7 @@ import FizUserContractDetail from "../FizUserContractDetail";
 import SignatureContract from "../SignatureContract";
 import Participants from "../Participants";
 import CreateEmail from "./CreateEmail";
+import CreateLot from "./CreateLot";
 
 const tabs = [
   {
@@ -113,7 +114,7 @@ const renderDetail = (
             <tr
               className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Shartnoma sanasi</th>
-              <td className={'text-center px-2 py-2'}>{moment(data?.contract?.contract_date).format('DD.MM.YYYY')}</td>
+              <td className={'text-center px-2 py-2'}>{data?.contract?.contract_date ? moment(data?.contract?.contract_date).format('DD.MM.YYYY') : '-'}</td>
             </tr>
             <tr
               className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
@@ -135,7 +136,7 @@ const renderDetail = (
               className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}>
               <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Amal qilish muddati</th>
               <td className={'text-center px-2 py-2'}>{data?.contract?.expiration_date == null
-                ? moment(data?.contract?.contract_date)
+                ? moment(data?.contract?.contract_date ? data?.contract?.contract_date : new Date())
                   .add(1, 'y')
                   .format('DD.MM.YYYY')
                 : moment(data?.contract?.expiration_date).format(
@@ -393,8 +394,10 @@ const renderDetail = (
       )
     case 7:
       return (
-        user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" ? (<></>) :
-          <h1 className="text-center dark:text-white">Lot qo'sha olmaysiz</h1>
+        data?.contract?.pay_choose === 1 && data?.contract.is_confirmed_contract === 4 && data?.contract?.contract_status === "Lot raqami kutilmoqda" && user?.userdata?.role?.name === "IUT XRvaEQB boshlig'ining o'rinbosari" ?
+          (
+            <CreateLot />
+          ) : <h1 className="text-center dark:text-white">Lot qo'sha olmaysiz</h1>
       )
     default:
       return null

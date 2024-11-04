@@ -6,7 +6,7 @@ const Profile = () => {
   const {user} = useSelector((state) => state.user);
 
   return (
-    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 bg-white rounded">
+    <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 dark:bg-secondary-dark-bg bg-white rounded">
       <Header category="Sahifa" title="Profil"/>
       <div className="relative container overflow-x-auto shadow-md sm:rounded">
         <div className={'flex justify-between items-center flex-wrap gap-4 md:px-4 md:py-4'}>
