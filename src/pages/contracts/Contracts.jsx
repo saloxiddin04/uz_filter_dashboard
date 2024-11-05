@@ -289,7 +289,7 @@ const Contracts = () => {
                     {item?.contract_number}
                   </td>
                   <td className={'px-6 py-4 border-b-1'}>
-                    {moment(item?.contract_date).format('DD-MM-YYYY')}
+                    {item?.contract_date ? moment(item?.contract_date).format('DD-MM-YYYY') : '-'}
                   </td>
                   <td className={'px-6 py-4 border-b-1'}>
                     {item?.expiration_date == null

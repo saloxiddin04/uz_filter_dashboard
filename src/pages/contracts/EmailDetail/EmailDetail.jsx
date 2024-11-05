@@ -298,7 +298,7 @@ const renderDetail = (
       return (
         data?.signed_letter?.signed_letter?.id ? (
           <>
-            <table className={'w-full'}>
+            <table key={data?.signed_letter?.signed_letter?.id} className={'w-full'}>
               <tbody className="dark:text-white">
               <tr
                 className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
@@ -342,11 +342,13 @@ const renderDetail = (
               </tbody>
             </table>
             
+            <hr className="my-10"/>
+            
             {data?.signed_letter?.signed_letter_ownership?.map((el, index) => (
-              <table key={el?.id} className={'w-full my-5'}>
+              <table key={el?.pin} className={'w-full'}>
                 <thead className="my-4">
                 <tr>
-                  <td className="font-bold">Xodim {index + 1}</td>
+                  <td className="font-bold">Exat foydalanuvchilari {index + 1}</td>
                 </tr>
                 </thead>
                 <tbody className="border dark:text-white">
