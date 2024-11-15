@@ -15,7 +15,7 @@ export const getContracts = createAsyncThunk(
   'contracts/getContracts',
   async (data) => {
     try {
-      const response = await instance.get(`${api_url}/${data?.slug}/group-contracts?page_size=${data?.page === undefined ? 1 : data?.page}`)
+      const response = await instance.get(`${api_url}/${data?.slug}/group-contracts?page=${data?.page === undefined ? 1 : data?.page}&page_size=${data?.page_size === undefined ? 10 : data?.page_size}`)
       return response.data
     } catch (e) {
       return e
@@ -64,7 +64,7 @@ export const getFilteredContracts = createAsyncThunk(
   "contracts/getFilteredContracts",
   async (data) => {
     try {
-      const response = await instance.post(`/${data.slug}/filter-contracts?page_size=${data?.page === undefined ? 1 : data?.page}`, data.body)
+      const response = await instance.post(`/${data.slug}/filter-contracts?page=${data?.page === undefined ? 1 : data?.page}&page_size=${data?.page_size === undefined ? 10 : data?.page_size}`, data.body)
       return response.data
     } catch (e) {
       return e

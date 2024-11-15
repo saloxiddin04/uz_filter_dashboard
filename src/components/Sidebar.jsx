@@ -11,7 +11,7 @@ import Logo from "../assets/images/logo";
 const Sidebar = () => {
   const {loading, sidebar} = useSelector(state => state.sections)
   const {user} = useSelector(state => state.user)
-  const {currentColor, activeMenu, setActiveMenu, screenSize, setPage, setCurrentPage} = useStateContext();
+  const {currentColor, activeMenu, setActiveMenu, screenSize, setPage, setCurrentPage, setPageSize} = useStateContext();
   const {pathname} = useLocation();
 
   const handleCloseSideBar = () => {
@@ -105,7 +105,9 @@ const Sidebar = () => {
                       onClick={() => {
                         setPage(1)
                         setCurrentPage(1)
+                        setPageSize(10)
                         localStorage.setItem("currentPage", 1);
+                        localStorage.setItem("page_size", 10);
                         handleCloseSideBar();
                       }}
                       style={({isActive}) => ({
@@ -127,8 +129,10 @@ const Sidebar = () => {
                       key={item.slug}
                       onClick={() => {
                         setPage(1)
+                        setPageSize(10)
                         setCurrentPage(1)
                         localStorage.setItem("currentPage", 1);
+                        localStorage.setItem("page_size", 10);
                         handleCloseSideBar();
                       }}
                       style={({isActive}) => ({
@@ -151,7 +155,9 @@ const Sidebar = () => {
                       onClick={() => {
                         setPage(1)
                         setCurrentPage(1)
+                        setPageSize(10)
                         localStorage.setItem("currentPage", 1);
+                        localStorage.setItem("page_size", 10);
                         handleCloseSideBar();
                       }}
                       style={({isActive}) => ({

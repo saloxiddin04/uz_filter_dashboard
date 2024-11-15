@@ -17,7 +17,7 @@ const Contracts = () => {
 	const navigate = useNavigate()
 	const {slug} = useParams();
 	const {pathname} = useLocation();
-	const {currentColor, setPage, currentPage} = useStateContext();
+	const {currentColor, setPage, currentPage, page_size, setPageSize} = useStateContext();
 	
 	const {sidebar} = useSelector(state => state.sections)
 	const {contracts, loading} = useSelector(state => state.contracts)
@@ -45,7 +45,7 @@ const Contracts = () => {
 		if (!slug) {
 			navigate(`/shartnomalar/${filteredChildren[0]?.slug}`);
 		} else {
-			dispatch(getContracts({page: currentPage, slug}))
+			dispatch(getContracts({page: currentPage, slug, page_size}))
 		}
 	}, [dispatch, slug]);
 	
@@ -56,9 +56,9 @@ const Contracts = () => {
 				contract_status: Number(contract_status),
 				contract_number: contract_number === '' ? undefined : contract_number
 			}
-			dispatch(getFilteredContracts({slug, page, body}))
+			dispatch(getFilteredContracts({slug, page, body, page_size}))
 		} else {
-			dispatch(getContracts({page, slug}))
+			dispatch(getContracts({page, slug, page_size}))
 		}
 	}
 	
@@ -70,11 +70,13 @@ const Contracts = () => {
 		}
 		if (currentPage > 1) {
 			setPage(1)
-			dispatch(getFilteredContracts({slug, page: 1, body}))
+			dispatch(getFilteredContracts({slug, page: 1, body, page_size}))
 		} else {
-			dispatch(getFilteredContracts({slug, page: currentPage, body}))
+			dispatch(getFilteredContracts({slug, page: currentPage, body, page_size}))
 		}
 	}
+	
+	console.log(page_size)
 	
 	const downloadExcel = async () => {
 		try {
@@ -223,7 +225,7 @@ const Contracts = () => {
 								setContractNumber(undefined)
 								setContractStatus(undefined)
 								setTin(undefined)
-								dispatch(getContracts({page: 1, slug}))
+								dispatch(getContracts({page: 1, slug, page_size}))
 							}}
 						>
 							<ArrowPathIcon className="size-6" fill={currentColor}/>
@@ -277,7 +279,8 @@ const Contracts = () => {
 								return (
 									<React.Fragment key={index}>
 										<tr key={item?.id} className={'hover:bg-gray-100 hover:dark:bg-gray-800'}>
-											<td scope="row" className="px-6 py-9 font-medium whitespace-nowrap border-b-1 flex gap-1 items-center">
+											<td scope="row"
+											    className="px-6 py-9 font-medium whitespace-nowrap border-b-1 flex gap-1 items-center">
 												{item?.child_contracts?.length > 0 && (
 													<div className="cursor-pointer">
 														<ChevronRightIcon onClick={() => toggle(index)} className="size-6"/>
@@ -393,11 +396,31 @@ const Contracts = () => {
 						</table>
 				}
 			</div>
-			<Pagination
-				totalItems={contracts?.count}
-				itemsPerPage={10}
-				onPageChange={handlePageChange}
-			/>
+			<div className="flex items-center justify-end gap-4">
+				<select
+					className={'w-[4%] mt-9 px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+					value={page_size || ''}
+					onChange={(e) => {
+						dispatch(getContracts({page: currentPage, slug, page_size: e.target.value}))
+						localStorage.setItem('page_size', e.target.value)
+						setPageSize(e.target.value)
+					}}
+					name="page_size"
+					id="page_size"
+				>
+					<option value="5" disabled={5 > contracts?.count}>5</option>
+					<option value="10" disabled={10 > contracts?.count}>10</option>
+					<option value="15" disabled={15 > contracts?.count}>15</option>
+					<option value="20" disabled={20 > contracts?.count}>20</option>
+					<option value="25" disabled={25 > contracts?.count}>25</option>
+				</select>
+				
+				<Pagination
+					totalItems={contracts?.count}
+					itemsPerPage={page_size}
+					onPageChange={handlePageChange}
+				/>
+			</div>
 		</div>
 	);
 };
