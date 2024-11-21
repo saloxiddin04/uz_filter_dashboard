@@ -35,3 +35,4 @@ export {default as CreateRegistry} from './Registry/CreateRegistry'
 
 
 export {default as ChatPage} from './Chat/Chat'
+export {default as ChatRoom} from '../components/Chat/ChatRoom'
