@@ -8,6 +8,23 @@ import {useSelector} from "react-redux";
 import Loader from "./Loader";
 import Logo from "../assets/images/logo";
 
+const messagesNav = [
+  {
+    id: 1,
+    name: "O'qilmagan xabarlar",
+    slug: '1'
+  },
+  {
+    id: 2,
+    name: "O'qilgan xabarlar",
+    slug: '2'
+  },{
+    id: 3,
+    name: "Barchasi",
+    slug: '0'
+  },
+]
+
 const Sidebar = () => {
   const {loading, sidebar} = useSelector(state => state.sections)
   const {user} = useSelector(state => state.user)
@@ -32,6 +49,8 @@ const Sidebar = () => {
 
   const slugs = ['vps', 'colocation', 'e-xat', 'expertise', 'tte_certification'];
   const slugsRegistry = ['vps', 'colocation'];
+  
+  console.log(pathname.indexOf('/chat-messages'))
 
   if (loading) return <Loader/>
 
@@ -59,29 +78,38 @@ const Sidebar = () => {
           </div>
           <div className="pl-3 mt-5">
             {children.length === 0 && (
-              <div>
-                <NavLink
-                  to={`/dashboard`}
-                  onClick={() => {
-                    setPage(1)
-                    setCurrentPage(1)
-                    localStorage.setItem("currentPage", '1');
-                    handleCloseSideBar();
-                  }}
-                  style={({isActive}) => ({
-                    backgroundColor: isActive ? currentColor : '',
+              pathname.indexOf('/chat-messages') === 0 ? (
+                <>
+                  {messagesNav?.map((item) => {
+                    const newPath = `${pathname.split('/')[1]}/${item.slug}`;
+                    return (
+                      <NavLink
+                        key={item?.id}
+                        to={newPath}
+                        onClick={() => {
+                          setPage(1)
+                          setCurrentPage(1)
+                          localStorage.setItem("currentPage", '1');
+                          handleCloseSideBar();
+                        }}
+                        style={({isActive}) => ({
+                          backgroundColor: isActive ? currentColor : '',
+                        })}
+                        className={({isActive}) => (isActive ? activeLink : normalLink)}
+                      >
+                        <span className="capitalize">{item?.name}</span>
+                      </NavLink>
+                    )
                   })}
-                  className={({isActive}) => (isActive ? activeLink : normalLink)}
-                >
-                  <span className="capitalize">Statistika</span>
-                </NavLink>
-                {user?.role === 'admin' && (
+                </>
+              ) : (
+                <div>
                   <NavLink
-                    to={`/xizmatlar`}
+                    to={`/dashboard`}
                     onClick={() => {
                       setPage(1)
                       setCurrentPage(1)
-                      localStorage.setItem("currentPage", 1);
+                      localStorage.setItem("currentPage", '1');
                       handleCloseSideBar();
                     }}
                     style={({isActive}) => ({
@@ -89,11 +117,27 @@ const Sidebar = () => {
                     })}
                     className={({isActive}) => (isActive ? activeLink : normalLink)}
                   >
-                    <span className="capitalize">Xizmatlar</span>
+                    <span className="capitalize">Statistika</span>
                   </NavLink>
-                )}
-              </div>
-            )}
+                  {user?.role === 'admin' && (
+                    <NavLink
+                      to={`/xizmatlar`}
+                      onClick={() => {
+                        setPage(1)
+                        setCurrentPage(1)
+                        localStorage.setItem("currentPage", 1);
+                        handleCloseSideBar();
+                      }}
+                      style={({isActive}) => ({
+                        backgroundColor: isActive ? currentColor : '',
+                      })}
+                      className={({isActive}) => (isActive ? activeLink : normalLink)}
+                    >
+                      <span className="capitalize">Xizmatlar</span>
+                    </NavLink>
+                  )}
+                </div>
+              ))}
             {pathname.indexOf('/shartnomalar') === 0 ? (
               children && children.filter(item => slugs.includes(item?.slug))?.map((item) => {
                 const newPath = `${pathname.split('/')[1]}/${item.slug}`;

@@ -14,7 +14,7 @@ import {
   DataCenter,
   Registry, CreateRegistry,
   RegistryDetail, Xizmatlar, AdmissionDataCenter, DataCenterDocuments,
-  DataCenterDocumentsFazaUpdate, DataCenterDocumentsAktUpdate, TechHelp, TechHelpDetail
+  DataCenterDocumentsFazaUpdate, DataCenterDocumentsAktUpdate, TechHelp, TechHelpDetail, ChatPage
 } from './pages';
 import ShowRack from "./components/DataCenter/ShowRack";
 
@@ -54,4 +54,6 @@ export const routes = [
   {path: '/registry/:slug', element: Registry },
   {path: '/registry/:slug/:id', element: RegistryDetail },
   {path: '/registry/:slug/create', element: CreateRegistry },
+  
+  {path: '/chat-messages/:slug', element: ChatPage },
 ]

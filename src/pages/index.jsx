@@ -32,3 +32,6 @@ export {default as DataCenterDocumentsAktUpdate} from '../components/DataCenter/
 export {default as Registry} from './Registry/Registry'
 export {default as RegistryDetail} from './Registry/RegistryDetail'
 export {default as CreateRegistry} from './Registry/CreateRegistry'
+
+
+export {default as ChatPage} from './Chat/Chat'

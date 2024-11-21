@@ -11,6 +11,7 @@ import createExpertiseSlice from './slices/contractCreate/Expertise/expertiseSli
 import createCertificationSlice from './slices/contractCreate/Certification/CertificationSlice';
 import dataCenterSlice from './slices/dataCenter/dataCenterSlice';
 import registrySlice from "./slices/registry/registrySlice";
+import chatSlice from "./slices/chat/chatSlice";
 
 const appReducer = combineReducers({
   user: authSlice,
@@ -25,6 +26,7 @@ const appReducer = combineReducers({
   createExpertise: createExpertiseSlice,
   createCertification: createCertificationSlice,
   registry: registrySlice,
+  chat: chatSlice
 });
 
 const rootReducer = (state, action) => {

@@ -76,8 +76,6 @@ const Contracts = () => {
 		}
 	}
 	
-	console.log(page_size)
-	
 	const downloadExcel = async () => {
 		try {
 			await instance.post(`/${slug}/excel`, {}, {
