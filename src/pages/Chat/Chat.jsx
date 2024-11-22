@@ -33,7 +33,7 @@ const Chat = () => {
 	
 	useEffect(() => {
 		if (slug) {
-			dispatch(getRooms());
+			dispatch(getRooms({room_type: slug}));
 		}
 	}, [dispatch, slug]);
 	
