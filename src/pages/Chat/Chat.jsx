@@ -5,9 +5,10 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import {getRooms} from "../../redux/slices/chat/chatSlice";
 import Loader from "../../components/Loader";
 import moment from "moment";
-import {IoIosSend} from "react-icons/io";
+import {IoIosArrowDown, IoIosSend} from "react-icons/io";
 import useSocket from "../../components/Chat/useSocket";
 import instance from "../../API";
+import {MdClose} from "react-icons/md";
 
 const Chat = () => {
 	const dispatch = useDispatch();
@@ -93,6 +94,7 @@ const Chat = () => {
 		if (input.trim() && id) {
 			sendMessage(input)
 			setInput("");
+			if (messagesEndRef.current) messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
 		}
 	};
 	
@@ -115,7 +117,7 @@ const Chat = () => {
 										setMessages([])
 										navigate(`/chat-messages/${slug}/${room.id}`)
 									}}
-									className={`p-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 flex justify-between items-center ${
+									className={`p-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 flex justify-between items-end ${
 										id === room.id ? "bg-gray-200 dark:bg-gray-700" : ""
 									}`}
 								>
@@ -133,16 +135,26 @@ const Chat = () => {
 				</div>
 				{id && (
 					<div className="flex-1 flex flex-col bg-gray-100 dark:bg-gray-900">
-						<div className="p-4 bg-white dark:bg-gray-800 shadow-md">
+						<div className="p-4 bg-white dark:bg-gray-800 shadow-md flex justify-between items-center">
 							<h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
 								{rooms?.find((room) => room?.id === id)?.room_name || "Chat"}
 							</h2>
+							<button
+								onClick={() => {
+									setPage(1)
+									setMaxPage(null)
+									setMessages([])
+									navigate(`/chat-messages/${slug}`)
+								}}
+							>
+								<MdClose className="size-6" />
+							</button>
 						</div>
 						
 						<div
 							onScroll={handleScroll}
 							ref={modalBodyRef}
-							className="flex-1 overflow-y-auto p-4"
+							className="flex-1 overflow-y-auto p-4 relative"
 						>
 							{loading || loader ? (
 								<Loader/>
@@ -159,11 +171,18 @@ const Chat = () => {
 										<p className={`text-sm font-semibold border-b-1 pb-1 ${!msg?.is_owner_client ? 'border-b-1' : 'border-b-1 border-b-blue-500'}`}>{msg.user.name}</p>
 										<p className="text-base">{msg.message}</p>
 										<p className="text-xs mt-2 text-right">
-											{moment(msg.updated_time).format("HH:mm")}
+											{moment(msg.updated_time).format("DD-MM-YYYY HH:mm")}
 										</p>
 									</div>
 								))
 							)}
+							<div
+								onClick={() => {
+									messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" })
+								}}
+								className="cursor-pointer fixed flex items-center justify-center z-5 bottom-[20%] right-[4%] size-10 rounded-full" style={{backgroundColor: currentColor}}>
+								<IoIosArrowDown className="size-6" color="#fff" />
+							</div>
 							<div ref={messagesEndRef}/>
 						</div>
 						
