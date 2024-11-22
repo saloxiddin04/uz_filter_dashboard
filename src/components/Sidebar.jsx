@@ -50,8 +50,6 @@ const Sidebar = () => {
   const slugs = ['vps', 'colocation', 'e-xat', 'expertise', 'tte_certification'];
   const slugsRegistry = ['vps', 'colocation'];
   
-  console.log(pathname.indexOf('/chat-messages'))
-
   if (loading) return <Loader/>
 
   return (

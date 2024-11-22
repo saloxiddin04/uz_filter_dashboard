@@ -55,6 +55,8 @@ export const routes = [
   {path: '/registry/:slug/:id', element: RegistryDetail },
   {path: '/registry/:slug/create', element: CreateRegistry },
   
+  {path: '/chat-messages', element: ChatPage },
+  {path: '/chat-messages/:slug/:id', element: ChatPage },
   {path: '/chat-messages/:slug', element: ChatPage },
-  {path: '/chat-messages/:slug/:id', element: ChatRoom },
+  // {path: '/chat-messages/:slug/:id', element: ChatRoom },
 ]

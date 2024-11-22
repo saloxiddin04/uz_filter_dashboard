@@ -7,22 +7,24 @@ const useSocket = (roomId) => {
 	const webSocketRef = useRef(null);
 	
 	useEffect(() => {
-		const webSocketUrl = `wss://dcid.unicon.uz/ws/chat/${roomId}/?token=${access}`;
-		
-		webSocketRef.current = new WebSocket(webSocketUrl);
-		
-		webSocketRef.current.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			setMessages((prevMessages) => [...prevMessages, data.message]);
-		};
-		
-		webSocketRef.current.onerror = (error) => {
-			console.error("WebSocket error:", error);
-		};
-		
-		return () => {
-			webSocketRef.current?.close();
-		};
+		if (roomId) {
+			const webSocketUrl = `wss://dcid.unicon.uz/ws/chat/${roomId}/?token=${access}`;
+			
+			webSocketRef.current = new WebSocket(webSocketUrl);
+			
+			webSocketRef.current.onmessage = (event) => {
+				const data = JSON.parse(event.data);
+				setMessages((prevMessages) => [...prevMessages, data.message]);
+			};
+			
+			webSocketRef.current.onerror = (error) => {
+				console.error("WebSocket error:", error);
+			};
+			
+			return () => {
+				webSocketRef.current?.close();
+			};
+		}
 	}, [roomId]);
 	
 	const sendMessage = (message) => {
