@@ -99,7 +99,7 @@ const Chat = () => {
 	return (
 		<div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
 			
-			<div className="flex h-[85vh] bg-gray-100 dark:bg-gray-900">
+			<div className="flex h-[82vh] bg-gray-100 dark:bg-gray-900">
 				<div className="w-1/3 bg-white dark:bg-gray-800 shadow-md h-full overflow-y-auto">
 					<div className="p-4 text-lg font-bold text-gray-800 dark:text-gray-200">Chats</div>
 					<div className="divide-y divide-gray-300 dark:divide-gray-700">
@@ -127,58 +127,60 @@ const Chat = () => {
 						)}
 					</div>
 				</div>
-				
-				<div className="flex-1 flex flex-col bg-gray-100 dark:bg-gray-900">
-					<div className="p-4 bg-white dark:bg-gray-800 shadow-md">
-						<h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-							{rooms?.find((room) => room?.id === parseInt(id))?.room_name || "Chat"}
-						</h2>
-					</div>
-					
-					<div
-						onScroll={handleScroll}
-						ref={modalBodyRef}
-						className="flex-1 overflow-y-auto p-4"
-					>
-						{loading || loader ? (
-							<Loader/>
-						) : (
-							messages?.map((msg, index) => (
-								<div
-									key={index}
-									className={`mb-4 p-3 rounded-lg max-w-[70%] shadow ${
-										!msg?.is_owner_client
-											? "ml-auto bg-blue-500 text-white"
-											: "mr-auto bg-gray-200 text-black"
-									}`}
-								>
-									<p className="text-sm font-semibold">{msg.user.name}</p>
-									<p className="text-base">{msg.message}</p>
-									<p className="text-xs mt-2 text-right">
-										{moment(msg.updated_time).format("HH:mm")}
-									</p>
-								</div>
-							))
-						)}
-						<div ref={messagesEndRef}/>
-					</div>
-					
-					<form onSubmit={handleSendMessage} className="p-4 bg-white dark:bg-gray-800 flex items-center gap-4 shadow-md">
-						<input
-							value={input}
-							onChange={(e) => setInput(e.target.value)}
-							placeholder="Write a message..."
-							className="flex-1 p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-						<button
-							type="submit"
-							disabled={!input.trim()}
-							className="p-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 disabled:opacity-50"
+				{id && (
+					<div className="flex-1 flex flex-col bg-gray-100 dark:bg-gray-900">
+						<div className="p-4 bg-white dark:bg-gray-800 shadow-md">
+							<h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
+								{rooms?.find((room) => room?.id === parseInt(id))?.room_name || "Chat"}
+							</h2>
+						</div>
+						
+						<div
+							onScroll={handleScroll}
+							ref={modalBodyRef}
+							className="flex-1 overflow-y-auto p-4"
 						>
-							<IoIosSend size={20}/>
-						</button>
-					</form>
-				</div>
+							{loading || loader ? (
+								<Loader/>
+							) : (
+								messages?.map((msg, index) => (
+									<div
+										key={index}
+										className={`mb-4 p-3 rounded-lg max-w-[70%] shadow ${
+											!msg?.is_owner_client
+												? "ml-auto bg-blue-500 text-white"
+												: "mr-auto bg-gray-200 text-black"
+										}`}
+									>
+										<p className="text-sm font-semibold">{msg.user.name}</p>
+										<p className="text-base">{msg.message}</p>
+										<p className="text-xs mt-2 text-right">
+											{moment(msg.updated_time).format("HH:mm")}
+										</p>
+									</div>
+								))
+							)}
+							<div ref={messagesEndRef}/>
+						</div>
+						
+						<form onSubmit={handleSendMessage}
+						      className="p-4 bg-white dark:bg-gray-800 flex items-center gap-4 shadow-md">
+							<input
+								value={input}
+								onChange={(e) => setInput(e.target.value)}
+								placeholder="Write a message..."
+								className="flex-1 p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							/>
+							<button
+								type="submit"
+								disabled={!input.trim()}
+								className="p-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 disabled:opacity-50"
+							>
+								<IoIosSend size={20}/>
+							</button>
+						</form>
+					</div>
+				)}
 			</div>
 		</div>
 	);
