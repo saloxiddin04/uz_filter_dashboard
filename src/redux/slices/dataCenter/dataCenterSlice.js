@@ -23,6 +23,7 @@ const initialState = {
   documentDetail: null,
   techHelp: null,
   techHelpDetail: null,
+  clients: null
 }
 
 export const getDataCenterList = createAsyncThunk(
@@ -275,6 +276,18 @@ export const getAdmissionDetail = createAsyncThunk(
   async (id) => {
     try {
       const response = await instance.get(`/dispatcher/admission-employee-letters/${id}`)
+      return response.data
+    } catch (e) {
+      return e
+    }
+  }
+)
+
+export const getAdmissionClients = createAsyncThunk(
+  "dataCenter/getAdmissionClients",
+  async () => {
+    try {
+      const response = await instance.get('/dispatcher/client-contracts')
       return response.data
     } catch (e) {
       return e
@@ -582,6 +595,19 @@ const dataCenterSlice = createSlice({
       state.updateRack = null
     })
 
+    // getAdmissionClients
+    builder.addCase(getAdmissionClients.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getAdmissionClients.fulfilled, (state, {payload}) => {
+      state.clients = payload
+      state.loading = false
+    })
+    builder.addCase(getAdmissionClients.rejected, (state, {payload}) => {
+      state.loading = false
+      state.clients = null
+    })
+    
     // getAdmissionLetters
     builder.addCase(getAdmissionLetters.pending, (state) => {
       state.loading = true

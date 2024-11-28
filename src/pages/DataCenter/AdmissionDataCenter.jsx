@@ -7,7 +7,7 @@ import {ArrowDownTrayIcon, ArrowPathIcon, EyeIcon, FunnelIcon, PencilIcon, Trash
 import {BiSearch} from "react-icons/bi";
 import {
   clearLetterDetail,
-  createAdmission, deleteAdmission, getAdmissionDetail,
+  createAdmission, deleteAdmission, getAdmissionClients, getAdmissionDetail,
   getAdmissionLetters, getAdmissionSearch,
   getDataCenterList
 } from "../../redux/slices/dataCenter/dataCenterSlice";
@@ -33,7 +33,7 @@ const AdmissionDataCenter = () => {
   const navigate = useNavigate()
 
   const {currentColor} = useStateContext();
-  const {admissionLetter, admissionEmployee, loading, dataCenterList} = useSelector((state) => state.dataCenter)
+  const {admissionLetter, admissionEmployee, loading, dataCenterList, clients} = useSelector((state) => state.dataCenter)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
   // const [openTab, setOpenTab] = useState(2);
@@ -67,6 +67,7 @@ const AdmissionDataCenter = () => {
   const [filterPin, setFilterPin] = useState(undefined)
   const [filterName, setFilterName] = useState(undefined)
   const [pport_no, setPportNo] = useState(undefined)
+  const [tin, setTin] = useState(undefined)
 
   const [drawer, setDrawer] = useState(false)
   const [id, setId] = useState(null)
@@ -79,6 +80,10 @@ const AdmissionDataCenter = () => {
       dispatch(getDataCenterList())
     }
   }, [openTab]);
+  
+  useEffect(() => {
+    dispatch(getAdmissionClients())
+  }, [dispatch])
 
   useEffect(() => {
     if (id && drawer) {
@@ -149,6 +154,7 @@ const AdmissionDataCenter = () => {
       contract_number: filterContractNumber,
       name: filterName,
       letter_number: filterLetterNumber,
+      tin,
       pport_no
     }
     dispatch(getAdmissionSearch(data))
@@ -257,25 +263,39 @@ const AdmissionDataCenter = () => {
                   <div className="flex gap-4 items-center justify-center w-[90%]">
                     <div className={'flex flex-col w-[35%]'}>
                       <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-                        Shartnoma raqami
+                        Mijoz
                       </label>
-                      <input
-                        value={filterContractNumber || ""}
-                        onChange={(e) => setFilterContractNumber(e.target.value.toUpperCase())}
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter") {
-                            if (!filterContractNumber) {
-                              toast.error('Shartnoma raqamini kitiring')
-                            } else {
-                              searchLetters()
-                            }
-                          }
-                        }}
-                        name="amount"
+                      <select
+                        className={'rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
                         id="amount"
-                        type="text"
-                        className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-                      />
+                        value={tin || ''}
+                        onChange={(e) => {
+                          setTin(e.target.value)
+                          dispatch(getAdmissionSearch({tin: e.target.value}))
+                        }}
+                      >
+                        <option value="" disabled={clients}>Tanlang...</option>
+                        {clients && clients?.map((item) => (
+                          <option key={item?.id} value={item?.client?.pin_or_tin}>{item?.client?.name}</option>
+                        ))}
+                      </select>
+                      {/*<input*/}
+                      {/*  value={filterContractNumber || ""}*/}
+                      {/*  onChange={(e) => setFilterContractNumber(e.target.value.toUpperCase())}*/}
+                      {/*  onKeyPress={(e) => {*/}
+                      {/*    if (e.key === "Enter") {*/}
+                      {/*      if (!filterContractNumber) {*/}
+                      {/*        toast.error('Shartnoma raqamini kitiring')*/}
+                      {/*      } else {*/}
+                      {/*        searchLetters()*/}
+                      {/*      }*/}
+                      {/*    }*/}
+                      {/*  }}*/}
+                      {/*  name="amount"*/}
+                      {/*  id="amount"*/}
+                      {/*  type="text"*/}
+                      {/*  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"*/}
+                      {/*/>*/}
                     </div>
                     <div className={'flex flex-col w-[35%]'}>
                       <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
@@ -376,7 +396,7 @@ const AdmissionDataCenter = () => {
                       className="rounded px-4 py-1 mt-5 disabled:opacity-25"
                       style={{border: `1px solid ${currentColor}`}}
                       onClick={searchLetters}
-                      disabled={!filterPin && !filterName && !filterLetterNumber && !filterContractNumber && !pport_no}
+                      disabled={!filterPin && !filterName && !filterLetterNumber && !filterContractNumber && !pport_no && !tin}
                     >
                       <BiSearch className="size-6" color={currentColor}/>
                     </button>
@@ -390,6 +410,7 @@ const AdmissionDataCenter = () => {
                         setFilterPin(undefined)
                         setFilterName(undefined)
                         setFilter(false)
+                        setTin(undefined)
                       }}
                     >
                       <ArrowPathIcon className="size-6" fill={currentColor}/>
