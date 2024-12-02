@@ -11,7 +11,7 @@ const initialState = {
 
 export const ContextProvider = ({ children }) => {
   const [screenSize, setScreenSize] = useState(undefined);
-  const [currentColor, setCurrentColor] = useState('#03C9D7');
+  const [currentColor, setCurrentColor] = useState('#1A97F5');
   const [currentPage, setCurrentPage] = useState(localStorage.getItem("currentPage") ? parseInt(localStorage.getItem("currentPage")) : 1);
   const [page_size, setPageSize] = useState(localStorage.getItem("page_size") ? parseInt(localStorage.getItem("page_size")) : 10);
   const [currentMode, setCurrentMode] = useState('Light');
