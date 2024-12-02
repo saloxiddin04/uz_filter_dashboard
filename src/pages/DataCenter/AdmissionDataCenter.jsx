@@ -556,12 +556,12 @@ const AdmissionDataCenter = () => {
                         {/*      className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>*/}
                         {/*  </a>*/}
                         {/*</button>*/}
-                        <button className="rounded border border-red-500 p-1">
-                          <TrashIcon
-                            className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
-                            onClick={() => deleteAdmissions(item?.id)}
-                          />
-                        </button>
+                        {/*<button className="rounded border border-red-500 p-1">*/}
+                        {/*  <TrashIcon*/}
+                        {/*    className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}*/}
+                        {/*    onClick={() => deleteAdmissions(item?.id)}*/}
+                        {/*  />*/}
+                        {/*</button>*/}
                       </td>
                     </tr>
                     
@@ -617,12 +617,12 @@ const AdmissionDataCenter = () => {
                           {/*      className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>*/}
                           {/*  </a>*/}
                           {/*</button>*/}
-                          <button className="rounded border border-red-500 p-1">
-                            <TrashIcon
-                              className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
-                              onClick={() => deleteAdmissions(item?.id)}
-                            />
-                          </button>
+                          {/*<button className="rounded border border-red-500 p-1">*/}
+                          {/*  <TrashIcon*/}
+                          {/*    className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}*/}
+                          {/*    onClick={() => deleteAdmissions(item?.id)}*/}
+                          {/*  />*/}
+                          {/*</button>*/}
                         </td>
                       </tr>
                     ))}
