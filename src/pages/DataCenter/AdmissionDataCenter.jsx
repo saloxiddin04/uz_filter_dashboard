@@ -3,7 +3,15 @@ import {Header, Input, Loader, Pagination, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {ArrowDownTrayIcon, ArrowPathIcon, EyeIcon, FunnelIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {
+  ArrowDownTrayIcon,
+  ArrowPathIcon,
+  ChevronRightIcon,
+  EyeIcon,
+  FunnelIcon,
+  PencilIcon,
+  TrashIcon
+} from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
   clearLetterDetail,
@@ -35,7 +43,8 @@ const AdmissionDataCenter = () => {
 
   const {currentColor} = useStateContext();
   const {admissionLetter, admissionEmployee, loading, dataCenterList, clients} = useSelector((state) => state.dataCenter)
-
+  const {userByTin} = useSelector(state => state.userByTin)
+  
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
   const [handleFilter, setFilter] = useState(false)
@@ -82,7 +91,9 @@ const AdmissionDataCenter = () => {
   const [drawer, setDrawer] = useState(false)
   const [id, setId] = useState(null)
   const [type, setType] = useState(null)
-
+  
+  const [accordionSelected, setAccordionSelected] = useState(null)
+  
   useEffect(() => {
     if (openTab === 0) {
       dispatch(getAdmissionLetters())
@@ -92,7 +103,7 @@ const AdmissionDataCenter = () => {
   }, [openTab]);
   
   useEffect(() => {
-    dispatch(getAdmissionClients())
+    // dispatch(getAdmissionClients())
   }, [dispatch])
 
   useEffect(() => {
@@ -105,6 +116,7 @@ const AdmissionDataCenter = () => {
   const searchUserJuridic = () => {
     dispatch(getUserByTin({stir, client})).then((res) => {
       setName(res?.payload?.name === null ? '' : res?.payload?.name)
+      setSubTenantUser(res?.payload?.userdata?.id)
     })
   }
   
@@ -115,6 +127,7 @@ const AdmissionDataCenter = () => {
       passport_ce: tenant_serial
     })).then((res) => {
       setTenantName(`${res?.payload?.first_name}` + ` ${res?.payload?.mid_name} ` + `${res?.payload?.sur_name}`)
+      setSubTenantUser(res?.payload?.userdata?.id)
     });
   }
 
@@ -169,6 +182,7 @@ const AdmissionDataCenter = () => {
     try {
       const response = await instance.get(`dispatcher/admission-search-letters?contract_number=${contract_number}`)
       setContract(response.data)
+      setSubTenantUser(response.data?.client?.id)
     } catch (e) {
       return e
     }
@@ -253,6 +267,7 @@ const AdmissionDataCenter = () => {
       letter_date: new Date(letter_date)?.toISOString(),
       admission_status: 0,
       file,
+      sub_tenant_user: sub_tenant_user,
       employee_count: employees_count,
       employees: JSON.stringify(employees)
     }
@@ -272,6 +287,13 @@ const AdmissionDataCenter = () => {
     dispatch(deleteAdmission(id)).then(() => {
       dispatch(getAdmissionLetters())
     })
+  }
+  
+  const toggle = (i) => {
+    if (accordionSelected === i) {
+      return setAccordionSelected(null)
+    }
+    setAccordionSelected(i)
   }
   
   const handlePageChange = (page) => {
@@ -467,80 +489,144 @@ const AdmissionDataCenter = () => {
                 <th scope="col" className="px-4 py-3">Tashkilot</th>
                 <th scope="col" className="px-6 py-3">STIR/JSHSHIR</th>
                 <th scope="col" className="px-8 py-3">Shartnoma raqami</th>
-                <th scope="col" className="px-8 py-3">Xat raqami</th>
-                <th scope="col" className="px-6 py-3">Xat sanasi</th>
-                <th scope="col" className="px-6 py-3">Xat holati</th>
+                <th scope="col" className="px-8 py-3">Xat sanasi</th>
                 <th scope="col" className="px-6 py-3">Xodim soni</th>
                 <th scope="col" className="px-6 py-3">Boshqarish</th>
               </tr>
               </thead>
               <tbody>
-              {admissionLetter && admissionLetter?.result?.map((item, index) => (
-                <tr
-                  className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
-                  key={item?.id}
-                >
-                  <td scope="row" className="px-6 py-4 font-medium border-b-1">
-                    {index + 1}
-                  </td>
-                  <td className={'px-4 py-2'}>
-                    {item?.client?.name}
-                  </td>
-                  <td className={'px-4 py-2'}>
-                    {item?.client?.pin_or_tin}
-                  </td>
-                  <td className={'px-4 py-2'}>
-                    {item?.contract}
-                  </td>
-                  <td className={'px-4 py-2'}>
-                    {item?.letter_number}
-                  </td>
-                  <td className={'px-4 py-2'}>
-                    {moment(item?.letter_date).format('DD-MM-YYYY')}
-                  </td>
-                  <td className={'px-4 py-2'}>
-                    {item?.admission_status === 0 ? <span className="text-green-400">Aktiv</span> :
-                      <span className="text-red-400">No Aktiv</span>}
-                  </td>
-                  <td className={'px-4 py-2'}>
-                    {item?.employee_count}
-                  </td>
-                  <td className="px-4 py-2 flex gap-2">
-                    <button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
-                      <EyeIcon
-                        style={{color: currentColor}}
-                        className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
-                        onClick={() => {
-                          setId(item?.id)
-                          setDrawer(true)
-                          setType('get')
-                        }}
-                      />
-                    </button>
-                    {/*<button className="rounded border-yellow-500 border p-1">*/}
-                    {/*  <PencilIcon*/}
-                    {/*    className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}*/}
-                    {/*    onClick={() => {*/}
-                    {/*      setId(item?.id)*/}
-                    {/*      setDrawer(true)*/}
-                    {/*      setType('put')*/}
-                    {/*    }}*/}
-                    {/*  />*/}
-                    {/*</button>*/}
-                    <button className="p-1 border-yellow-500 border rounded" title="Xat yuklab olish">
-                      <a href={item?.file} target="_blank">
-                        <ArrowDownTrayIcon className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>
-                      </a>
-                    </button>
-                    <button className="rounded border border-red-500 p-1">
-                      <TrashIcon
-                        className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
-                        onClick={() => deleteAdmissions(item?.id)}
-                      />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {admissionLetter && admissionLetter?.result?.map((item, index) => {
+                return (
+                  <React.Fragment key={index}>
+                    <tr
+                      className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
+                      key={item?.id}
+                    >
+                      <td scope="row"
+                          className="px-6 py-4 font-medium border-b-1 whitespace-nowrap flex gap-1 items-center">
+                        {item?.sub_tenant?.length > 0 && (
+                          <div className={`cursor-pointer ${accordionSelected === index ? 'rotate-90' : ''}`}>
+                            <ChevronRightIcon onClick={() => toggle(index)} className="size-6"/>
+                          </div>
+                        )}
+                        {index + 1}
+                      </td>
+                      <td className={'px-4 py-2'}>
+                        {item?.client?.name}
+                      </td>
+                      <td className={'px-4 py-2'}>
+                        {item?.client?.pin_or_tin}
+                      </td>
+                      <td className={'px-4 py-2'}>
+                        {item?.contract?.contract_number}
+                      </td>
+                      <td className={'px-4 py-2'}>
+                        {moment(item?.created_time).format('DD-MM-YYYY')}
+                      </td>
+                      <td className={'px-4 py-2'}>
+                        {item?.count_admission_letters}
+                      </td>
+                      <td className="px-4 py-2 flex gap-2">
+                        {/*<button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">*/}
+                        {/*  <EyeIcon*/}
+                        {/*    style={{color: currentColor}}*/}
+                        {/*    className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}*/}
+                        {/*    onClick={() => {*/}
+                        {/*      setId(item?.id)*/}
+                        {/*      setDrawer(true)*/}
+                        {/*      setType('get')*/}
+                        {/*    }}*/}
+                        {/*  />*/}
+                        {/*</button>*/}
+                        {/*<button className="rounded border-yellow-500 border p-1">*/}
+                        {/*  <PencilIcon*/}
+                        {/*    className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}*/}
+                        {/*    onClick={() => {*/}
+                        {/*      setId(item?.id)*/}
+                        {/*      setDrawer(true)*/}
+                        {/*      setType('put')*/}
+                        {/*    }}*/}
+                        {/*  />*/}
+                        {/*</button>*/}
+                        {/*<button className="p-1 border-yellow-500 border rounded" title="Xat yuklab olish">*/}
+                        {/*  <a href={item?.file} target="_blank">*/}
+                        {/*    <ArrowDownTrayIcon*/}
+                        {/*      className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>*/}
+                        {/*  </a>*/}
+                        {/*</button>*/}
+                        <button className="rounded border border-red-500 p-1">
+                          <TrashIcon
+                            className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
+                            onClick={() => deleteAdmissions(item?.id)}
+                          />
+                        </button>
+                      </td>
+                    </tr>
+                    
+                    {accordionSelected === index && item?.sub_tenant?.map((el, i) => (
+                      <tr
+                        className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
+                        key={el?.id}
+                      >
+                        <td scope="row"
+                            className="px-6 py-4 font-medium border-b-1 whitespace-nowrap flex gap-1 items-center">
+                          {`${index + 1}.${i + 1} `}
+                        </td>
+                        <td className={'px-4 py-2'}>
+                          {el?.sub_tenant_user?.name}
+                        </td>
+                        <td className={'px-4 py-2'}>
+                          {el?.sub_tenant_user?.pin_or_tin}
+                        </td>
+                        <td className={'px-4 py-2'}>
+                          {item?.contract?.contract_number}
+                        </td>
+                        <td className={'px-4 py-2'}>
+                          {moment(el?.created_time).format('DD-MM-YYYY')}
+                        </td>
+                        <td className={'px-4 py-2'}>
+                          {el?.count_admission_letters}
+                        </td>
+                        <td className="px-4 py-2 flex gap-2">
+                          <button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
+                            <EyeIcon
+                              style={{color: currentColor}}
+                              className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
+                              onClick={() => {
+                                setId(item?.id)
+                                setDrawer(true)
+                                setType('get')
+                              }}
+                            />
+                          </button>
+                          {/*<button className="rounded border-yellow-500 border p-1">*/}
+                          {/*  <PencilIcon*/}
+                          {/*    className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}*/}
+                          {/*    onClick={() => {*/}
+                          {/*      setId(item?.id)*/}
+                          {/*      setDrawer(true)*/}
+                          {/*      setType('put')*/}
+                          {/*    }}*/}
+                          {/*  />*/}
+                          {/*</button>*/}
+                          {/*<button className="p-1 border-yellow-500 border rounded" title="Xat yuklab olish">*/}
+                          {/*  <a href={item?.file} target="_blank">*/}
+                          {/*    <ArrowDownTrayIcon*/}
+                          {/*      className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>*/}
+                          {/*  </a>*/}
+                          {/*</button>*/}
+                          <button className="rounded border border-red-500 p-1">
+                            <TrashIcon
+                              className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}
+                              onClick={() => deleteAdmissions(item?.id)}
+                            />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                )
+              })}
               </tbody>
             </table>
             

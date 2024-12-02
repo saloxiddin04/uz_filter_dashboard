@@ -226,7 +226,7 @@ export const getAdmissionLetters = createAsyncThunk(
   "dataCenter/getAdmissionLetters",
   async (params) => {
     try {
-      const response = await instance.get('/dispatcher/admission-employee-letters', {params})
+      const response = await instance.get('/dispatcher/admissions', {params})
       return response.data
     } catch (e) {
       return e.message
@@ -250,7 +250,7 @@ export const createAdmission = createAsyncThunk(
   "dataCenter/createAdmission",
   async (data) => {
     try {
-      return await instance.post('/dispatcher/admission-employee-letters', data, {
+      return await instance.post('/dispatcher/create-admissions', data, {
         headers: { "Content-type": 'multipart/form-data' }
       })
     } catch (e) {
