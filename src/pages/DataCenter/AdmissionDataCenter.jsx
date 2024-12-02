@@ -182,7 +182,7 @@ const AdmissionDataCenter = () => {
     try {
       const response = await instance.get(`dispatcher/admission-search-letters?contract_number=${contract_number}`)
       setContract(response.data)
-      setSubTenantUser(response.data?.client?.id)
+      setSubTenantUser(response.data[0]?.client?.id)
     } catch (e) {
       return e
     }
@@ -227,7 +227,7 @@ const AdmissionDataCenter = () => {
         !contract || !contract_number || !letter_number || !letter_date || !file || !employees_count ||
         !currentEmployee?.pport_no || !currentEmployee?.per_adr || !currentEmployee?.mid_name || !currentEmployee?.sur_name ||
         !currentEmployee?.name || currentEmployee?.admission_type === null || currentEmployee?.admission_time === null || currentEmployee.data_center.length === 0 ||
-        !client || !tenant_type || (tenant_type === '2' && client === 'fiz' ? !tenant_name : !name)
+        !tenant_type || (tenant_type === '2' && (client === 'fiz' ? !tenant_name : !name))
       ) {
         return true
       }
@@ -235,6 +235,8 @@ const AdmissionDataCenter = () => {
 
     return false
   }
+  
+  console.log(handleValidate())
 
   const clearData = () => {
     setContractNumber(null)
