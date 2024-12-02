@@ -275,7 +275,7 @@ export const getAdmissionDetail = createAsyncThunk(
   "dataCenter/getAdmissionDetail",
   async (id) => {
     try {
-      const response = await instance.get(`/dispatcher/admission-employee-letters/${id}`)
+      const response = await instance.get(`/dispatcher/admissions/sub-tenant/${id}`)
       return response.data
     } catch (e) {
       return e
