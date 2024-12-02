@@ -16,6 +16,7 @@ import {toast} from "react-toastify";
 import {getUserByTin} from "../../redux/slices/contractCreate/FirstStepSlices";
 import moment from "moment";
 import AdmissionDrawer from "../../components/DataCenter/AdmissionDrawer";
+import {refreshUserByTin} from "../../redux/slices/contracts/contractsSlice";
 
 const tabs = [
   {
@@ -36,7 +37,6 @@ const AdmissionDataCenter = () => {
   const {admissionLetter, admissionEmployee, loading, dataCenterList, clients} = useSelector((state) => state.dataCenter)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
-  // const [openTab, setOpenTab] = useState(2);
 
   const [handleFilter, setFilter] = useState(false)
 
@@ -61,6 +61,16 @@ const AdmissionDataCenter = () => {
       additional_info: ''
     }
   ])
+  
+  const [client, setClient] = useState('');
+  const [stir, setStir] = useState('');
+  const [tenant_type, setTenantType] = useState(null)
+  const [sub_tenant_user, setSubTenantUser] = useState(null)
+  const [name, setName] = useState(null)
+  
+  const [tenant_serial, setTenantSerial] = useState(undefined)
+  const [tenant_pin, setTenantPin] = useState(undefined)
+  const [tenant_name, setTenantName] = useState(undefined)
 
   const [filterContractNumber, setFilterContractNumber] = useState(undefined)
   const [filterLetterNumber, setFilterLetterNumber] = useState(undefined)
@@ -91,6 +101,22 @@ const AdmissionDataCenter = () => {
       dispatch(getDataCenterList())
     }
   }, [id, drawer]);
+  
+  const searchUserJuridic = () => {
+    dispatch(getUserByTin({stir, client})).then((res) => {
+      setName(res?.payload?.name === null ? '' : res?.payload?.name)
+    })
+  }
+  
+  const searchTenantFiz = (index) => {
+    dispatch(getUserByTin({
+      pin: tenant_pin,
+      client,
+      passport_ce: tenant_serial
+    })).then((res) => {
+      setTenantName(`${res?.payload?.first_name}` + ` ${res?.payload?.mid_name} ` + `${res?.payload?.sur_name}`)
+    });
+  }
 
   const handleAddEmployee = () => {
     const employee = [...employees, {
@@ -186,7 +212,8 @@ const AdmissionDataCenter = () => {
       if (
         !contract || !contract_number || !letter_number || !letter_date || !file || !employees_count ||
         !currentEmployee?.pport_no || !currentEmployee?.per_adr || !currentEmployee?.mid_name || !currentEmployee?.sur_name ||
-        !currentEmployee?.name || currentEmployee?.admission_type === null || currentEmployee?.admission_time === null || currentEmployee.data_center.length === 0
+        !currentEmployee?.name || currentEmployee?.admission_type === null || currentEmployee?.admission_time === null || currentEmployee.data_center.length === 0 ||
+        !client || !tenant_type || (tenant_type === '2' && client === 'fiz' ? !tenant_name : !name)
       ) {
         return true
       }
@@ -568,6 +595,129 @@ const AdmissionDataCenter = () => {
                 />
               </div>
               <div className={'w-[49%]'}>
+                <label
+                  htmlFor="client"
+                  className={'block text-gray-700 text-sm font-bold mb-2 ml-3'}
+                >
+                  Tenant turi
+                </label>
+                <select
+                  name="client"
+                  id="client"
+                  className={`w-full py-2 px-3 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1 shadow`}
+                  value={tenant_type || ''}
+                  onChange={(e) => setTenantType(e.target.value)}
+                >
+                  <option value="" disabled={tenant_type}>Tanlang...</option>
+                  <option value="1">O'z o'ziga xizmat</option>
+                  <option value="2">Tenant</option>
+                </select>
+              </div>
+              {tenant_type === '2' && (
+                <div className={'w-[49%]'}>
+                  <label
+                    htmlFor="client"
+                    className={'block text-gray-700 text-sm font-bold mb-2 ml-3'}
+                  >
+                    Mijoz turi
+                  </label>
+                  <select
+                    name="client"
+                    id="client"
+                    className={`w-full px-3 py-2 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1 shadow`}
+                    value={client}
+                    onChange={(e) => setClient(e.target.value)}
+                  >
+                    <option value="" disabled={client}>Tanlang...</option>
+                    <option value="fiz">Jismoniy</option>
+                    <option value="yur">Yuridik</option>
+                  </select>
+                </div>
+              )}
+              {client === 'yur' && (
+                <>
+                  <div className={'w-[49%] flex items-end gap-4'}>
+                    <div className={'w-full'}>
+                      <Input
+                        value={stir}
+                        onChange={(e) => {
+                          const re = /^[0-9\b]+$/;
+                          if (e.target.value === '' || re.test(e.target.value)) {
+                            setStir(e.target.value.slice(0, 9));
+                          }
+                        }}
+                        label={'Tenantning STIR raqami'}
+                      />
+                    </div>
+                    <button
+                      className={`px-4 py-2 rounded text-white ${stir.length === 9 ? 'opacity-1' : 'opacity-50'}`}
+                      style={{backgroundColor: currentColor}}
+                      onClick={searchUserJuridic}
+                      disabled={stir.length !== 9}
+                    >
+                      Izlash
+                    </button>
+                  </div>
+                  <div className={'w-[49%]'}>
+                    <Input
+                      label={'Tenant nomi'}
+                      placeholder={'Tenant nomi'}
+                      type={'text'}
+                      value={name || ''}
+                      disabled={true}
+                    />
+                  </div>
+                </>
+              )}
+              {client === 'fiz' && (
+                <>
+                  <div className={'w-[49%] flex items-end gap-4'}>
+                    <div className={'w-full flex items-end gap-4'}>
+                      <div className={'w-2/5'}>
+                        <Input
+                          label={'Passport malumotlari'}
+                          placeholder={'Passport seriyasi va raqami'}
+                          value={tenant_serial || ''}
+                          onChange={(e) => setTenantSerial(e.target.value.toUpperCase().slice(0, 9))}
+                          type={'text'}
+                        />
+                      </div>
+                      <div className={'w-3/5'}>
+                        <Input
+                          label={''}
+                          placeholder={'JShIShIR'}
+                          onChange={(e) => {
+                            const re = /^[0-9\b]+$/;
+                            if (e.target.value === '' || re.test(e.target.value)) {
+                              setTenantPin(e.target.value.slice(0, 14));
+                            }
+                          }}
+                          value={tenant_pin || ''}
+                          type={'text'}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      className={'px-4 py-2 rounded text-white disabled:opacity-25'}
+                      style={{backgroundColor: currentColor}}
+                      onClick={searchTenantFiz}
+                      disabled={!tenant_serial || !tenant_pin}
+                    >
+                      Izlash
+                    </button>
+                  </div>
+                  <div className={'w-[49%]'}>
+                    <Input
+                      label={'Tenant ismi'}
+                      placeholder={'Tenant ismi'}
+                      type={'text'}
+                      value={tenant_name || ''}
+                      disabled={true}
+                    />
+                  </div>
+                </>
+              )}
+              <div className={'w-[49%]'}>
                 <Input
                   label={'Xat raqami'}
                   placeholder={'Xat raqami'}
@@ -608,7 +758,7 @@ const AdmissionDataCenter = () => {
                 />
               </div>
             </div>
-
+            
             {employees?.map((item, index) => (
               <div key={index} className="flex justify-between flex-wrap p-4 gap-4 mb-4 rounded border border-dashed">
                 <div className="w-full flex items-end gap-4 justify-between">

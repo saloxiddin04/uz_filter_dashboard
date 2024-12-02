@@ -14,7 +14,7 @@ const Input = ({label, placeholder, type, disabled, value, onChange, className})
       <input
         className={`
           shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight
-           ${className}
+           ${className ? className : ''}
         `}
         id={label}
         type={type}
