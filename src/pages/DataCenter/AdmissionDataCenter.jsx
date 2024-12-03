@@ -33,11 +33,11 @@ const tabs = [
 		active: true
 	},
 	{
-		title: "Ruxsatnoma yaratish",
+		title: "Batafsil",
 		active: false
 	},
 	{
-		title: "Batafsil",
+		title: "Ruxsatnoma yaratish",
 		active: false
 	}
 ]
@@ -508,9 +508,8 @@ const AdmissionDataCenter = () => {
 								<th scope="col" className="px-4 py-3">Tashkilot</th>
 								<th scope="col" className="px-6 py-3">STIR/JSHSHIR</th>
 								<th scope="col" className="px-8 py-3">Shartnoma raqami</th>
-								<th scope="col" className="px-8 py-3">Xat sanasi</th>
-								<th scope="col" className="px-6 py-3">Xodim soni</th>
-								<th scope="col" className="px-6 py-3">Boshqarish</th>
+								<th scope="col" className="px-8 py-3">Shartnoma sanasi</th>
+								<th scope="col" className="px-6 py-3">Xat soni</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -540,110 +539,58 @@ const AdmissionDataCenter = () => {
 												{item?.contract?.contract_number}
 											</td>
 											<td className={'px-4 py-2'}>
-												{moment(item?.created_time).format('DD-MM-YYYY')}
+												{moment(item?.contract?.contract_date).format('DD-MM-YYYY')}
 											</td>
 											<td className={'px-4 py-2'}>
 												{item?.count_admission_letters}
 											</td>
-											<td className="px-4 py-2 flex gap-2">
-												{/*<button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">*/}
-												{/*  <EyeIcon*/}
-												{/*    style={{color: currentColor}}*/}
-												{/*    className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}*/}
-												{/*    onClick={() => {*/}
-												{/*      setId(item?.id)*/}
-												{/*      setDrawer(true)*/}
-												{/*      setType('get')*/}
-												{/*    }}*/}
-												{/*  />*/}
-												{/*</button>*/}
-												{/*<button className="rounded border-yellow-500 border p-1">*/}
-												{/*  <PencilIcon*/}
-												{/*    className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}*/}
-												{/*    onClick={() => {*/}
-												{/*      setId(item?.id)*/}
-												{/*      setDrawer(true)*/}
-												{/*      setType('put')*/}
-												{/*    }}*/}
-												{/*  />*/}
-												{/*</button>*/}
-												{/*<button className="p-1 border-yellow-500 border rounded" title="Xat yuklab olish">*/}
-												{/*  <a href={item?.file} target="_blank">*/}
-												{/*    <ArrowDownTrayIcon*/}
-												{/*      className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>*/}
-												{/*  </a>*/}
-												{/*</button>*/}
-												{/*<button className="rounded border border-red-500 p-1">*/}
-												{/*  <TrashIcon*/}
-												{/*    className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}*/}
-												{/*    onClick={() => deleteAdmissions(item?.id)}*/}
-												{/*  />*/}
-												{/*</button>*/}
-											</td>
 										</tr>
 										
-										{accordionSelected === index && item?.sub_tenant?.map((el, i) => (
-											<tr
-												className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
-												key={el?.id}
-											>
-												<td scope="row"
-												    className="px-6 py-4 font-medium whitespace-nowrap flex gap-1 items-center">
-													{`${index + 1}.${i + 1} `}
-												</td>
-												<td className={'px-4 py-2'}>
-													{el?.sub_tenant_user?.name}
-												</td>
-												<td className={'px-4 py-2'}>
-													{el?.sub_tenant_user?.pin_or_tin}
-												</td>
-												<td className={'px-4 py-2'}>
-													{item?.contract?.contract_number}
-												</td>
-												<td className={'px-4 py-2'}>
-													{moment(el?.created_time).format('DD-MM-YYYY')}
-												</td>
-												<td className={'px-4 py-2'}>
-													{el?.count_admission_letters}
-												</td>
-												<td className="px-4 py-2 flex gap-2">
-													<button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
-														<EyeIcon
-															style={{color: currentColor}}
-															className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
-															onClick={() => {
-																dispatch(getAdmissionDetail(el?.id)).then(() => {
-																	setOpenTab(2)
-																})
-																dispatch(getDataCenterList())
-															}}
-														/>
-													</button>
-													{/*<button className="rounded border-yellow-500 border p-1">*/}
-													{/*  <PencilIcon*/}
-													{/*    className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}*/}
-													{/*    onClick={() => {*/}
-													{/*      setId(item?.id)*/}
-													{/*      setDrawer(true)*/}
-													{/*      setType('put')*/}
-													{/*    }}*/}
-													{/*  />*/}
-													{/*</button>*/}
-													{/*<button className="p-1 border-yellow-500 border rounded" title="Xat yuklab olish">*/}
-													{/*  <a href={item?.file} target="_blank">*/}
-													{/*    <ArrowDownTrayIcon*/}
-													{/*      className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>*/}
-													{/*  </a>*/}
-													{/*</button>*/}
-													{/*<button className="rounded border border-red-500 p-1">*/}
-													{/*  <TrashIcon*/}
-													{/*    className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}*/}
-													{/*    onClick={() => deleteAdmissions(item?.id)}*/}
-													{/*  />*/}
-													{/*</button>*/}
-												</td>
-											</tr>
-										))}
+										{accordionSelected === index && (
+											<>
+												<tr>
+													<td colSpan={7} className="px-6 py-4">
+														<table
+															className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
+															<thead
+																className="bg-gray-100 dark:bg-gray-700 text-xs uppercase text-gray-700 dark:text-gray-400">
+															<tr>
+																<th className="px-4 py-2">#</th>
+																<th className="px-4 py-2">Sub tenant</th>
+																<th className="px-4 py-2">Pinfl</th>
+																<th className="px-4 py-2">Sub tenant bo'yicha xat soni</th>
+																<th className="px-4 py-2">Boshqarish</th>
+															</tr>
+															</thead>
+															<tbody>
+															  {item?.sub_tenant?.map((el, i) => (
+																  <tr key={el?.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 border-b-1">
+																	  <td className="px-4 py-2">{`${index + 1}.${i + 1}`}</td>
+																	  <td className="px-4 py-2">{el?.sub_tenant_user?.name}</td>
+																	  <td className="px-4 py-2">{el?.sub_tenant_user?.pin_or_tin}</td>
+																	  <td className="px-4 py-2">{el?.count_admission_letters}</td>
+																	  <td className="px-4 py-2">
+																		  <button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
+																			  <EyeIcon
+																				  style={{color: currentColor}}
+																				  className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
+																				  onClick={() => {
+																					  dispatch(getAdmissionDetail(el?.id)).then(() => {
+																						  setOpenTab(1)
+																					  })
+																					  dispatch(getDataCenterList())
+																				  }}
+																			  />
+																		  </button>
+																	  </td>
+																  </tr>
+															  ))}
+															</tbody>
+														</table>
+													</td>
+												</tr>
+											</>
+										)}
 									</React.Fragment>
 								)
 							})}
@@ -660,6 +607,165 @@ const AdmissionDataCenter = () => {
 					</>
 				)
 			case 1:
+				return (
+					<>
+						<Header category={admissionLetterDetail?.sub_tenant_user?.pin_or_tin} title={admissionLetterDetail?.sub_tenant_user?.name}/>
+						{
+							admissionLetterDetail
+								?
+								<>
+									<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
+										<thead
+											className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+										>
+										<tr>
+											<th scope="col" className="px-3 py-3"></th>
+											<th scope="col" className="px-4 py-3">Tashkilot</th>
+											<th scope="col" className="px-6 py-3">STIR/JSHSHIR</th>
+											<th scope="col" className="px-6 py-3">Shartnoma raqami</th>
+											<th scope="col" className="px-6 py-3">Shartnoma sanasi</th>
+											<th scope="col" className="px-8 py-3">Xat raqami</th>
+											<th scope="col" className="px-8 py-3">Xat sanasi</th>
+											<th scope="col" className="px-6 py-3">Xodim soni</th>
+											<th scope="col" className="px-6 py-3"></th>
+										</tr>
+										</thead>
+										<tbody>
+										{admissionLetterDetail && admissionLetterDetail?.employee_letters?.map((item, index) => {
+											return (
+												<React.Fragment key={index}>
+													<tr className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'} key={item?.id}>
+														<td scope="row"
+														    className="px-6 py-4 font-medium flex gap-1 items-center">
+															{item?.employees?.length > 0 && (
+																<div className={`cursor-pointer ${accordionDetail === index ? 'rotate-90' : ''}`}>
+																	<ChevronRightIcon onClick={() => toggleDetail(index)} className="size-6"/>
+																</div>
+															)}
+															{index + 1}
+														</td>
+														<td className={'px-4 py-2'}>
+															{item?.admission?.client?.name}
+														</td>
+														<td className={'px-4 py-2'}>
+															{item?.admission?.client?.pin_or_tin}
+														</td>
+														<td className={'px-4 py-2'}>
+															{item?.admission?.contract?.contract_number}
+														</td>
+														<td className={'px-4 py-2'}>
+															{moment(item?.admission?.contract?.contract_date).format('DD-MM-YYYY')}
+														</td>
+														<td className={'px-4 py-2'}>
+															{item?.letter_number}
+														</td>
+														<td className={'px-4 py-2'}>
+															{moment(item?.letter_date).format('DD-MM-YYYY')}
+														</td>
+														<td className={'px-4 py-2'}>
+															{item?.employee_count}
+														</td>
+														<td className="px-4 py-2 flex gap-2">
+															<button className="p-1 border-yellow-500 border rounded" title="Xat yuklab olish">
+																<a href={`${item?.file}`} target="_blank">
+																	<ArrowDownTrayIcon
+																		className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>
+																</a>
+															</button>
+														</td>
+													</tr>
+													
+													{accordionDetail === index && (
+														<tr>
+															<td colSpan={10} className="px-6 py-4">
+																<table
+																	className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
+																	<thead
+																		className="bg-gray-100 dark:bg-gray-700 text-xs uppercase text-gray-700 dark:text-gray-400">
+																	<tr>
+																		<th className="px-4 py-2">#</th>
+																		<th className="px-4 py-2">Xodim</th>
+																		<th className="px-4 py-2">Pasport raqami</th>
+																		<th className="px-4 py-2">Pinfl</th>
+																		<th className="px-4 py-2">Ruxsatnoma turi</th>
+																		<th className="px-4 py-2">Ruxsatnoma vaqti</th>
+																		<th className="px-4 py-2">Data markaz</th>
+																	</tr>
+																	</thead>
+																	<tbody>
+																	{item?.employees?.map((el, i) => (
+																		<tr key={el?.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 border-b-1">
+																			<td className="px-4 py-2">{`${index + 1}.${i + 1}`}</td>
+																			<td className="px-4 py-2">{el?.name}</td>
+																			<td className="px-4 py-2">{el?.pport_no}</td>
+																			<td className="px-4 py-2">{el?.pin}</td>
+																			<td className="px-4 py-2">
+																				{(() => {
+																					switch (el?.admission_type) {
+																						case 2:
+																							return 'Qurilmalarni olib kirish/chiqish';
+																						case 1:
+																							return 'Faqat kirish';
+																						case 0:
+																							return 'Ekskursiya';
+																						default:
+																							return '';
+																					}
+																				})()}
+																			</td>
+																			<td className="px-4 py-2">
+																				{(() => {
+																					switch (el?.admission_time) {
+																						case 1:
+																							return 'Kecha-kunduz';
+																						case 0:
+																							return '9:00 - 18:00';
+																						default:
+																							return '';
+																					}
+																				})()}
+																			</td>
+																			<td className="px-4 py-2">
+																				{dataCenterList?.length > 0 ? (
+																					dataCenterList.map((option) => {
+																						const isSelected = el?.data_center?.includes(option?.id);
+																						
+																						return (
+																							<div
+																								key={option?.id}
+																								className={`px-4 py-2 border rounded cursor-pointer
+                                                  ${isSelected ? 'text-white' : 'bg-white text-gray-800 border-gray-300'}`}
+																								style={{
+																									background: isSelected ? currentColor : ''
+																								}}
+																							>
+																								{option?.name}
+																							</div>
+																						);
+																					})
+																				) : (
+																					<span className="text-gray-500 italic">No data centers available</span>
+																				)}
+																			</td>
+																		</tr>
+																	))}
+																	</tbody>
+																</table>
+															</td>
+														</tr>
+													)}
+												</React.Fragment>
+											)
+										})}
+										</tbody>
+									</table>
+								</>
+								:
+								<h1 className="text-center dark:bg-white">Batafsil ma'lumot yo'q</h1>
+						}
+					</>
+				)
+			case 2:
 				return (
 					<>
 						<div className="flex items-end gap-4">
@@ -1107,186 +1213,6 @@ const AdmissionDataCenter = () => {
 						</div>
 					</>
 				)
-			case 2:
-				return (
-					<>
-						{
-							admissionLetterDetail
-								?
-                <>
-                  <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
-                    <thead
-                      className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-                    >
-                    <tr>
-                      <th scope="col" className="px-3 py-3"></th>
-                      <th scope="col" className="px-4 py-3">Tashkilot</th>
-                      <th scope="col" className="px-6 py-3">STIR/JSHSHIR</th>
-                      <th scope="col" className="px-8 py-3">Xat raqami</th>
-                      <th scope="col" className="px-8 py-3">Xat sanasi</th>
-                      <th scope="col" className="px-6 py-3">Xodim soni</th>
-                      <th scope="col" className="px-6 py-3">Boshqarish</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {admissionLetterDetail && admissionLetterDetail?.employee_letters?.map((item, index) => {
-                      return (
-                        <React.Fragment key={index}>
-                          <tr
-                            className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}
-                            key={item?.id}
-                          >
-                            <td scope="row"
-                                className="px-6 py-4 font-medium flex gap-1 items-center">
-                              {item?.employees?.length > 0 && (
-                                <div className={`cursor-pointer ${accordionDetail === index ? 'rotate-90' : ''}`}>
-                                  <ChevronRightIcon onClick={() => toggleDetail(index)} className="size-6"/>
-                                </div>
-                              )}
-                              {index + 1}
-                            </td>
-                            <td className={'px-4 py-2'}>
-                              {item?.admission?.client?.name}
-                            </td>
-                            <td className={'px-4 py-2'}>
-                              {item?.admission?.client?.pin_or_tin}
-                            </td>
-                            <td className={'px-4 py-2'}>
-                              {item?.letter_number}
-                            </td>
-                            <td className={'px-4 py-2'}>
-                              {moment(item?.letter_date).format('DD-MM-YYYY')}
-                            </td>
-                            <td className={'px-4 py-2'}>
-                              {item?.employee_count}
-                            </td>
-                            <td className="px-4 py-2 flex gap-2">
-                              {/*<button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">*/}
-                              {/*  <EyeIcon*/}
-                              {/*    style={{color: currentColor}}*/}
-                              {/*    className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}*/}
-                              {/*    onClick={() => {*/}
-                              {/*      setId(item?.id)*/}
-                              {/*      setDrawer(true)*/}
-                              {/*      setType('get')*/}
-                              {/*    }}*/}
-                              {/*  />*/}
-                              {/*</button>*/}
-                              {/*<button className="rounded border-yellow-500 border p-1">*/}
-                              {/*  <PencilIcon*/}
-                              {/*    className={`size-6 text-yellow-500 hover:underline cursor-pointer mx-auto`}*/}
-                              {/*    onClick={() => {*/}
-                              {/*      setId(item?.id)*/}
-                              {/*      setDrawer(true)*/}
-                              {/*      setType('put')*/}
-                              {/*    }}*/}
-                              {/*  />*/}
-                              {/*</button>*/}
-                              <button className="p-1 border-yellow-500 border rounded" title="Xat yuklab olish">
-                                <a href={`${api_url}${item?.file}`} target="_blank">
-                                  <ArrowDownTrayIcon
-                                    className="size-6 text-yellow-500 hover:underline cursor-pointer mx-auto"/>
-                                </a>
-                              </button>
-                              {/*<button className="rounded border border-red-500 p-1">*/}
-                              {/*  <TrashIcon*/}
-                              {/*    className={`size-6 text-red-500 hover:underline cursor-pointer mx-auto`}*/}
-                              {/*    onClick={() => deleteAdmissions(item?.id)}*/}
-                              {/*  />*/}
-                              {/*</button>*/}
-                            </td>
-                          </tr>
-                          
-                          {accordionDetail === index && (
-                            <tr>
-                              <td colSpan={7} className="px-6 py-4">
-                                <table
-                                  className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 my-4">
-                                  <thead
-                                    className="bg-gray-100 dark:bg-gray-700 text-xs uppercase text-gray-700 dark:text-gray-400">
-                                  <tr>
-                                    <th className="px-4 py-2">#</th>
-                                    <th className="px-4 py-2">Xodim ismi</th>
-                                    <th className="px-4 py-2">Pasport raqami</th>
-                                    <th className="px-4 py-2">Pinfl</th>
-                                    <th className="px-4 py-2">Ruxsatnoma turi</th>
-                                    <th className="px-4 py-2">Ruxsatnoma vaqti</th>
-                                    <th className="px-4 py-2">Data markaz</th>
-                                  </tr>
-                                  </thead>
-                                  <tbody>
-                                  {item?.employees?.map((el, i) => (
-                                    <tr key={el?.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 border-b-1">
-                                      <td className="px-4 py-2">{`${index + 1}.${i + 1}`}</td>
-                                      <td className="px-4 py-2">{el?.name}</td>
-                                      <td className="px-4 py-2">{el?.pport_no}</td>
-                                      <td className="px-4 py-2">{el?.pin}</td>
-                                      <td className="px-4 py-2">
-                                        {(() => {
-                                          switch (el?.admission_type) {
-                                            case 2:
-                                              return 'Qurilmalarni olib kirish/chiqish';
-                                            case 1:
-                                              return 'Faqat kirish';
-                                            case 0:
-                                              return 'Ekskursiya';
-                                            default:
-                                              return '';
-                                          }
-                                        })()}
-                                      </td>
-                                      <td className="px-4 py-2">
-                                        {(() => {
-                                          switch (el?.admission_time) {
-                                            case 1:
-                                              return 'Kecha-kunduz';
-                                            case 0:
-                                              return '9:00 - 18:00';
-                                            default:
-                                              return '';
-                                          }
-                                        })()}
-                                      </td>
-                                      <td className="px-4 py-2">
-                                        {dataCenterList?.length > 0 ? (
-                                          dataCenterList.map((option) => {
-                                            const isSelected = el?.data_center?.includes(option?.id);
-                                            
-                                            return (
-                                              <div
-                                                key={option?.id}
-                                                className={`px-4 py-2 border rounded cursor-pointer
-                                                  ${isSelected ? 'text-white' : 'bg-white text-gray-800 border-gray-300'}`}
-                                                style={{
-                                                  background: isSelected ? currentColor : ''
-                                                }}
-                                              >
-                                                {option?.name}
-                                              </div>
-                                            );
-                                          })
-                                        ) : (
-                                          <span className="text-gray-500 italic">No data centers available</span>
-                                        )}
-                                      </td>
-                                    </tr>
-                                  ))}
-                                  </tbody>
-                                </table>
-                              </td>
-                            </tr>
-                          )}
-                        </React.Fragment>
-                      )
-                    })}
-                    </tbody>
-                  </table>
-                </>
-                :
-                <h1 className="text-center dark:bg-white">Batafsil ma'lumot yo'q</h1>
-            }
-          </>
-        )
       default:
         return null
     }
