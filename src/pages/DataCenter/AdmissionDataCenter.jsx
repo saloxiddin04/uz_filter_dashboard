@@ -49,9 +49,9 @@ const AdmissionDataCenter = () => {
 	
 	const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 	
-	const [handleFilter, setFilter] = useState(false)
+	const [handleFilter, setFilter] = useState(true)
 	
-	const [detailFilter, setDetailFilter] = useState(false)
+	const [detailFilter, setDetailFilter] = useState(true)
 	const [filterLetterNumber, setFilterLetterNumber] = useState(undefined)
 	const [employee_passport_number, setEmployeePassportNumber] = useState(undefined)
 	const [employee_name, setEmployeeName] = useState(undefined)
@@ -289,13 +289,13 @@ const AdmissionDataCenter = () => {
 		}
 		setAccordionSelected(i)
 	}
-  
-  const toggleDetail = (i) => {
-    if (accordionDetail === i) {
-      return setAccordionDetail(null)
-    }
-    setAccordionDetail(i)
-  }
+	
+	const toggleDetail = (i) => {
+		if (accordionDetail === i) {
+			return setAccordionDetail(null)
+		}
+		setAccordionDetail(i)
+	}
 	
 	const handlePageChange = (page) => {
 		dispatch(getAdmissionLetters({page_size: page}))
@@ -391,7 +391,6 @@ const AdmissionDataCenter = () => {
 											className={`rounded px-4 py-1 mt-5 border text-center`}
 											style={{borderColor: currentColor}}
 											onClick={() => {
-												setFilter(false)
 												dispatch(getAdmissionLetters())
 												setFilterContractNumber(undefined)
 												setSubTenantTinOrPin(undefined)
@@ -401,18 +400,6 @@ const AdmissionDataCenter = () => {
 											<ArrowPathIcon className="size-6" fill={currentColor}/>
 										</button>
 									</div>
-								</>
-							)}
-							{!handleFilter && (
-								<>
-									<button
-										title="filter"
-										className="rounded px-4 py-1 border text-center"
-										onClick={() => setFilter(true)}
-										style={{borderColor: currentColor}}
-									>
-										<FunnelIcon className="size-6" color={currentColor}/>
-									</button>
 								</>
 							)}
 						</div>
@@ -474,35 +461,35 @@ const AdmissionDataCenter = () => {
 															<tr>
 																<th className="px-4 py-2">#</th>
 																<th className="px-4 py-2">Sub tenant</th>
-																<th className="px-4 py-2">Pinfl</th>
+																<th className="px-4 py-2">Stir/JShShIR</th>
 																<th className="px-4 py-2">Sub tenant bo'yicha xat soni</th>
 																<th className="px-4 py-2">Boshqarish</th>
 															</tr>
 															</thead>
 															<tbody>
-															  {item?.sub_tenant?.map((el, i) => (
-																  <tr key={el?.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 border-b-1">
-																	  <td className="px-4 py-2">{`${index + 1}.${i + 1}`}</td>
-																	  <td className="px-4 py-2">{el?.sub_tenant_user?.name}</td>
-																	  <td className="px-4 py-2">{el?.sub_tenant_user?.pin_or_tin}</td>
-																	  <td className="px-4 py-2">{el?.count_admission_letters}</td>
-																	  <td className="px-4 py-2">
-																		  <button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
-																			  <EyeIcon
-																				  style={{color: currentColor}}
-																				  className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
-																				  onClick={() => {
-																					  dispatch(getAdmissionDetail({id: el?.id})).then(() => {
-																							setId(el?.id)
-																						  setOpenTab(1)
-																					  })
-																					  dispatch(getDataCenterList())
-																				  }}
-																			  />
-																		  </button>
-																	  </td>
-																  </tr>
-															  ))}
+															{item?.sub_tenant?.map((el, i) => (
+																<tr key={el?.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 border-b-1">
+																	<td className="px-4 py-2">{`${index + 1}.${i + 1}`}</td>
+																	<td className="px-4 py-2">{el?.sub_tenant_user?.name}</td>
+																	<td className="px-4 py-2">{el?.sub_tenant_user?.pin_or_tin}</td>
+																	<td className="px-4 py-2">{el?.count_admission_letters}</td>
+																	<td className="px-4 py-2">
+																		<button style={{border: `1px solid ${currentColor}`}} className="rounded p-1">
+																			<EyeIcon
+																				style={{color: currentColor}}
+																				className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
+																				onClick={() => {
+																					dispatch(getAdmissionDetail({id: el?.id})).then(() => {
+																						setId(el?.id)
+																						setOpenTab(1)
+																					})
+																					dispatch(getDataCenterList())
+																				}}
+																			/>
+																		</button>
+																	</td>
+																</tr>
+															))}
 															</tbody>
 														</table>
 													</td>
@@ -527,8 +514,9 @@ const AdmissionDataCenter = () => {
 			case 1:
 				return (
 					<>
-						<div className="flex justify-between items-center">
-							<Header category={admissionLetterDetail?.sub_tenant_user?.pin_or_tin} title={admissionLetterDetail?.sub_tenant_user?.name}/>
+						<Header category={admissionLetterDetail?.sub_tenant_user?.pin_or_tin}
+						        title={admissionLetterDetail?.sub_tenant_user?.name}/>
+						<div className="flex justify-center my-4">
 							{detailFilter && (
 								<>
 									<div className="flex gap-4 items-center justify-center w-[90%]">
@@ -612,7 +600,6 @@ const AdmissionDataCenter = () => {
 											className={`rounded px-4 py-1 mt-5 border text-center`}
 											style={{borderColor: currentColor}}
 											onClick={() => {
-												setDetailFilter(false)
 												dispatch(getAdmissionDetail({id}))
 												setFilterLetterNumber(undefined)
 												setEmployeePassportNumber(undefined)
@@ -622,18 +609,6 @@ const AdmissionDataCenter = () => {
 											<ArrowPathIcon className="size-6" fill={currentColor}/>
 										</button>
 									</div>
-								</>
-							)}
-							{!detailFilter && (
-								<>
-									<button
-										title="filter"
-										className="rounded px-4 py-1 border text-center"
-										onClick={() => setDetailFilter(true)}
-										style={{borderColor: currentColor}}
-									>
-										<FunnelIcon className="size-6" color={currentColor}/>
-									</button>
 								</>
 							)}
 						</div>
@@ -1249,28 +1224,28 @@ const AdmissionDataCenter = () => {
 						</div>
 					</>
 				)
-      default:
-        return null
-    }
-  }
-  
-  if (loading) return <Loader/>
-  
-  return (
-    <>
-      <div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
-        <TabsRender
-          tabs={tabs}
-          color={currentColor}
-          openTab={openTab}
-          setOpenTab={setOpenTab}
-        />
-      </div>
-      <div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
-        {displayStep(openTab)}
-      </div>
-    </>
-  );
+			default:
+				return null
+		}
+	}
+	
+	if (loading) return <Loader/>
+	
+	return (
+		<>
+			<div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
+				<TabsRender
+					tabs={tabs}
+					color={currentColor}
+					openTab={openTab}
+					setOpenTab={setOpenTab}
+				/>
+			</div>
+			<div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
+				{displayStep(openTab)}
+			</div>
+		</>
+	);
 };
 
 export default AdmissionDataCenter;
