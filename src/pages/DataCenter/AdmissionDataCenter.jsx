@@ -2,30 +2,24 @@ import React, {useEffect, useState} from 'react';
 import {Header, Input, Loader, Pagination, TabsRender} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
 import {
 	ArrowDownTrayIcon,
 	ArrowPathIcon,
 	ChevronRightIcon,
 	EyeIcon,
 	FunnelIcon,
-	PencilIcon,
 	TrashIcon
 } from "@heroicons/react/16/solid";
 import {BiSearch} from "react-icons/bi";
 import {
-	clearLetterDetail,
-	createAdmission, deleteAdmission, getAdmissionClients, getAdmissionDetail,
-	getAdmissionLetters, getAdmissionSearch,
+	createAdmission, getAdmissionDetail,
+	getAdmissionLetters,
 	getDataCenterList
 } from "../../redux/slices/dataCenter/dataCenterSlice";
 import instance from "../../API";
 import {toast} from "react-toastify";
 import {getUserByTin} from "../../redux/slices/contractCreate/FirstStepSlices";
 import moment from "moment";
-import AdmissionDrawer from "../../components/DataCenter/AdmissionDrawer";
-import {refreshUserByTin} from "../../redux/slices/contracts/contractsSlice";
-import {api_url} from "../../config";
 
 const tabs = [
 	{
@@ -44,7 +38,6 @@ const tabs = [
 
 const AdmissionDataCenter = () => {
 	const dispatch = useDispatch()
-	const navigate = useNavigate()
 	
 	const {currentColor} = useStateContext();
 	const {
@@ -52,13 +45,16 @@ const AdmissionDataCenter = () => {
 		admissionLetterDetail,
 		loading,
 		dataCenterList,
-		clients
 	} = useSelector((state) => state.dataCenter)
-	const {userByTin} = useSelector(state => state.userByTin)
 	
 	const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 	
 	const [handleFilter, setFilter] = useState(false)
+	
+	const [detailFilter, setDetailFilter] = useState(false)
+	const [filterLetterNumber, setFilterLetterNumber] = useState(undefined)
+	const [employee_passport_number, setEmployeePassportNumber] = useState(undefined)
+	const [employee_name, setEmployeeName] = useState(undefined)
 	
 	const [contract_number, setContractNumber] = useState(null)
 	const [contract, setContract] = useState([])
@@ -66,6 +62,7 @@ const AdmissionDataCenter = () => {
 	const [letter_date, setLetterDate] = useState(null)
 	const [file, setFile] = useState(null)
 	const [employees_count, setEmployeesCount] = useState(null)
+	const [completed_date, setCompletedDate] = useState(null)
 	const [employees, setEmployees] = useState([
 		{
 			pin: '',
@@ -93,15 +90,10 @@ const AdmissionDataCenter = () => {
 	const [tenant_name, setTenantName] = useState(undefined)
 	
 	const [filterContractNumber, setFilterContractNumber] = useState(undefined)
-	const [filterLetterNumber, setFilterLetterNumber] = useState(undefined)
-	const [filterPin, setFilterPin] = useState(undefined)
-	const [filterName, setFilterName] = useState(undefined)
-	const [pport_no, setPportNo] = useState(undefined)
-	const [tin, setTin] = useState(undefined)
+	const [client_tin_or_pin, setClientTinOrPin] = useState(undefined)
+	const [sub_tenant_tin_or_pin, setSubTenantTinOrPin] = useState(undefined)
 	
-	const [drawer, setDrawer] = useState(false)
 	const [id, setId] = useState(null)
-	const [type, setType] = useState(null)
 	
 	const [accordionSelected, setAccordionSelected] = useState(null)
 	const [accordionDetail, setAccordionDetail] = useState(null)
@@ -109,21 +101,8 @@ const AdmissionDataCenter = () => {
 	useEffect(() => {
 		if (openTab === 0) {
 			dispatch(getAdmissionLetters())
-		} else {
-			// dispatch(getDataCenterList())
 		}
 	}, [openTab]);
-	
-	useEffect(() => {
-		// dispatch(getAdmissionClients())
-	}, [dispatch])
-	
-	// useEffect(() => {
-	//   if (id && drawer) {
-	//     dispatch(getAdmissionDetail(id))
-	//     dispatch(getDataCenterList())
-	//   }
-	// }, [id, drawer]);
 	
 	const searchUserJuridic = () => {
 		dispatch(getUserByTin({stir, client})).then((res) => {
@@ -132,7 +111,7 @@ const AdmissionDataCenter = () => {
 		})
 	}
 	
-	const searchTenantFiz = (index) => {
+	const searchTenantFiz = () => {
 		dispatch(getUserByTin({
 			pin: tenant_pin,
 			client,
@@ -202,14 +181,23 @@ const AdmissionDataCenter = () => {
 	
 	const searchLetters = () => {
 		const data = {
-			pin: filterPin,
 			contract_number: filterContractNumber,
-			name: filterName,
-			letter_number: filterLetterNumber,
-			tin,
-			pport_no
+			sub_tenant_tin_or_pin,
+			client_tin_or_pin
 		}
-		dispatch(getAdmissionSearch(data))
+		dispatch(getAdmissionLetters(data))
+	}
+	
+	const searchDetail = () => {
+		const params = {
+			letter_number: filterLetterNumber,
+			employee_passport_number,
+			employee_name
+		}
+		dispatch(getAdmissionDetail({
+			id,
+			params
+		}))
 	}
 	
 	const searchUserPhysics = (index) => {
@@ -239,7 +227,7 @@ const AdmissionDataCenter = () => {
 				!contract || !contract_number || !letter_number || !letter_date || !file || !employees_count ||
 				!currentEmployee?.pport_no || !currentEmployee?.per_adr || !currentEmployee?.mid_name || !currentEmployee?.sur_name ||
 				!currentEmployee?.name || currentEmployee?.admission_type === null || currentEmployee?.admission_time === null || currentEmployee.data_center.length === 0 ||
-				!tenant_type || (tenant_type === '2' && (client === 'fiz' ? !tenant_name : !name))
+				!completed_date || !tenant_type || (tenant_type === '2' && (client === 'fiz' ? !tenant_name : !name))
 			) {
 				return true
 			}
@@ -277,6 +265,7 @@ const AdmissionDataCenter = () => {
 			contract: contract[0]?.id,
 			letter_number,
 			letter_date: new Date(letter_date)?.toISOString(),
+			completed_date: new Date(completed_date)?.toISOString(),
 			admission_status: 0,
 			file,
 			sub_tenant_user: sub_tenant_user,
@@ -289,15 +278,8 @@ const AdmissionDataCenter = () => {
 				setOpenTab(0)
 				clearData()
 			} else {
-				toast.error("Xatolik")
-				return
+				return toast.error("Xatolik")
 			}
-		})
-	}
-	
-	const deleteAdmissions = (id) => {
-		dispatch(deleteAdmission(id)).then(() => {
-			dispatch(getAdmissionLetters())
 		})
 	}
 	
@@ -331,51 +313,39 @@ const AdmissionDataCenter = () => {
 									<div className="flex gap-4 items-center justify-center w-[90%]">
 										<div className={'flex flex-col w-[35%]'}>
 											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-												Mijoz
-											</label>
-											<select
-												className={'rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
-												id="amount"
-												value={tin || ''}
-												onChange={(e) => {
-													setTin(e.target.value)
-													dispatch(getAdmissionSearch({tin: e.target.value}))
-												}}
-											>
-												<option value="" disabled={clients}>Tanlang...</option>
-												{clients && clients?.map((item) => (
-													<option key={item?.id} value={item?.client?.pin_or_tin}>{item?.client?.name}</option>
-												))}
-											</select>
-											{/*<input*/}
-											{/*  value={filterContractNumber || ""}*/}
-											{/*  onChange={(e) => setFilterContractNumber(e.target.value.toUpperCase())}*/}
-											{/*  onKeyPress={(e) => {*/}
-											{/*    if (e.key === "Enter") {*/}
-											{/*      if (!filterContractNumber) {*/}
-											{/*        toast.error('Shartnoma raqamini kitiring')*/}
-											{/*      } else {*/}
-											{/*        searchLetters()*/}
-											{/*      }*/}
-											{/*    }*/}
-											{/*  }}*/}
-											{/*  name="amount"*/}
-											{/*  id="amount"*/}
-											{/*  type="text"*/}
-											{/*  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"*/}
-											{/*/>*/}
-										</div>
-										<div className={'flex flex-col w-[35%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-												Xat raqami
+												Shartnoma raqami
 											</label>
 											<input
-												value={filterLetterNumber || ""}
-												onChange={(e) => setFilterLetterNumber(e.target.value)}
+												value={filterContractNumber || ""}
+												onChange={(e) => setFilterContractNumber(e.target.value?.toUpperCase())}
 												onKeyPress={(e) => {
 													if (e.key === "Enter") {
-														if (!filterLetterNumber) {
-															toast.error('Xat raqamini kitiring')
+														if (!filterContractNumber) {
+															toast.error('Shartnoma raqam kiriting')
+														} else {
+															searchLetters()
+														}
+													}
+												}}
+												name="amount"
+												id="amount"
+												type="text"
+												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+											/>
+										</div>
+										
+										
+										<div className={'flex flex-col w-[35%]'}>
+											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+												Mijoz STIR/JShShIR
+											</label>
+											<input
+												value={client_tin_or_pin || ""}
+												onChange={(e) => setClientTinOrPin(e.target.value)}
+												onKeyPress={(e) => {
+													if (e.key === "Enter") {
+														if (!client_tin_or_pin) {
+															toast.error('Mijoz STIR/JShShIR kiriting')
 														} else {
 															searchLetters()
 														}
@@ -389,66 +359,15 @@ const AdmissionDataCenter = () => {
 										</div>
 										<div className={'flex flex-col w-[35%]'}>
 											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-												Ismi
+												Sub Tenant STIR/JShShIR
 											</label>
 											<input
-												value={filterName || ""}
-												onChange={(e) => setFilterName(e.target.value)}
+												value={sub_tenant_tin_or_pin || ""}
+												onChange={(e) => setSubTenantTinOrPin(e.target.value)}
 												onKeyPress={(e) => {
 													if (e.key === "Enter") {
-														if (!filterName) {
-															toast.error('Ism kitiring')
-														} else {
-															searchLetters()
-														}
-													}
-												}}
-												name="amount"
-												id="amount"
-												type="text"
-												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-											/>
-										</div>
-										<div className={'flex flex-col w-[35%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-												Pasport seriya va raqam
-											</label>
-											<input
-												value={pport_no || ""}
-												onChange={(e) => {
-													setPportNo(e.target.value);
-												}}
-												onKeyPress={(e) => {
-													if (e.key === "Enter") {
-														if (!pport_no) {
-															toast.error('Pasport kitiring')
-														} else {
-															searchLetters()
-														}
-													}
-												}}
-												name="amount"
-												id="amount"
-												type="text"
-												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-											/>
-										</div>
-										<div className={'flex flex-col w-[35%]'}>
-											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-												Pinfl
-											</label>
-											<input
-												value={filterPin || ""}
-												onChange={(e) => {
-													const re = /^[0-9\b]+$/;
-													if (e.target.value === '' || re.test(e.target.value)) {
-														setFilterPin(e.target.value);
-													}
-												}}
-												onKeyPress={(e) => {
-													if (e.key === "Enter") {
-														if (!filterPin) {
-															toast.error('Pinfl kitiring')
+														if (!sub_tenant_tin_or_pin) {
+															toast.error('Sub Tenant STIR/JShShIR kiriting')
 														} else {
 															searchLetters()
 														}
@@ -464,7 +383,7 @@ const AdmissionDataCenter = () => {
 											className="rounded px-4 py-1 mt-5 disabled:opacity-25"
 											style={{border: `1px solid ${currentColor}`}}
 											onClick={searchLetters}
-											disabled={!filterPin && !filterName && !filterLetterNumber && !filterContractNumber && !pport_no && !tin}
+											disabled={!filterContractNumber && !client_tin_or_pin && !sub_tenant_tin_or_pin}
 										>
 											<BiSearch className="size-6" color={currentColor}/>
 										</button>
@@ -472,13 +391,11 @@ const AdmissionDataCenter = () => {
 											className={`rounded px-4 py-1 mt-5 border text-center`}
 											style={{borderColor: currentColor}}
 											onClick={() => {
+												setFilter(false)
 												dispatch(getAdmissionLetters())
 												setFilterContractNumber(undefined)
-												setFilterLetterNumber(undefined)
-												setFilterPin(undefined)
-												setFilterName(undefined)
-												setFilter(false)
-												setTin(undefined)
+												setSubTenantTinOrPin(undefined)
+												setClientTinOrPin(undefined)
 											}}
 										>
 											<ArrowPathIcon className="size-6" fill={currentColor}/>
@@ -575,7 +492,8 @@ const AdmissionDataCenter = () => {
 																				  style={{color: currentColor}}
 																				  className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mx-auto rounded`}
 																				  onClick={() => {
-																					  dispatch(getAdmissionDetail(el?.id)).then(() => {
+																					  dispatch(getAdmissionDetail({id: el?.id})).then(() => {
+																							setId(el?.id)
 																						  setOpenTab(1)
 																					  })
 																					  dispatch(getDataCenterList())
@@ -609,7 +527,116 @@ const AdmissionDataCenter = () => {
 			case 1:
 				return (
 					<>
-						<Header category={admissionLetterDetail?.sub_tenant_user?.pin_or_tin} title={admissionLetterDetail?.sub_tenant_user?.name}/>
+						<div className="flex justify-between items-center">
+							<Header category={admissionLetterDetail?.sub_tenant_user?.pin_or_tin} title={admissionLetterDetail?.sub_tenant_user?.name}/>
+							{detailFilter && (
+								<>
+									<div className="flex gap-4 items-center justify-center w-[90%]">
+										<div className={'flex flex-col w-[35%]'}>
+											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+												Xat raqami
+											</label>
+											<input
+												value={filterLetterNumber || ""}
+												onChange={(e) => setFilterLetterNumber(e.target.value)}
+												onKeyPress={(e) => {
+													if (e.key === "Enter") {
+														if (!filterLetterNumber) {
+															toast.error('Xat raqam kiriting')
+														} else {
+															searchDetail()
+														}
+													}
+												}}
+												name="amount"
+												id="amount"
+												type="text"
+												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+											/>
+										</div>
+										
+										
+										<div className={'flex flex-col w-[35%]'}>
+											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+												Xodim passport seriyasi
+											</label>
+											<input
+												value={employee_passport_number || ""}
+												onChange={(e) => setEmployeePassportNumber(e.target.value)}
+												onKeyPress={(e) => {
+													if (e.key === "Enter") {
+														if (!employee_passport_number) {
+															toast.error('Xodim passport seriyasi kiriting')
+														} else {
+															searchDetail()
+														}
+													}
+												}}
+												name="amount"
+												id="amount"
+												type="text"
+												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+											/>
+										</div>
+										<div className={'flex flex-col w-[35%]'}>
+											<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+												Xodim ismi
+											</label>
+											<input
+												value={employee_name || ""}
+												onChange={(e) => setEmployeeName(e.target.value)}
+												onKeyPress={(e) => {
+													if (e.key === "Enter") {
+														if (!employee_name) {
+															toast.error('Xodim ismi kiriting')
+														} else {
+															searchDetail()
+														}
+													}
+												}}
+												name="amount"
+												id="amount"
+												type="text"
+												className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+											/>
+										</div>
+										<button
+											className="rounded px-4 py-1 mt-5 disabled:opacity-25"
+											style={{border: `1px solid ${currentColor}`}}
+											onClick={searchDetail}
+											disabled={!filterLetterNumber && !employee_passport_number && !employee_name}
+										>
+											<BiSearch className="size-6" color={currentColor}/>
+										</button>
+										<button
+											className={`rounded px-4 py-1 mt-5 border text-center`}
+											style={{borderColor: currentColor}}
+											onClick={() => {
+												setDetailFilter(false)
+												dispatch(getAdmissionDetail({id}))
+												setFilterLetterNumber(undefined)
+												setEmployeePassportNumber(undefined)
+												setEmployeeName(undefined)
+											}}
+										>
+											<ArrowPathIcon className="size-6" fill={currentColor}/>
+										</button>
+									</div>
+								</>
+							)}
+							{!detailFilter && (
+								<>
+									<button
+										title="filter"
+										className="rounded px-4 py-1 border text-center"
+										onClick={() => setDetailFilter(true)}
+										style={{borderColor: currentColor}}
+									>
+										<FunnelIcon className="size-6" color={currentColor}/>
+									</button>
+								</>
+							)}
+						</div>
 						{
 							admissionLetterDetail
 								?
@@ -949,6 +976,15 @@ const AdmissionDataCenter = () => {
 							</div>
 							<div className={'w-[49%]'}>
 								<Input
+									label={'Ruxsatnoma amal qilish sanasi'}
+									placeholder={'Ruxsatnoma amal qilish sanasi'}
+									type={'date'}
+									value={completed_date || ''}
+									onChange={(e) => setCompletedDate(e.target.value)}
+								/>
+							</div>
+							<div className={'w-[49%]'}>
+								<Input
 									label={"Xat bo'yicha mutahassislar soni"}
 									placeholder={"Xat bo'yicha mutahassislar soni"}
 									type={'text'}
@@ -1233,17 +1269,6 @@ const AdmissionDataCenter = () => {
       <div className="m-1 md:mx-4 md:my-8 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         {displayStep(openTab)}
       </div>
-      {drawer && (
-        <AdmissionDrawer
-          id={id}
-          type={type}
-          onclose={() => {
-            setDrawer(false)
-            setId(null)
-            dispatch(clearLetterDetail())
-          }}
-        />
-      )}
     </>
   );
 };

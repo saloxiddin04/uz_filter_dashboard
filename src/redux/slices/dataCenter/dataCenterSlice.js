@@ -273,9 +273,9 @@ export const deleteAdmission = createAsyncThunk(
 
 export const getAdmissionDetail = createAsyncThunk(
   "dataCenter/getAdmissionDetail",
-  async (id) => {
+  async ({id, params}) => {
     try {
-      const response = await instance.get(`/dispatcher/admissions/sub-tenant/${id}`)
+      const response = await instance.get(`/dispatcher/admissions/sub-tenant/${id}`, {params})
       return response.data
     } catch (e) {
       return e
