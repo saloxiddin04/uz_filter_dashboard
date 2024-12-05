@@ -1307,6 +1307,7 @@ const CreateVps = () => {
                                       <option value="">Tanlang...</option>
                                       <option value="hdd">HDD</option>
                                       <option value="ssd">SSD</option>
+                                      <option value="smart_disk">SMART DISK</option>
                                     </select>
                                     <div className="flex justify-between w-full">
                                       {data.system_storage && (
@@ -1407,9 +1408,10 @@ const CreateVps = () => {
                                             <option value="">Tanlang...</option>
                                             <option value="ssd">SSD</option>
                                             <option value="hdd">HDD</option>
+                                            <option value="smart_disk">SMART DISK</option>
                                           </select>
                                           <div>
-                                            <button
+                                          <button
                                               className={`rounded-full py-1.5 px-3 bg-inherit border dark:border-white ${(data.tariff !== null ? true : handleValidateStorages()) ? "opacity-25" : ''}`}
                                               onClick={() => disksDelete(index, diskIndex)}
                                               disabled={data.tariff !== null ? true : handleValidateStorages()}
