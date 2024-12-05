@@ -41,17 +41,17 @@ const Applications = () => {
 
   useEffect(() => {
     if (openTab === 1) {
-      dispatch(getContactUs({page_size: currentPage}))
+      dispatch(getContactUs({page: currentPage, page_size: 10}))
     } else {
-      dispatch(getApplications({page_size: currentPage}))
+      dispatch(getApplications({page: currentPage, page_size: 10}))
     }
   }, [openTab]);
 
   const handlePageChange = (page) => {
     if (openTab === 0) {
-      dispatch(getApplications({page_size: page}))
+      dispatch(getApplications({page: page, page_size: 10}))
     } else {
-      dispatch(getContactUs({page_size: page}))
+      dispatch(getContactUs({page: page, page_size: 10}))
     }
   }
 
