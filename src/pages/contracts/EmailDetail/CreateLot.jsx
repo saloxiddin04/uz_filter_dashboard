@@ -21,18 +21,16 @@ const CreateLot = () => {
 	const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
 	const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
 	
-	
 	const createLot = async () => {
 		try {
 			setLoader(true)
-			const response = await instance.post(`e-xat/enter-lot-number/${id}`, {lot_number, contract_date: new Date(contract_date).toISOString()})
+			const response = await instance.post(`e-xat/enter-lot-number/${id}`, {lot_number})
 			if (response?.data?.id) {
 				toast.success("Muvofaqqiyatli qo'shildi")
 				dispatch(getContractDetail({id, slug}))
 				setLotNumber('')
 				setContractDate('')
 			}
-			console.log(response)
 		} catch (e) {
 			setLoader(false)
 			return toast.error(e.message)
@@ -56,26 +54,26 @@ const CreateLot = () => {
 				/>
 			</div>
 			
-			<div className={'flex flex-col my-4'}>
-				<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="contract_date">Shartnoma
-					sanasi</label>
-				<input
-					value={contract_date}
-					min={firstDayOfMonth}
-					max={lastDayOfMonth}
-					onChange={(e) => setContractDate(e.target.value)}
-					name="contract_date"
-					id="contract_date"
-					type="date"
-					className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
-				/>
-			</div>
+			{/*<div className={'flex flex-col my-4'}>*/}
+			{/*	<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="contract_date">Shartnoma*/}
+			{/*		sanasi</label>*/}
+			{/*	<input*/}
+			{/*		value={contract_date}*/}
+			{/*		min={firstDayOfMonth}*/}
+			{/*		max={lastDayOfMonth}*/}
+			{/*		onChange={(e) => setContractDate(e.target.value)}*/}
+			{/*		name="contract_date"*/}
+			{/*		id="contract_date"*/}
+			{/*		type="date"*/}
+			{/*		className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"*/}
+			{/*	/>*/}
+			{/*</div>*/}
 			
 			<div className="flex justify-end">
 				<button
 					className={`px-4 py-2 rounded text-white disabled:opacity-25`}
 					style={{backgroundColor: currentColor}}
-					disabled={!lot_number || !contract_date}
+					disabled={!lot_number}
 					onClick={createLot}
 				>
 					Saqlash
