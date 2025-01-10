@@ -8,7 +8,7 @@ const useSocket = (roomId) => {
 	
 	useEffect(() => {
 		if (roomId) {
-			const webSocketUrl = `wss://dcid.unicon.uz/ws/chat/${roomId}/?token=${access}`;
+			const webSocketUrl = `wss://api2.unicon.uz/ws/chat/${roomId}/?token=${access}`;
 			
 			webSocketRef.current = new WebSocket(webSocketUrl);
 			
