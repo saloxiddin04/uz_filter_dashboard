@@ -242,9 +242,6 @@ const AdmissionDataCenter = () => {
 		return false
 	}
 	
-	console.log(handleValidate())
-	console.log(employees)
-	
 	const clearData = () => {
 		setContractNumber(null)
 		setContract([])
