@@ -104,6 +104,12 @@ const AdmissionDataCenter = () => {
 		}
 	}, [openTab]);
 	
+	useEffect(() => {
+		if (openTab === 2) {
+			dispatch(getDataCenterList())
+		}
+	}, [dispatch, openTab])
+	
 	const searchUserJuridic = () => {
 		dispatch(getUserByTin({stir, client})).then((res) => {
 			setName(res?.payload?.name === null ? '' : res?.payload?.name)
@@ -235,6 +241,9 @@ const AdmissionDataCenter = () => {
 		
 		return false
 	}
+	
+	console.log(handleValidate())
+	console.log(employees)
 	
 	const clearData = () => {
 		setContractNumber(null)
