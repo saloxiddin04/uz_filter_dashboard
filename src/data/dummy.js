@@ -62,6 +62,7 @@ export const e_xat = [
   { title: "Qo'shimcha shartnoma mavjud", value: 7 },
   { title: "Shartnomani to'xtatish kutilmoqda", value: 8 },
   { title: "Shartnomani raqami bron qilingan", value: 9 },
+  { title: "Lot raqami kutilmoqda", value: 10 },
 ]
 
 export const tte_certification = [
