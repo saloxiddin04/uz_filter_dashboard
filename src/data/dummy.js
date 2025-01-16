@@ -63,6 +63,7 @@ export const e_xat = [
   { title: "Shartnomani to'xtatish kutilmoqda", value: 8 },
   { title: "Shartnomani raqami bron qilingan", value: 9 },
   { title: "Lot raqami kutilmoqda", value: 10 },
+  { title: "Qoralama", value: 0 },
 ]
 
 export const tte_certification = [
