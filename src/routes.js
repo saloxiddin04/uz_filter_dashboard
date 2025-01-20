@@ -1,62 +1,20 @@
 import {
   Contracts,
   ContractDetail,
-  Applications,
-  ApplicationDetail,
-  Dashboard,
   Profile,
   NotFound,
-  CreateColocation,
-  CreateVps,
-  CreateEmail,
-  CreateExpertise,
-  CreateCertification,
-  DataCenter,
-  Registry, CreateRegistry,
-  RegistryDetail, Xizmatlar, AdmissionDataCenter, DataCenterDocuments,
-  DataCenterDocumentsFazaUpdate, DataCenterDocumentsAktUpdate, TechHelp, TechHelpDetail, ChatPage, ChatRoom
+  Dashboard
 } from './pages';
-import ShowRack from "./components/DataCenter/ShowRack";
 
 export const routes = [
   { path: '*', element: NotFound },
   // { path: '/code', element: Code },
 
-  { path: '/dashboard', element: Dashboard },
   { path: '/profile', element: Profile },
-  { path: '/xizmatlar', element: Xizmatlar },
+
+  { path: '/dashboard', element: Dashboard },
 
   { path: '/shartnomalar', element: Contracts },
   { path: '/shartnomalar/:slug', element: Contracts },
   { path: '/shartnomalar/:slug/:id', element: ContractDetail },
-
-
-  { path: '/application', element: Applications },
-  { path: '/application/:id', element: ApplicationDetail },
-
-  { path: '/data-center', element: DataCenter },
-  { path: '/data-center/:id', element: DataCenter },
-  { path: 'data-center/:id/rack/:rackId', element: ShowRack },
-  { path: '/data-center/data-center-admission', element: AdmissionDataCenter },
-  { path: '/data-center/data-center-documents', element: DataCenterDocuments },
-  { path: '/data-center/tech-help', element: TechHelp },
-  { path: '/data-center/tech-help/:id', element: TechHelpDetail },
-  { path: '/data-center/data-center-documents/faza/:id', element: DataCenterDocumentsFazaUpdate },
-  { path: '/data-center/data-center-documents/akt/:id', element: DataCenterDocumentsAktUpdate },
-
-  {path: '/shartnomalar/colocation/create', element: CreateColocation },
-  {path: '/shartnomalar/vps/create', element: CreateVps },
-  {path: '/shartnomalar/e-xat/create', element: CreateEmail },
-  {path: '/shartnomalar/expertise/create', element: CreateExpertise },
-  {path: '/shartnomalar/tte_certification/create', element: CreateCertification },
-
-  {path: '/registry', element: Registry },
-  {path: '/registry/:slug', element: Registry },
-  {path: '/registry/:slug/:id', element: RegistryDetail },
-  {path: '/registry/:slug/create', element: CreateRegistry },
-  
-  {path: '/chat-messages', element: ChatPage },
-  {path: '/chat-messages/:slug/:id', element: ChatPage },
-  {path: '/chat-messages/:slug', element: ChatPage },
-  // {path: '/chat-messages/:slug/:id', element: ChatRoom },
 ]

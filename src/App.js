@@ -8,15 +8,11 @@ import MainLayout from './Layout/MainLayout';
 import AuthLayout from './Layout/AuthLayout';
 import ProtectedRoutes from './utils/ProtectedRoutes';
 import {Login} from './pages';
-import Code from './redux/slices/auth/Code';
 import {routes} from "./routes";
-import TwoFactor from "./pages/Auth/TwoFactor";
 
 const App = () => {
   const { setCurrentColor, setCurrentMode, currentMode } = useStateContext();
-  const { loading, one_id, access, access_token } = useSelector((state) => state.user);
-
-  if (loading) return <Loader />;
+  const { loading, access_token } = useSelector((state) => state.user || {});
 
   useEffect(() => {
     const currentThemeColor = localStorage.getItem('colorMode');
@@ -26,13 +22,13 @@ const App = () => {
       setCurrentMode(currentThemeMode);
     }
   }, []);
-  
+
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
       <BrowserRouter>
         <Routes>
           {
-            access ? <Route element={<ProtectedRoutes />}>
+            access_token ? <Route element={<ProtectedRoutes />}>
               <Route element={<MainLayout />}>
                 <Route path="login" element={<Navigate to={'/dashboard'}/>} />
                 <Route path="/" element={<Navigate to={'/dashboard'}/>} />
@@ -49,9 +45,7 @@ const App = () => {
             </Route> : <Route element={<AuthLayout />}>
               <Route path="*" element={<Navigate to={'/login'}/>} />
               <Route path="/login" element={<Login />} />
-              <Route path="/code" element={<Code />} />
-              <Route path="/two-factor" element={<TwoFactor />} />
-              <Route path="/" element={one_id ? <Loader /> : <Navigate to="login" replace />} />
+              <Route path="/" element={loading ? <Loader /> : <Navigate to="login" replace />} />
             </Route>
           }
         </Routes>

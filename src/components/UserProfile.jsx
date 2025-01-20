@@ -5,20 +5,21 @@ import { Button } from '.';
 import { userProfileData } from '../data/dummy';
 import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
-import {logOut} from "../redux/slices/auth/authSlice";
 import {useStateContext} from "../contexts/ContextProvider";
+import {setLogout} from "../redux/slices/auth/authSlice";
 
 const UserProfile = ({onClose}) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const {pathname} = useLocation()
 
-  const {user, access, access_token, refresh_token} = useSelector((state) => state.user)
+  const {user} = useSelector((state) => state.user)
 
   const modalRef = useRef();
 
-  const handleLogout = async () => {
-    await dispatch(logOut({access, access_token, refresh_token}))
+  const handleLogout = () => {
+    dispatch(setLogout())
+    // await dispatch(logOut({access, access_token, refresh_token}))
     navigate('/login', {replace: true})
   }
 

@@ -7,12 +7,6 @@ import moment from "moment/moment";
 import {AiOutlineCloudDownload} from "react-icons/ai";
 import instance from "../../../API";
 import {api_url} from "../../../config";
-import YurUserContractDetail from "../YurUserContractDetail";
-import FizUserContractDetail from "../FizUserContractDetail";
-import SignatureContract from "../SignatureContract";
-import Participants from "../Participants";
-import Monitoring from "../Monitoring";
-import ColocationUpload from "./ColocationUpload";
 
 const tabs = [
   {
@@ -44,7 +38,6 @@ const tabs = [
 const ColocationDetail = () => {
   const {id, slug} = useParams();
   const {currentColor} = useStateContext();
-  const {contractDetail} = useSelector(state => state.contracts);
   const {user} = useSelector(state => state.user)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
@@ -52,11 +45,11 @@ const ColocationDetail = () => {
   return (
     <>
       <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
-        <DetailNav
-          id={contractDetail?.contract?.id}
-          name={contractDetail?.contract?.contract_number}
-          status={contractDetail?.contract?.contract_status?.name ? contractDetail?.contract?.contract_status?.name : contractDetail?.contract?.contract_status}
-        />
+        {/*<DetailNav*/}
+        {/*  id={contractDetail?.contract?.id}*/}
+        {/*  name={contractDetail?.contract?.contract_number}*/}
+        {/*  status={contractDetail?.contract?.contract_status?.name ? contractDetail?.contract?.contract_status?.name : contractDetail?.contract?.contract_status}*/}
+        {/*/>*/}
       </div>
       <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <TabsRender
@@ -70,7 +63,7 @@ const ColocationDetail = () => {
         {
           renderDetail(
             openTab,
-            contractDetail,
+            '',
             currentColor,
             slug,
             setOpenTab,

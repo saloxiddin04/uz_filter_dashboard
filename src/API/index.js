@@ -3,27 +3,33 @@ import {api_url} from '../config';
 import {toast} from "react-toastify";
 
 const access_token = localStorage.getItem("access") || "";
-const user = localStorage.getItem("user") || "";
-const pin_or_tin = localStorage.getItem("tin_or_pin") || undefined;
 
 const instance = axios.create({
   baseURL: api_url,
   headers: {
-    "Content-Type": "application/json",
-    "PINORTIN": pin_or_tin
-  }
+    "Content-Type": "application/json"
+  },
+  timeout: 20000
 })
+
+export const updateAuthHeader = () => {
+  const access_token = localStorage.getItem("access_token");
+  if (access_token) {
+    instance.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+  }
+};
+
+updateAuthHeader();
 
 if (access_token) {
   instance.defaults.headers.common = { Authorization: `Bearer ${access_token}` };
-  instance.defaults.headers.common = { "PINORTIN": `${pin_or_tin}` };
 }
 
 instance.interceptors.request.use(
   (config) => {
+    updateAuthHeader();
     if (access_token) {
       config.headers.Authorization = `Bearer ${access_token}`;
-      config.headers['PINORTIN'] = pin_or_tin
     }
     return config;
   },

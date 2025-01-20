@@ -30,7 +30,7 @@ const NavButton = ({title, customFunc, icon, color, dotColor}) => (
 
 const Navbar = () => {
   const {user} = useSelector((state) => state.user)
-  const {sidebar, loading} = useSelector(state => state.sections)
+  // const {sidebar, loading} = useSelector(state => state.sections)
 
   const {currentColor, activeMenu, setActiveMenu, handleClick, setScreenSize, screenSize, isClicked, setPage, handleClose} = useStateContext();
 
@@ -68,40 +68,40 @@ const Navbar = () => {
     >
       <NavButton title="Menu" customFunc={handleActiveMenu} color={'#fff'} icon={<AiOutlineMenu/>}/>
       <div className="relative flex items-center gap-5">
-        <div>
-          <NavLink
-            to={`/dashboard`}
-            onClick={() => {
-              setPage(1)
-              localStorage.setItem("currentPage", '1');
-              // handleCloseSideBar();
-            }}
-            style={({isActive}) => ({
-              backgroundColor: isActive ? currentColor : '',
-            })}
-            className={({isActive}) => (isActive ? activeLink : normalLink)}
-          >
-            <span className="capitalize">Statistika</span>
-          </NavLink>
-        </div>
-        {sidebar?.permissions && sidebar?.permissions?.map((item, index) => (
-          <div key={index}>
-            <NavLink
-              to={`/${item.slug}`}
-              key={item.slug}
-              onClick={() => {
-                setPage(1)
-                localStorage.setItem("currentPage", '1');
-              }}
-              style={({isActive}) => ({
-                backgroundColor: isActive ? currentColor : '',
-              })}
-              className={({isActive}) => (isActive ? activeLink : normalLink)}
-            >
-              <span className="capitalize">{item.name}</span>
-            </NavLink>
-          </div>
-        ))}
+        {/*<div>*/}
+        {/*  <NavLink*/}
+        {/*    to={`/dashboard`}*/}
+        {/*    onClick={() => {*/}
+        {/*      setPage(1)*/}
+        {/*      localStorage.setItem("currentPage", '1');*/}
+        {/*      // handleCloseSideBar();*/}
+        {/*    }}*/}
+        {/*    style={({isActive}) => ({*/}
+        {/*      backgroundColor: isActive ? currentColor : '',*/}
+        {/*    })}*/}
+        {/*    className={({isActive}) => (isActive ? activeLink : normalLink)}*/}
+        {/*  >*/}
+        {/*    <span className="capitalize">Statistika</span>*/}
+        {/*  </NavLink>*/}
+        {/*</div>*/}
+        {/*{sidebar?.permissions && sidebar?.permissions?.map((item, index) => (*/}
+        {/*  <div key={index}>*/}
+        {/*    <NavLink*/}
+        {/*      to={`/${item.slug}`}*/}
+        {/*      key={item.slug}*/}
+        {/*      onClick={() => {*/}
+        {/*        setPage(1)*/}
+        {/*        localStorage.setItem("currentPage", '1');*/}
+        {/*      }}*/}
+        {/*      style={({isActive}) => ({*/}
+        {/*        backgroundColor: isActive ? currentColor : '',*/}
+        {/*      })}*/}
+        {/*      className={({isActive}) => (isActive ? activeLink : normalLink)}*/}
+        {/*    >*/}
+        {/*      <span className="capitalize">{item.name}</span>*/}
+        {/*    </NavLink>*/}
+        {/*  </div>*/}
+        {/*))}*/}
       </div>
       <div className="flex">
         {/*<TooltipComponent content="Profile" position="BottomCenter">*/}
