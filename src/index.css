@@ -81,3 +81,7 @@ body{
 .userProfile:hover h1 {
     color: #000;
 }
+
+.card {
+    @apply m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 dark:bg-secondary-dark-bg bg-white rounded
+}

@@ -1,32 +1,11 @@
 import React from 'react';
 import {Link, NavLink, useLocation} from 'react-router-dom';
 import {MdOutlineCancel} from 'react-icons/md';
-// import {TooltipComponent} from '@syncfusion/ej2-react-popups';
 
 import {useStateContext} from '../contexts/ContextProvider';
 import {useSelector} from "react-redux";
-import Loader from "./Loader";
-import Logo from "../assets/images/logo";
-
-const messagesNav = [
-  {
-    id: 1,
-    name: "O'qilmagan xabarlar",
-    slug: '1'
-  },
-  {
-    id: 2,
-    name: "O'qilgan xabarlar",
-    slug: '2'
-  },{
-    id: 3,
-    name: "Barchasi",
-    slug: '0'
-  },
-]
 
 const Sidebar = () => {
-  // const {loading, sidebar} = useSelector(state => state.sections)
   const {user} = useSelector(state => state.user)
   const {currentColor, activeMenu, setActiveMenu, screenSize, setPage, setCurrentPage, setPageSize} = useStateContext();
   const {pathname} = useLocation();
@@ -39,16 +18,6 @@ const Sidebar = () => {
 
   const activeLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded  text-white  text-md m-2';
   const normalLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
-
-  function filterBySlug() {
-    // const matchedPermission = sidebar?.permissions.find(permission => `${permission.slug}` === pathname.split('/')[1]);
-    // return matchedPermission ? matchedPermission.children : [];
-  }
-
-  const children = filterBySlug();
-
-  const slugs = ['vps', 'colocation', 'e-xat', 'expertise', 'tte_certification'];
-  const slugsRegistry = ['vps', 'colocation'];
   
   // if (loading) return <Loader/>
 
@@ -63,7 +32,6 @@ const Sidebar = () => {
             >
               Logo
             </Link>
-            {/*<TooltipComponent content="Menu" position="BottomCenter">*/}
               <button
                 type="button"
                 onClick={() => setActiveMenu(!activeMenu)}
@@ -72,7 +40,6 @@ const Sidebar = () => {
               >
                 <MdOutlineCancel/>
               </button>
-            {/*</TooltipComponent>*/}
           </div>
           <NavLink
             to={`/dashboard`}
@@ -88,129 +55,20 @@ const Sidebar = () => {
           >
             <span className="capitalize">Dashboard</span>
           </NavLink>
-          {/*<div className="pl-3 mt-5">*/}
-          {/*  {children.length === 0 && (*/}
-          {/*    pathname.indexOf('/chat-messages') === 0 ? (*/}
-          {/*      <>*/}
-          {/*        {messagesNav?.map((item) => {*/}
-          {/*          const newPath = `${pathname.split('/')[1]}/${item.slug}`;*/}
-          {/*          return (*/}
-          {/*            <NavLink*/}
-          {/*              key={item?.id}*/}
-          {/*              to={newPath}*/}
-          {/*              onClick={() => {*/}
-          {/*                setPage(1)*/}
-          {/*                setCurrentPage(1)*/}
-          {/*                localStorage.setItem("currentPage", '1');*/}
-          {/*                handleCloseSideBar();*/}
-          {/*              }}*/}
-          {/*              style={({isActive}) => ({*/}
-          {/*                backgroundColor: isActive ? currentColor : '',*/}
-          {/*              })}*/}
-          {/*              className={({isActive}) => (isActive ? activeLink : normalLink)}*/}
-          {/*            >*/}
-          {/*              <span className="capitalize">{item?.name}</span>*/}
-          {/*            </NavLink>*/}
-          {/*          )*/}
-          {/*        })}*/}
-          {/*      </>*/}
-          {/*    ) : (*/}
-          {/*      <div>*/}
-          {/*        <NavLink*/}
-          {/*          to={`/dashboard`}*/}
-          {/*          onClick={() => {*/}
-          {/*            setPage(1)*/}
-          {/*            setCurrentPage(1)*/}
-          {/*            localStorage.setItem("currentPage", '1');*/}
-          {/*            handleCloseSideBar();*/}
-          {/*          }}*/}
-          {/*          style={({isActive}) => ({*/}
-          {/*            backgroundColor: isActive ? currentColor : '',*/}
-          {/*          })}*/}
-          {/*          className={({isActive}) => (isActive ? activeLink : normalLink)}*/}
-          {/*        >*/}
-          {/*          <span className="capitalize">Statistika</span>*/}
-          {/*        </NavLink>*/}
-          {/*      </div>*/}
-          {/*    ))}*/}
-          {/*  {pathname.indexOf('/shartnomalar') === 0 ? (*/}
-          {/*    children && children.filter(item => slugs.includes(item?.slug))?.map((item) => {*/}
-          {/*      const newPath = `${pathname.split('/')[1]}/${item.slug}`;*/}
-          {/*      return (*/}
-          {/*        <div key={item.slug}>*/}
-          {/*          <NavLink*/}
-          {/*            to={newPath}*/}
-          {/*            key={item.slug}*/}
-          {/*            onClick={() => {*/}
-          {/*              setPage(1)*/}
-          {/*              setCurrentPage(1)*/}
-          {/*              setPageSize(10)*/}
-          {/*              localStorage.setItem("currentPage", 1);*/}
-          {/*              localStorage.setItem("page_size", 10);*/}
-          {/*              handleCloseSideBar();*/}
-          {/*            }}*/}
-          {/*            style={({isActive}) => ({*/}
-          {/*              backgroundColor: isActive ? currentColor : '',*/}
-          {/*            })}*/}
-          {/*            className={({isActive}) => (isActive ? activeLink : normalLink)}*/}
-          {/*          >*/}
-          {/*            <span className="capitalize">{item.name}</span>*/}
-          {/*          </NavLink>*/}
-          {/*        </div>*/}
-          {/*      )*/}
-          {/*    })) : pathname.indexOf('/registry') === 0 ? (*/}
-          {/*    children && children.filter(item => slugsRegistry.includes(item?.slug))?.map((item) => {*/}
-          {/*      const newPath = `${pathname.split('/')[1]}/${item.slug}`;*/}
-          {/*      return (*/}
-          {/*        <div key={item.slug}>*/}
-          {/*          <NavLink*/}
-          {/*            to={newPath}*/}
-          {/*            key={item.slug}*/}
-          {/*            onClick={() => {*/}
-          {/*              setPage(1)*/}
-          {/*              setPageSize(10)*/}
-          {/*              setCurrentPage(1)*/}
-          {/*              localStorage.setItem("currentPage", 1);*/}
-          {/*              localStorage.setItem("page_size", 10);*/}
-          {/*              handleCloseSideBar();*/}
-          {/*            }}*/}
-          {/*            style={({isActive}) => ({*/}
-          {/*              backgroundColor: isActive ? currentColor : '',*/}
-          {/*            })}*/}
-          {/*            className={({isActive}) => (isActive ? activeLink : normalLink)}*/}
-          {/*          >*/}
-          {/*            <span className="capitalize">{item.name}</span>*/}
-          {/*          </NavLink>*/}
-          {/*        </div>*/}
-          {/*      )*/}
-          {/*    })) : (*/}
-          {/*    children && children.map((item) => {*/}
-          {/*      const newPath = `${pathname.split('/')[1]}/${item.slug}`;*/}
-          {/*      return (*/}
-          {/*        <div key={item.slug}>*/}
-          {/*          <NavLink*/}
-          {/*            to={newPath}*/}
-          {/*            key={item.slug}*/}
-          {/*            onClick={() => {*/}
-          {/*              setPage(1)*/}
-          {/*              setCurrentPage(1)*/}
-          {/*              setPageSize(10)*/}
-          {/*              localStorage.setItem("currentPage", 1);*/}
-          {/*              localStorage.setItem("page_size", 10);*/}
-          {/*              handleCloseSideBar();*/}
-          {/*            }}*/}
-          {/*            style={({isActive}) => ({*/}
-          {/*              backgroundColor: isActive ? currentColor : '',*/}
-          {/*            })}*/}
-          {/*            className={({isActive}) => (isActive ? activeLink : normalLink)}*/}
-          {/*          >*/}
-          {/*            <span className="capitalize">{item.name}</span>*/}
-          {/*          </NavLink>*/}
-          {/*        </div>*/}
-          {/*      )*/}
-          {/*    })*/}
-          {/*  )}*/}
-          {/*</div>*/}
+          <NavLink
+            to={`/category`}
+            onClick={() => {
+              setPage(1)
+              localStorage.setItem("currentPage", '1');
+              // handleCloseSideBar();
+            }}
+            style={({isActive}) => ({
+              backgroundColor: isActive ? currentColor : '',
+            })}
+            className={({isActive}) => (isActive ? activeLink : normalLink)}
+          >
+            <span className="capitalize">Category</span>
+          </NavLink>
         </>
       )}
     </div>
