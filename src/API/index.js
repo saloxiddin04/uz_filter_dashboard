@@ -3,6 +3,7 @@ import {api_url} from '../config';
 import {toast} from "react-toastify";
 
 const access_token = localStorage.getItem("access") || "";
+const user = localStorage.getItem("user") || ""
 
 const instance = axios.create({
   baseURL: api_url,

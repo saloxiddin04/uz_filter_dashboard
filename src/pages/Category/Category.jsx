@@ -5,9 +5,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {ChevronRightIcon, EyeIcon, PencilIcon} from "@heroicons/react/16/solid";
 import {getAllCategories} from "../../redux/slices/category/categorySlice";
 import {useStateContext} from "../../contexts/ContextProvider";
+import {useNavigate} from "react-router-dom";
 
 const Category = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const {currentColor} = useStateContext();
   const {loading, categories} = useSelector((state) => state.category)
 
@@ -31,6 +33,7 @@ const Category = () => {
         <button
           className={'px-4 py-2 rounded text-white'}
           style={{backgroundColor: currentColor}}
+          onClick={() => navigate('/category/:id')}
         >
           Create Category
         </button>
@@ -57,7 +60,7 @@ const Category = () => {
                   <React.Fragment key={index}>
                     <tr key={item?.id} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
                       <td scope="row"
-                          className="px-6 py-3 font-medium whitespace-nowrap flex gap-1 items-center">
+                          className="px-6 py-4 font-medium whitespace-nowrap flex gap-1 items-center">
                         {item?.children?.length > 0 && (
                           <div className="cursor-pointer">
                             <ChevronRightIcon onClick={() => toggle(index)} className="size-6"/>

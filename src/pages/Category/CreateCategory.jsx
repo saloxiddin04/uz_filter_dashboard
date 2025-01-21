@@ -1,0 +1,158 @@
+import React, {useEffect, useState} from 'react';
+import {Button, DetailNav, Input, Loader, TabsRender} from "../../components";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
+import {createCategory, getAllCategories} from "../../redux/slices/category/categorySlice";
+import {useStateContext} from "../../contexts/ContextProvider";
+
+const tabs = [
+  {
+    title: 'Create Parent Category',
+    active: true
+  },
+  {
+    title: "Create Child Category",
+    active: false
+  }
+]
+
+const CreateCategory = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const {currentColor} = useStateContext();
+
+  const {categories, loading} = useSelector(state => state.category)
+
+  const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
+
+  const [name, setName] = useState(null);
+  const [parent, setParent] = useState(null);
+  const [image, setImage] = useState(null)
+
+  useEffect(() => {
+    if (openTab === 2) {
+      dispatch(getAllCategories())
+    }
+  }, [dispatch, openTab]);
+
+  const postCategory = () => {
+    if (!name || (openTab === 2 && !parent)) return toast.error('All inputs required')
+
+    dispatch(createCategory({name, parent, image})).then(({payload}) => {
+      if (payload?.id) {
+        toast.success('Created successfully!')
+        dispatch(getAllCategories())
+        setName(null)
+        setParent(null)
+        setImage(null)
+        setOpenTab(0)
+        navigate('/category')
+      }
+    })
+  }
+
+  const renderCategory = () => {
+    switch (openTab) {
+      case 0:
+        return (
+          <>
+            <Input
+              value={name || ""}
+              onChange={(e) => setName(e.target.value)}
+              label="Category Name"
+              type="text"
+              className="w-full mb-4"
+            />
+            <Input
+              value={image || ""}
+              onChange={(e) => setImage(e.target.files[0])}
+              label="Category Icon"
+              type="file"
+              className="w-full mb-4"
+              disabled={true}
+            />
+            <Button
+              text="Create Parent Category"
+              style={{backgroundColor: currentColor}}
+              className="text-white rounded flex ml-auto"
+              onClick={postCategory}
+            />
+          </>
+        )
+      case 1:
+        return (
+          loading ?
+            <Loader/> :
+            <>
+            <div>
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2 ml-3"
+                htmlFor="category">Parent Category</label>
+              <select
+                name="category"
+                id="category"
+                className="py-2 px-3 w-full border rounded focus:outline-none mb-4 shadow"
+                value={parent || ""}
+                onChange={(e) => setParent(e.target.value)}
+              >
+              <option value={null}>Select...</option>
+                {categories?.map((item) => (
+                  <option value={item?.id} key={item?.id}>{item?.name}</option>
+                ))}
+            </select>
+            </div>
+            <Input
+              value={name || ""}
+              onChange={(e) => setName(e.target.value)}
+              label="Category Name"
+              type="text"
+              className="w-full mb-4"
+            />
+            <Input
+              value={image || ""}
+              onChange={(e) => setImage(e.target.files[0])}
+              label="Category Icon"
+              type="file"
+              className="w-full mb-4"
+              disabled={true}
+            />
+            <Button
+              text="Create Parent Category"
+              style={{backgroundColor: currentColor}}
+              className="text-white rounded flex ml-auto"
+              onClick={postCategory}
+            />
+          </>
+        )
+
+      default:
+        return <p>Wrong step</p>
+    }
+  }
+
+  return (
+    <>
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
+        <DetailNav
+          id={''}
+          name={''}
+          status={''}
+        />
+      </div>
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
+        <TabsRender
+          tabs={tabs}
+          color={currentColor}
+          openTab={openTab}
+          setOpenTab={setOpenTab}
+        />
+      </div>
+      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
+        {renderCategory()}
+      </div>
+    </>
+  );
+};
+
+export default CreateCategory;
