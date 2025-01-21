@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useStateContext} from "../contexts/ContextProvider";
 
-const Input = ({label, placeholder, type, disabled, value, onChange, className}) => {
+const Input = ({label, placeholder, type, disabled, value, onChange, className, accept}) => {
 
   const {currentColor} = useStateContext();
   const [isFocused, setIsFocused] = useState(false);
@@ -29,6 +29,7 @@ const Input = ({label, placeholder, type, disabled, value, onChange, className})
           borderColor: isFocused ? currentColor : '',
           boxShadow: isFocused ? `0 0 0 2px rgba(66, 153, 225, 0.5)` : '',
         }}
+        accept={accept || "*/*"}
       />
     </>
   );

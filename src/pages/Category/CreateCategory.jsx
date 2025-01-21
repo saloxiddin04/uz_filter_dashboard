@@ -3,7 +3,7 @@ import {Button, DetailNav, Input, Loader, TabsRender} from "../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
-import {createCategory, getAllCategories} from "../../redux/slices/category/categorySlice";
+import {createCategory, fileUpload, getAllCategories} from "../../redux/slices/category/categorySlice";
 import {useStateContext} from "../../contexts/ContextProvider";
 
 const tabs = [
@@ -52,6 +52,22 @@ const CreateCategory = () => {
     })
   }
 
+  const handleFile = (e) => {
+    const file = e.target.files[0]
+
+    if (!file) {
+      return toast.error('No file selected')
+    }
+
+    const formData = new FormData()
+    formData.append('file', file)
+    dispatch(fileUpload(formData)).then(({payload}) => {
+      if (payload?.id) {
+        setImage(payload?.id)
+      }
+    })
+  }
+
   const renderCategory = () => {
     switch (openTab) {
       case 0:
@@ -65,12 +81,10 @@ const CreateCategory = () => {
               className="w-full mb-4"
             />
             <Input
-              value={image || ""}
-              onChange={(e) => setImage(e.target.files[0])}
+              onChange={(e) => handleFile(e)}
               label="Category Icon"
               type="file"
               className="w-full mb-4"
-              disabled={true}
             />
             <Button
               text="Create Parent Category"
@@ -110,12 +124,11 @@ const CreateCategory = () => {
               className="w-full mb-4"
             />
             <Input
-              value={image || ""}
-              onChange={(e) => setImage(e.target.files[0])}
+              onChange={(e) => handleFile(e)}
               label="Category Icon"
               type="file"
               className="w-full mb-4"
-              disabled={true}
+              accept=".jpg,.jpeg"
             />
             <Button
               text="Create Parent Category"

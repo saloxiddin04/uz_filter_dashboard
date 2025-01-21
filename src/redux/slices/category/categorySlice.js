@@ -43,6 +43,18 @@ export const updateCategory = createAsyncThunk(
   }
 )
 
+export const fileUpload = createAsyncThunk(
+  "category/fileUpload",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await instance.post(`main/file-upload`, data, {headers: { "Content-type": "multipart/form-data" }})
+      return response.data
+    } catch (e) {
+      return rejectWithValue(e.message)
+    }
+  }
+)
+
 const categorySlice = createSlice({
   name: "category",
   initialState,
