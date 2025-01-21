@@ -1,5 +1,6 @@
 # Use an official Node.js runtime as a base image
-FROM node:14.16.0-alpine
+# FROM node:14.16.0-alpine
+FROM node:18.20-bookworm-slim
 
 # Set the working directory in the container
 WORKDIR /usr/src/dashboard
