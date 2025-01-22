@@ -45,7 +45,7 @@ instance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (user && error.response.status === 401) {
+    if (user && error?.response?.status === 401) {
       window.location.href = '/login'
       localStorage.clear()
       window.location.reload()

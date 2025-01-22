@@ -63,7 +63,10 @@ const Category = () => {
                           className="px-6 py-4 font-medium whitespace-nowrap flex gap-1 items-center">
                         {item?.children?.length > 0 && (
                           <div className="cursor-pointer">
-                            <ChevronRightIcon onClick={() => toggle(index)} className="size-6"/>
+                            <ChevronRightIcon
+                              onClick={() => toggle(index)}
+                              className={`size-6 ${accordionSelected === index ? 'rotate-90' : ''}`}
+                            />
                           </div>
                         )}
                         {index + 1}
@@ -75,7 +78,7 @@ const Category = () => {
                         <PencilIcon
                           style={{color: currentColor}}
                           className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
-                          // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
+                          onClick={() => navigate(`/category/${item.id}`)}
                         />
                       </td>
                     </tr>
@@ -83,7 +86,7 @@ const Category = () => {
                     {accordionSelected === index && item?.children?.map((el, i) => (
                       <tr key={el?.id} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
                         <td scope="row"
-                            className="px-6 py-4 font-medium whitespace-nowrap">
+                            className="px-10 py-4 font-medium whitespace-nowrap">
                           {`${index + 1}.${i + 1} `}
                         </td>
                         <td className={'px-2 py-1'}>
@@ -93,7 +96,7 @@ const Category = () => {
                           <PencilIcon
                             style={{color: currentColor}}
                             className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
-                            // onClick={() => navigate(`/shartnomalar/${slug}/${item.id}`)}
+                            onClick={() => navigate(`/category/${el.id}`)}
                           />
                         </td>
                       </tr>

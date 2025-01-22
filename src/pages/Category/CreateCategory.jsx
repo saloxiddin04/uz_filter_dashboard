@@ -1,9 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {Button, DetailNav, Input, Loader, TabsRender} from "../../components";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
-import {createCategory, fileUpload, getAllCategories} from "../../redux/slices/category/categorySlice";
+import {
+  createCategory,
+  fileUpload,
+  getAllCategories,
+  getCategory,
+  updateCategory
+} from "../../redux/slices/category/categorySlice";
 import {useStateContext} from "../../contexts/ContextProvider";
 
 const tabs = [
@@ -21,8 +27,9 @@ const CreateCategory = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {currentColor} = useStateContext();
+  const {id} = useParams()
 
-  const {categories, loading} = useSelector(state => state.category)
+  const {categories, loading, category} = useSelector(state => state.category)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
@@ -36,20 +43,45 @@ const CreateCategory = () => {
     }
   }, [dispatch, openTab]);
 
-  const postCategory = () => {
-    if (!name || (openTab === 2 && !parent)) return toast.error('All inputs required')
+  useEffect(() => {
+    if (id !== ':id') {
+      dispatch(getCategory(id)).then(({payload}) => {
+        setName(payload?.name)
+        setImage(payload?.image)
+      })
+    }
+  }, [dispatch, id]);
 
-    dispatch(createCategory({name, parent, image})).then(({payload}) => {
-      if (payload?.id) {
-        toast.success('Created successfully!')
-        dispatch(getAllCategories())
-        setName(null)
-        setParent(null)
-        setImage(null)
-        setOpenTab(0)
-        navigate('/category')
-      }
-    })
+  const postCategory = () => {
+    if (id !== ':id') {
+      if (!name) return toast.error('All inputs required')
+
+      dispatch(updateCategory({id, data: {name, image}})).then(({payload}) => {
+        if (payload?.id) {
+          toast.success('Updated successfully!')
+          // dispatch(getAllCategories())
+          setName(null)
+          setParent(null)
+          setImage(null)
+          setOpenTab(0)
+          navigate('/category')
+        }
+      })
+    } else {
+      if (!name || (openTab === 2 && !parent)) return toast.error('All inputs required')
+
+      dispatch(createCategory({name, parent, image})).then(({payload}) => {
+        if (payload?.id) {
+          toast.success('Created successfully!')
+          // dispatch(getAllCategories())
+          setName(null)
+          setParent(null)
+          setImage(null)
+          setOpenTab(0)
+          navigate('/category')
+        }
+      })
+    }
   }
 
   const handleFile = (e) => {
@@ -86,8 +118,11 @@ const CreateCategory = () => {
               type="file"
               className="w-full mb-4"
             />
+            {id !== ':id' && image && (
+              <img src={image} alt="img"/>
+            )}
             <Button
-              text="Create Parent Category"
+              text={id !== ':id' ? "Update Category" : "Create Parent Category"}
               style={{backgroundColor: currentColor}}
               className="text-white rounded flex ml-auto"
               onClick={postCategory}
@@ -131,7 +166,7 @@ const CreateCategory = () => {
               accept=".jpg,.jpeg"
             />
             <Button
-              text="Create Parent Category"
+              text="Create Child Category"
               style={{backgroundColor: currentColor}}
               className="text-white rounded flex ml-auto"
               onClick={postCategory}
@@ -153,14 +188,16 @@ const CreateCategory = () => {
           status={''}
         />
       </div>
-      <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
-        <TabsRender
-          tabs={tabs}
-          color={currentColor}
-          openTab={openTab}
-          setOpenTab={setOpenTab}
-        />
-      </div>
+      {id === ':id' && (
+        <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
+          <TabsRender
+            tabs={tabs}
+            color={currentColor}
+            openTab={openTab}
+            setOpenTab={setOpenTab}
+          />
+        </div>
+      )}
       <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         {renderCategory()}
       </div>

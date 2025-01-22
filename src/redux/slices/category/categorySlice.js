@@ -9,48 +9,60 @@ const initialState = {
 
 export const getAllCategories = createAsyncThunk(
   "category/getAllCategory",
-  async (_, { rejectWithValue }) => {
+  async () => {
     try {
       const response = await instance.get('main/create-categories')
       return response.data
     } catch (e) {
-      return rejectWithValue(e.message)
+      return e
     }
   }
 )
 
 export const createCategory = createAsyncThunk(
   "category/createCategory",
-  async (data, { rejectWithValue }) => {
+  async (data) => {
     try {
       const response = await instance.post('main/create-categories', data)
       return response.data
     } catch (e) {
-      return rejectWithValue(e.message)
+      return e
     }
   }
 )
 
 export const updateCategory = createAsyncThunk(
   "category/updateCategory",
-  async (params, { rejectWithValue }) => {
+  async (params) => {
     try {
-      const response = await instance.patch(`main/create-categories/${params.id}`, params.data)
+      const response = await instance.patch(`main/retrive-update-categories/${params.id}`, params.data)
       return response.data
     } catch (e) {
-      return rejectWithValue(e.message)
+      return e;
+    }
+  }
+)
+
+export const getCategory = createAsyncThunk(
+  "category/getCategory",
+  async (id) => {
+    try {
+      const response = await instance.get(`main/retrive-update-categories/${id}`)
+      return response.data
+    } catch (e) {
+      return e;
     }
   }
 )
 
 export const fileUpload = createAsyncThunk(
   "category/fileUpload",
-  async (data, { rejectWithValue }) => {
+  async (data) => {
     try {
       const response = await instance.post(`main/file-upload`, data, {headers: { "Content-type": "multipart/form-data" }})
       return response.data
     } catch (e) {
-      return rejectWithValue(e.message)
+      return e;
     }
   }
 )
@@ -70,6 +82,20 @@ const categorySlice = createSlice({
       })
       .addCase(getAllCategories.rejected, (state) => {
         state.categories = null
+        state.loading = false
+      })
+
+    // getCategory
+    builder
+      .addCase(getCategory.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(getCategory.fulfilled, (state, {payload}) => {
+        state.category = payload
+        state.loading = false
+      })
+      .addCase(getCategory.rejected, (state) => {
+        state.category = null
         state.loading = false
       })
 
