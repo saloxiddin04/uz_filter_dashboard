@@ -8,6 +8,7 @@ import {
   fileUpload,
   getAllCategories,
   getCategory,
+  setLoading,
   updateCategory
 } from "../../../redux/slices/utils/category/categorySlice";
 import {useStateContext} from "../../../contexts/ContextProvider";
@@ -93,10 +94,15 @@ const CreateCategory = () => {
 
     const formData = new FormData()
     formData.append('file', file)
+    dispatch(setLoading(true))
     dispatch(fileUpload(formData)).then(({payload}) => {
       if (payload?.id) {
         setImage(payload?.id)
+        dispatch(setLoading(false))
       }
+    }).catch(() => {
+      dispatch(setLoading(false))
+      return toast.error('Some went wrong')
     })
   }
 

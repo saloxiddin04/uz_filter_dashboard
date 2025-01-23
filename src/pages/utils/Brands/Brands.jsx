@@ -21,7 +21,7 @@ const Brands = () => {
   return (
     <div className={'card'}>
       <div className={'flex items-start justify-between mb-4'}>
-        <Header category="Page" title="Attributes"/>
+        <Header category="Page" title="Brands"/>
         <button
           className={'px-4 py-2 rounded text-white'}
           style={{backgroundColor: currentColor}}

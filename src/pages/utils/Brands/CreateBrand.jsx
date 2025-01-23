@@ -5,7 +5,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useStateContext} from "../../../contexts/ContextProvider";
 import {toast} from "react-toastify";
 import {fileUpload} from "../../../redux/slices/utils/category/categorySlice";
-import {createBrand, getBrand, updateBrand} from "../../../redux/slices/utils/brands/brandSlice";
+import {createBrand, getBrand, setLoading, updateBrand} from "../../../redux/slices/utils/brands/brandSlice";
 
 const CreateBrand = () => {
 	const dispatch = useDispatch()
@@ -62,10 +62,15 @@ const CreateBrand = () => {
 
 		const formData = new FormData()
 		formData.append('file', file)
+		dispatch(setLoading(true))
 		dispatch(fileUpload(formData)).then(({payload}) => {
 			if (payload?.id) {
 				setImage(payload?.id)
+				dispatch(setLoading(false))
 			}
+		}).catch(() => {
+			dispatch(setLoading(false))
+			return toast.error('Some went wrong')
 		})
 	}
 
@@ -100,8 +105,9 @@ const CreateBrand = () => {
         <Button
 	        text={loading ? 'Loading...' : (id !== ':id' ? "Update Brand" : "Create Brand")}
           style={{backgroundColor: currentColor}}
-          className="text-white rounded flex ml-auto"
+          className="text-white rounded flex ml-auto disabled:opacity-25"
           onClick={postBrand}
+	        disabled={loading}
         />
       </div>
     </>

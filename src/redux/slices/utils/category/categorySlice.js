@@ -70,6 +70,11 @@ export const fileUpload = createAsyncThunk(
 const categorySlice = createSlice({
   name: "category",
   initialState,
+  reducers: {
+    setLoading: (state, {payload}) => {
+      state.loading = payload
+    }
+  },
   extraReducers: builder => {
     // getAllCategories
     builder
@@ -125,4 +130,5 @@ const categorySlice = createSlice({
   }
 })
 
+export const {setLoading} = categorySlice.actions
 export default categorySlice.reducer

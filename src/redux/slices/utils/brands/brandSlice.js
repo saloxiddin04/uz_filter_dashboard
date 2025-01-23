@@ -58,6 +58,11 @@ export const updateBrand = createAsyncThunk(
 const brandsSlice = createSlice({
   name: "brand",
   initialState,
+  reducers: {
+    setLoading: (state, {payload}) => {
+      state.loading = payload
+    }
+  },
   extraReducers: builder => {
     // getAllBrands
     builder
@@ -113,4 +118,5 @@ const brandsSlice = createSlice({
   }
 })
 
+export const {setLoading} = brandsSlice.actions
 export default brandsSlice.reducer
