@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Header} from "../../components";
-import Loader from "../../components/Loader";
+import {Button, Header} from "../../../components";
+import Loader from "../../../components/Loader";
 import {useDispatch, useSelector} from "react-redux";
 import {ChevronRightIcon, EyeIcon, PencilIcon} from "@heroicons/react/16/solid";
-import {getAllCategories} from "../../redux/slices/category/categorySlice";
-import {useStateContext} from "../../contexts/ContextProvider";
+import {getAllCategories} from "../../../redux/slices/utils/category/categorySlice";
+import {useStateContext} from "../../../contexts/ContextProvider";
 import {useNavigate} from "react-router-dom";
 
 const Category = () => {

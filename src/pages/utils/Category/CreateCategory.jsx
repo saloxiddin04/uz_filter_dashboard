@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, DetailNav, Input, Loader, TabsRender} from "../../components";
+import {Button, DetailNav, Input, Loader, TabsRender} from "../../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
@@ -9,8 +9,8 @@ import {
   getAllCategories,
   getCategory,
   updateCategory
-} from "../../redux/slices/category/categorySlice";
-import {useStateContext} from "../../contexts/ContextProvider";
+} from "../../../redux/slices/utils/category/categorySlice";
+import {useStateContext} from "../../../contexts/ContextProvider";
 
 const tabs = [
   {
@@ -29,7 +29,7 @@ const CreateCategory = () => {
   const {currentColor} = useStateContext();
   const {id} = useParams()
 
-  const {categories, loading, category} = useSelector(state => state.category)
+  const {categories, loading} = useSelector(state => state.category)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 

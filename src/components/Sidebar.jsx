@@ -47,7 +47,7 @@ const Sidebar = () => {
 
   // Check if a parent menu is active based on the current path
   const isParentActive = (children) =>
-    children?.some((child) => child.path === pathname);
+    children?.some((child) => pathname.startsWith(child.path));
 
   return (
     <div className="h-screen md:overflow-hidden overflow-auto md:hover:overflow-auto pb-10">

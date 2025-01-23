@@ -3,7 +3,7 @@ import {
   ContractDetail,
   Profile,
   NotFound,
-  Dashboard, Category, CreateCategory
+  Dashboard, Category, CreateCategory, Attributes, CreateAttributes
 } from './pages';
 
 export const routes = [
@@ -16,6 +16,9 @@ export const routes = [
 
   { path: '/category', element: Category },
   { path: '/category/:id', element: CreateCategory },
+
+  { path: '/attributes', element: Attributes },
+  { path: '/attributes/:id', element: CreateAttributes },
 
   { path: '/shartnomalar', element: Contracts },
   { path: '/shartnomalar/:slug', element: Contracts },
