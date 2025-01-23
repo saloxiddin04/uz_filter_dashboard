@@ -1,9 +1,44 @@
-import React from 'react';
-import {Header, Input} from "../../components";
-import {useSelector} from "react-redux";
+import React, {useEffect, useState} from 'react';
+import {Button, Header, Input} from "../../components";
+import {useDispatch, useSelector} from "react-redux";
+import {useStateContext} from "../../contexts/ContextProvider";
+import {toast} from "react-toastify";
+import instance from "../../API";
+import {getUserDetail, setUser} from "../../redux/slices/auth/authSlice";
 
 const Profile = () => {
+  const dispatch = useDispatch()
   const {user} = useSelector((state) => state.user);
+  const {currentColor} = useStateContext();
+  
+  const [first_name, setFirstName] = useState(null)
+  const [last_name, setLastName] = useState(null)
+  const [email, setEmail] = useState(null)
+  
+  useEffect(() => {
+    setFirstName(user?.first_name)
+    setLastName(user?.last_name)
+    setEmail(user?.email)
+  }, [user]);
+  
+  const updateProfile = async () => {
+    if (!first_name || !last_name || !email) return toast.error('All inputs required')
+    
+    try {
+      await instance.patch('user/update', {first_name, last_name, email}).then((response) => {
+        if (response.status === 200) {
+          dispatch(getUserDetail()).then(({payload}) => {
+            if (payload) {
+              dispatch(setUser(payload))
+              toast.success('Updated successfully!')
+            }
+          })
+        }
+      })
+    } catch (e) {
+      return e;
+    }
+  }
 
   return (
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 dark:bg-secondary-dark-bg bg-white rounded">
@@ -13,64 +48,19 @@ const Profile = () => {
           <div className={'w-[49%]'}>
             <Input
               type={'text'}
-              placeholder={'Ism'}
+              placeholder={'First name'}
               label="Ism"
-              value={user?.first_name || ''}
-              disabled={true}
+              value={first_name || ''}
+              onChange={(e) => setFirstName(e.target.value)}
             />
           </div>
           <div className={'w-[49%]'}>
             <Input
               type={'text'}
-              placeholder={'Familiya'}
+              placeholder={'Last Name'}
               label="Familiya"
-              value={user?.sur_name || ''}
-              disabled={true}
-            />
-          </div>
-          <div className={'w-[49%]'}>
-            <Input
-              type={'text'}
-              placeholder={'Otasining ismi'}
-              label="Otasining ismi"
-              value={user?.mid_name || ''}
-              disabled={true}
-            />
-          </div>
-          <div className={'w-[49%]'}>
-            <Input
-              type={'text'}
-              placeholder={'Yashash joyi'}
-              label="Yashash joyi"
-              value={user?.per_adr || ''}
-              disabled={true}
-            />
-          </div>
-          <div className={'w-[49%]'}>
-            <Input
-              type={'text'}
-              placeholder={'Passport raqami'}
-              label="Passport raqami"
-              value={user?.pport_no || ''}
-              disabled={true}
-            />
-          </div>
-          <div className={'w-[49%]'}>
-            <Input
-              type={'text'}
-              placeholder={'PINFL'}
-              label="PINFL"
-              value={user?.pin || ''}
-              disabled={true}
-            />
-          </div>
-          <div className={'w-[49%]'}>
-            <Input
-              type={'text'}
-              placeholder={"Tug'ilgan sanasi"}
-              label="Tug'ilgan sanasi (yil.oy.sana)"
-              value={user?.birth_date || ''}
-              disabled={true}
+              value={last_name || ''}
+              onChange={(e) => setLastName(e.target.value)}
             />
           </div>
           <div className={'w-[49%]'}>
@@ -78,26 +68,25 @@ const Profile = () => {
               type={'text'}
               placeholder={'Telefon raqami'}
               label="Telefon raqami"
-              value={user?.mob_phone_no || ''}
+              value={user?.phone_number || ''}
               disabled={true}
             />
           </div>
           <div className={'w-[49%]'}>
             <Input
-              type={'text'}
+              type={'email'}
               placeholder={'Email'}
               label="Email"
-              value={user?.email || ''}
-              disabled={true}
+              value={email || ''}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className={'w-[49%]'}>
-            <Input
-              type={'text'}
-              placeholder={'Lavozim'}
-              label="Lavozim"
-              value={user?.role || ''}
-              disabled={true}
+          <div className="flex ml-auto">
+            <Button
+              text={'Update'}
+              style={{backgroundColor: currentColor}}
+              className="text-white rounded flex ml-auto"
+              onClick={updateProfile}
             />
           </div>
         </div>
