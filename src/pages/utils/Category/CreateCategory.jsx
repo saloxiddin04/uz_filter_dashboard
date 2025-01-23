@@ -47,7 +47,7 @@ const CreateCategory = () => {
     if (id !== ':id') {
       dispatch(getCategory(id)).then(({payload}) => {
         setName(payload?.name)
-        setImage(payload?.image)
+        setImage(payload?.image?.startsWith('http') ? undefined : payload?.image)
       })
     }
   }, [dispatch, id]);
@@ -118,8 +118,8 @@ const CreateCategory = () => {
               type="file"
               className="w-full mb-4"
             />
-            {id !== ':id' && image && (
-              <img src={image} alt="img"/>
+            {id !== ':id' && category?.image && (
+              <img loading="lazy" className="w-20 aspect-auto" src={category?.image} alt="img"/>
             )}
             <Button
               text={id !== ':id' ? "Update Category" : "Create Parent Category"}

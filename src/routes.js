@@ -1,14 +1,11 @@
 import {
-  Contracts,
-  ContractDetail,
   Profile,
   NotFound,
-  Dashboard, Category, CreateCategory, Attributes, CreateAttributes
+  Dashboard, Category, CreateCategory, Attributes, CreateAttributes, Brands, CreateBrands
 } from './pages';
 
 export const routes = [
   { path: '*', element: NotFound },
-  // { path: '/code', element: Code },
 
   { path: '/profile', element: Profile },
 
@@ -20,7 +17,6 @@ export const routes = [
   { path: '/attributes', element: Attributes },
   { path: '/attributes/:id', element: CreateAttributes },
 
-  { path: '/shartnomalar', element: Contracts },
-  { path: '/shartnomalar/:slug', element: Contracts },
-  { path: '/shartnomalar/:slug/:id', element: ContractDetail },
+  { path: '/brands', element: Brands },
+  { path: '/brands/:id', element: CreateBrands },
 ]

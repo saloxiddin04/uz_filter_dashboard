@@ -100,8 +100,8 @@ const Category = () => {
                           {el?.name}
                         </td>
                         <td className={'px-2 py-1'}>
-                          {item?.image && (
-                            <img className="w-16 aspect-auto" src={el?.image} alt={item?.name}/>
+                          {el?.image && (
+                            <img className="w-16 aspect-auto" src={el?.image} alt={el?.name}/>
                           )}
                         </td>
                         <td className="px-4 py-4">
