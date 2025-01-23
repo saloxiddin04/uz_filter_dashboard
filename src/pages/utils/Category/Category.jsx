@@ -51,6 +51,7 @@ const Category = () => {
               <tr>
                 <th scope="col" className="px-3 py-3"></th>
                 <th scope="col" className="px-4 py-3">Name</th>
+                <th scope="col" className="px-4 py-3">Image</th>
                 <th scope="col" className="px-4 py-3">Action</th>
               </tr>
               </thead>
@@ -60,7 +61,7 @@ const Category = () => {
                   <React.Fragment key={index}>
                     <tr key={item?.id} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
                       <td scope="row"
-                          className="px-6 py-4 font-medium whitespace-nowrap flex gap-1 items-center">
+                          className="px-4 py-4 font-medium whitespace-nowrap flex gap-1 items-center">
                         {item?.children?.length > 0 && (
                           <div className="cursor-pointer">
                             <ChevronRightIcon
@@ -74,6 +75,11 @@ const Category = () => {
                       <td className={'px-2 py-1'}>
                         {item?.name}
                       </td>
+                      <td className={'px-2 py-1'}>
+                        {item?.image && (
+                          <img className="w-16 aspect-auto" src={item?.image} alt={item?.name}/>
+                        )}
+                      </td>
                       <td className="px-4 py-4">
                         <PencilIcon
                           style={{color: currentColor}}
@@ -85,12 +91,18 @@ const Category = () => {
 
                     {accordionSelected === index && item?.children?.map((el, i) => (
                       <tr key={el?.id} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
-                        <td scope="row"
-                            className="px-10 py-4 font-medium whitespace-nowrap">
+                        <td
+                          scope="row"
+                          className="px-10 py-4 font-medium whitespace-nowrap">
                           {`${index + 1}.${i + 1} `}
                         </td>
                         <td className={'px-2 py-1'}>
                           {el?.name}
+                        </td>
+                        <td className={'px-2 py-1'}>
+                          {item?.image && (
+                            <img className="w-16 aspect-auto" src={el?.image} alt={item?.name}/>
+                          )}
                         </td>
                         <td className="px-4 py-4">
                           <PencilIcon

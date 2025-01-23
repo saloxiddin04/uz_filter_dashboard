@@ -29,7 +29,7 @@ const CreateCategory = () => {
   const {currentColor} = useStateContext();
   const {id} = useParams()
 
-  const {categories, loading} = useSelector(state => state.category)
+  const {categories, loading, category} = useSelector(state => state.category)
 
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
 
@@ -183,8 +183,8 @@ const CreateCategory = () => {
     <>
       <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <DetailNav
-          id={''}
-          name={''}
+          id={id !== ':id' ? category?.id : ''}
+          name={id !== ':id' ? category?.name : ''}
           status={''}
         />
       </div>

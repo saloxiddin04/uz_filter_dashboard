@@ -12,7 +12,7 @@ const CreateAttributes = () => {
   const {currentColor} = useStateContext();
   const {id} = useParams()
 
-  const {loading} = useSelector(state => state.attribute)
+  const {loading, attribute} = useSelector(state => state.attribute)
 
   const [name, setName] = useState(null);
 
@@ -52,8 +52,8 @@ const CreateAttributes = () => {
     <>
       <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-4 bg-white dark:bg-secondary-dark-bg rounded">
         <DetailNav
-          id={''}
-          name={''}
+          id={id !== ':id' ? attribute?.id : ''}
+          name={id !== ':id' ? attribute?.name : ''}
           status={''}
         />
       </div>
