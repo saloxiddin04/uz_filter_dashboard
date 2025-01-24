@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Header} from "../../components";
+import {Header, Pagination} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
@@ -18,6 +18,11 @@ const Products = () => {
   useEffect(() => {
     dispatch(getAllProducts())
   }, []);
+  
+  const handlePageChange = (page) => {
+    dispatch(getAllProducts({page, page_size: 10}))
+    
+  }
   
   return (
     <div className="card">
@@ -78,6 +83,12 @@ const Products = () => {
             </table>
         }
       </div>
+      
+      <Pagination
+        totalItems={products?.count}
+        itemsPerPage={10}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
