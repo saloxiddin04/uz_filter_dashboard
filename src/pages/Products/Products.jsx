@@ -21,7 +21,6 @@ const Products = () => {
   
   const handlePageChange = (page) => {
     dispatch(getAllProducts({page, page_size: 10}))
-    
   }
   
   return (
