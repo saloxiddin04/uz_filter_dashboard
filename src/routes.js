@@ -1,7 +1,7 @@
 import {
   Profile,
   NotFound,
-  Dashboard, Category, CreateCategory, Attributes, CreateAttributes, Brands, CreateBrands
+  Dashboard, Category, CreateCategory, Attributes, CreateAttributes, Brands, CreateBrands, Products, CreateProduct
 } from './pages';
 
 export const routes = [
@@ -19,4 +19,7 @@ export const routes = [
 
   { path: '/brands', element: Brands },
   { path: '/brands/:id', element: CreateBrands },
+  
+  {path: '/products', element: Products},
+  {path: '/products/:id', element: CreateProduct},
 ]

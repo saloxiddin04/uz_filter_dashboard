@@ -19,6 +19,10 @@ const menuData = [
       { name: "Brands", path: "/brands" },
     ],
   },
+  {
+    title: "Products",
+    path: '/products'
+  },
 ]
 
 const Sidebar = () => {
