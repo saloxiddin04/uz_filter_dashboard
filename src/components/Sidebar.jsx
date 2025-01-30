@@ -8,19 +8,19 @@ import { useSelector } from "react-redux";
 
 const menuData = [
   {
-    title: "Dashboard",
+    title: "Статистика",
     path: "/dashboard",
   },
   {
-    title: "Utils",
+    title: "Утилиты",
     children: [
-      { name: "Category", path: "/category" },
-      { name: "Attributes", path: "/attributes" },
-      { name: "Brands", path: "/brands" },
+      { name: "Категория", path: "/category" },
+      { name: "Атрибуты", path: "/attributes" },
+      { name: "Бренды", path: "/brands" },
     ],
   },
   {
-    title: "Products",
+    title: "Продукты",
     path: '/products'
   },
 ]
