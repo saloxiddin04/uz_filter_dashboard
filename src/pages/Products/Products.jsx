@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Loader from "../../components/Loader";
 import {getAllProducts} from "../../redux/slices/products/productSlice";
 import moment from "moment";
-import {PencilIcon} from "@heroicons/react/16/solid";
+import {EyeIcon, PencilIcon} from "@heroicons/react/16/solid";
 
 const Products = () => {
   const dispatch = useDispatch()
@@ -70,10 +70,10 @@ const Products = () => {
                     {moment(item?.created_time).format('DD-MM-YYYY')}
                   </td>
                   <td className="px-4 py-4">
-                    <PencilIcon
+                    <EyeIcon
                       style={{color: currentColor}}
                       className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
-                      // onClick={() => navigate(`/attributes/${item.id}`)}
+                      onClick={() => navigate(`/products/${item.id}`)}
                     />
                   </td>
                 </tr>

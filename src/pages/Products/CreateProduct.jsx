@@ -5,7 +5,7 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import {Button, DetailNav, Input} from "../../components";
 import {toast} from "react-toastify";
 import {fileUpload, getAllCategories} from "../../redux/slices/utils/category/categorySlice";
-import {createProduct, setLoading} from "../../redux/slices/products/productSlice";
+import {createProduct, getProduct, setLoading} from "../../redux/slices/products/productSlice";
 import {getAllBrands} from "../../redux/slices/utils/brands/brandSlice";
 import {getAllAttributes} from "../../redux/slices/utils/attributes/attributeSlice";
 import {TrashIcon} from "@heroicons/react/16/solid";
@@ -51,6 +51,35 @@ const CreateProduct = () => {
     dispatch(getAllCategories())
   }, []);
   
+  useEffect(() => {
+    if (id !== ':id') {
+      dispatch(getProduct(id)).then(({payload}) => {
+        setName(payload?.name)
+        setCategory(payload?.category?.id)
+        setDescription(payload?.description)
+        setProductFiles(payload?.product_files?.map((item) => ({
+          image: item?.image?.file
+        })))
+        setProductVariants(
+          payload?.product_variants?.map((item) => ({
+            category: item?.category?.id || null,
+            brand: item?.brand?.id || null,
+            unique_code: item?.unique_code || null,
+            price: item?.price || null,
+            discount: item?.discount || null,
+            quantity: item?.quantity || null,
+            product_variant_attributes: item?.product_variant_attributes?.map((attr) => ({
+              attribute: attr?.attribute?.id || null,
+              value: attr?.value || null,
+            })) || []
+          })) || []
+        );
+      })
+    }
+  }, [id, dispatch]);
+  
+  console.log(product_files)
+  
   const handleAddFile = () => {
     setProductFiles([...product_files, {image: null}]);
   };
@@ -92,7 +121,7 @@ const CreateProduct = () => {
   const handleVariantChange = (index, field, value) => {
     const updatedVariants = [...product_variants];
     
-    if (field === "quantity" || field === "price" || field === "discount") {
+    if (field === "quantity" || field === "price") {
       updatedVariants[index][field] = Number(value) || 0;
     } else {
       updatedVariants[index][field] = value;
@@ -226,7 +255,6 @@ const CreateProduct = () => {
     return true;
   };
   
-  
   const postProduct = () => {
     if (!validateProduct()) {
       return;
@@ -308,28 +336,36 @@ const CreateProduct = () => {
         <div className="mb-6 w-full flex flex-wrap">
           <h2 className="text-lg font-semibold mb-3 w-full">Product Files</h2>
           {product_files.map((file, index) => (
-            <div key={index} className="flex flex-col gap-4 mb-3 border rounded p-2 w-full">
-              <button
-                className="text-red-500 border border-red-500 rounded p-2 hover:underline ml-auto disabled:opacity-25"
-                onClick={() => handleRemoveFile(index)}
-                disabled={product_files?.length === 1}
-              >
-                <TrashIcon className="w-5 h-5" />
-              </button>
-              <input
-                type="file"
-                className="block w-full border rounded-lg p-2"
-                onChange={(e) => handleFileUpload(e, index)}
-              />
-            </div>
+            id !== ':id' ? (
+              <div key={index} className="w-2/4 aspect-auto">
+                <img className="object-cover" src={file?.image} alt={file?.image} />
+              </div>
+            ) : (
+              <div key={index} className="flex flex-col gap-4 mb-3 border rounded p-2 w-full">
+                <button
+                  className="text-red-500 border border-red-500 rounded p-2 hover:underline ml-auto disabled:opacity-25"
+                  onClick={() => handleRemoveFile(index)}
+                  disabled={product_files?.length === 1}
+                >
+                  <TrashIcon className="w-5 h-5" />
+                </button>
+                <input
+                  type="file"
+                  className="block w-full border rounded-lg p-2"
+                  onChange={(e) => handleFileUpload(e, index)}
+                />
+              </div>
+            )
           ))}
-          <button
-            className={`text-white px-4 py-2 rounded-lg mx-auto`}
-            style={{backgroundColor: currentColor}}
-            onClick={handleAddFile}
-          >
-            Add File
-          </button>
+          {id === ':id' && (
+            <button
+              className={`text-white px-4 py-2 rounded-lg mx-auto`}
+              style={{backgroundColor: currentColor}}
+              onClick={handleAddFile}
+            >
+              Add File
+            </button>
+          )}
         </div>
         
         <div className="mb-6 w-full flex flex-wrap">
@@ -339,7 +375,7 @@ const CreateProduct = () => {
               <button
                 className="text-red-500 hover:underline my-2 border border-red-500 p-2 rounded ml-auto disabled:opacity-25"
                 onClick={() => handleRemoveVariant(index)}
-                disabled={product_variants.length === 1}
+                disabled={id !== ':id' ? true : product_variants.length === 1}
               >
                 <TrashIcon className="w-5 h-5" />
               </button>
@@ -462,18 +498,19 @@ const CreateProduct = () => {
                     <button
                       className="text-red-500 border border-red-500 rounded p-2 hover:underline disabled:opacity-25"
                       onClick={() => handleRemoveAttribute(index, attrIndex)}
-                      disabled={variant.product_variant_attributes.length === 1}
+                      disabled={id !== ':id' ? true : variant.product_variant_attributes.length === 1}
                     >
                       <TrashIcon className="w-5 h-5" />
                     </button>
                   </div>
                 ))}
                 <button
-                  className="text-white px-4 py-2 rounded-lg mt-2 mx-auto"
+                  className="text-white px-4 py-2 rounded-lg mt-2 mx-auto disabled:opacity-25"
                   onClick={() => handleAddAttribute(index)}
                   style={{
                     backgroundColor: currentColor
                   }}
+                  disabled={id !== ':id'}
                 >
                   Add Attribute
                 </button>
@@ -481,25 +518,28 @@ const CreateProduct = () => {
             </div>
           ))}
           <button
-            className="text-white px-4 py-2 rounded-lg mx-auto"
+            className="text-white px-4 py-2 rounded-lg mx-auto disabled:opacity-25"
             onClick={handleAddVariant}
             style={{
               backgroundColor: currentColor
             }}
+            disabled={id !== ':id'}
           >
-            Add Variant
-          </button>
+              Add Variant
+            </button>
          </div>
         
-        <div className="w-full flex">
-          <Button
-            text={loading ? 'Loading...' : (id !== ':id' ? "Update Product" : "Create Product")}
-            style={{backgroundColor: currentColor}}
-            className="text-white rounded flex ml-auto disabled:opacity-25"
-            onClick={postProduct}
-            disabled={loading}
-          />
-        </div>
+        {id === ':id' && (
+          <div className="w-full flex">
+            <Button
+              text={loading ? 'Loading...' : (id !== ':id' ? "Update Product" : "Create Product")}
+              style={{backgroundColor: currentColor}}
+              className="text-white rounded flex ml-auto disabled:opacity-25"
+              onClick={postProduct}
+              disabled={loading}
+            />
+          </div>
+        )}
       </div>
     </>
   );
