@@ -12,7 +12,7 @@ import {getAllCategories} from "../../redux/slices/utils/category/categorySlice"
 const Products = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const {currentColor} = useStateContext();
+  const {currentColor, currentPage} = useStateContext();
   
   const {loading, products} = useSelector((state) => state.product)
   const {categories} = useSelector(state => state.category)
@@ -22,7 +22,7 @@ const Products = () => {
   const [category, setCategory] = useState(undefined)
   
   useEffect(() => {
-    dispatch(getAllProducts())
+    dispatch(getAllProducts({page: currentPage, page_size: 10}))
   }, []);
   
   useEffect(() => {
