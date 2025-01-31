@@ -26,13 +26,13 @@ const Products = () => {
   return (
     <div className="card">
       <div className={'flex items-start justify-between mb-4'}>
-        <Header category="Page" title="Products" />
+        <Header category="Страница" title="Продукты" />
         <button
           className={'px-4 py-2 rounded text-white'}
           style={{backgroundColor: currentColor}}
           onClick={() => navigate('/products/:id')}
         >
-          Create Product
+          Создать продукт
         </button>
       </div>
       
@@ -48,10 +48,10 @@ const Products = () => {
               >
               <tr>
                 <th scope="col" className="px-3 py-3"></th>
-                <th scope="col" className="px-4 py-3">Name</th>
-                <th scope="col" className="px-4 py-3">Category</th>
-                <th scope="col" className="px-4 py-3">Created time</th>
-                <th scope="col" className="px-4 py-3">Action</th>
+                <th scope="col" className="px-4 py-3">Название продукта</th>
+                <th scope="col" className="px-4 py-3">Категория</th>
+                <th scope="col" className="px-4 py-3">Время создания</th>
+                <th scope="col" className="px-4 py-3">Действие</th>
               </tr>
               </thead>
               <tbody>

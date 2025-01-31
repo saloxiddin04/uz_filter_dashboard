@@ -29,13 +29,13 @@ const Category = () => {
   return (
     <div className={'card'}>
       <div className={'flex items-start justify-between mb-4'}>
-        <Header category="Page" title="Category"/>
+        <Header category="Страница" title="Категория"/>
         <button
           className={'px-4 py-2 rounded text-white'}
           style={{backgroundColor: currentColor}}
           onClick={() => navigate('/category/:id')}
         >
-          Create Category
+          Создать категорию
         </button>
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded">
@@ -50,9 +50,9 @@ const Category = () => {
               >
               <tr>
                 <th scope="col" className="px-3 py-3"></th>
-                <th scope="col" className="px-4 py-3">Name</th>
-                <th scope="col" className="px-4 py-3">Image</th>
-                <th scope="col" className="px-4 py-3">Action</th>
+                <th scope="col" className="px-4 py-3">Название категория</th>
+                <th scope="col" className="px-4 py-3">Изображения</th>
+                <th scope="col" className="px-4 py-3">Действие</th>
               </tr>
               </thead>
               <tbody>

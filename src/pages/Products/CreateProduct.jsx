@@ -78,8 +78,6 @@ const CreateProduct = () => {
     }
   }, [id, dispatch]);
   
-  console.log(product_files)
-  
   const handleAddFile = () => {
     setProductFiles([...product_files, {image: null}]);
   };
@@ -297,8 +295,8 @@ const CreateProduct = () => {
           <div className="w-[49%]">
             <Input
               type="text"
-              placeholder="Product name"
-              label={'Product name'}
+              placeholder="Название продукта"
+              label={'Название продукта'}
               value={name || ""}
               onChange={(e) => setName(e.target.value)}
               className={'w-full'}
@@ -307,7 +305,7 @@ const CreateProduct = () => {
           <div className="w-[49%] flex flex-col">
             <label
               htmlFor="category"
-              className="block text-gray-700 text-sm font-bold mb-2 ml-3">Product Category</label>
+              className="block text-gray-700 text-sm font-bold mb-2 ml-3">Продукт Категория</label>
             <select
               value={category || ""}
               onChange={(e) => setCategory(e.target.value)}
@@ -323,7 +321,7 @@ const CreateProduct = () => {
         </div>
         
         <div className="mb-6">
-          <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2 ml-3">Description</label>
+          <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2 ml-3">Описание</label>
           <textarea
             className="w-full border rounded shadow focus:outline-none p-2"
             rows={5}
@@ -334,7 +332,7 @@ const CreateProduct = () => {
         </div>
         
         <div className="mb-6 w-full flex flex-wrap">
-          <h2 className="text-lg font-semibold mb-3 w-full">Product Files</h2>
+          <h2 className="text-lg font-semibold mb-3 w-full">Изображения продуктов</h2>
           {product_files.map((file, index) => (
             id !== ':id' ? (
               <div key={index} className="w-2/4 aspect-auto">
@@ -363,13 +361,13 @@ const CreateProduct = () => {
               style={{backgroundColor: currentColor}}
               onClick={handleAddFile}
             >
-              Add File
+              Добавить изображение
             </button>
           )}
         </div>
         
         <div className="mb-6 w-full flex flex-wrap">
-          <h2 className="text-lg font-semibold mb-3 w-full">Product Variants</h2>
+          <h2 className="text-lg font-semibold mb-3 w-full">Варианты продукта</h2>
           {product_variants.map((variant, index) => (
             <div key={index} className="border p-4 rounded-lg mb-3 w-full flex flex-wrap">
               <button
@@ -383,7 +381,7 @@ const CreateProduct = () => {
                 <div className="flex flex-col">
                   <label
                     htmlFor="category"
-                    className="block text-gray-700 text-sm font-bold mb-2 ml-3">Product Category</label>
+                    className="block text-gray-700 text-sm font-bold mb-2 ml-3">Продукт Категория</label>
                   <select
                     value={variant.category || ""}
                     onChange={(e) =>
@@ -402,7 +400,7 @@ const CreateProduct = () => {
                 <div className="flex flex-col">
                   <label
                     htmlFor="brand"
-                    className="block text-gray-700 text-sm font-bold mb-2 ml-3">Product Brand</label>
+                    className="block text-gray-700 text-sm font-bold mb-2 ml-3">Бренд продукта</label>
                   <select
                     value={variant.brand || ""}
                     onChange={(e) =>
@@ -420,8 +418,8 @@ const CreateProduct = () => {
                 <div className="flex flex-col">
                   <Input
                     type="text"
-                    placeholder="Unique code"
-                    label={'Unique code'}
+                    placeholder="Уникальный код"
+                    label={'Уникальный код'}
                     value={variant.unique_code || ""}
                     onChange={(e) =>
                       handleVariantChange(index, "unique_code", e.target.value)
@@ -433,8 +431,8 @@ const CreateProduct = () => {
                 <div className="flex flex-col">
                   <Input
                     type="text"
-                    placeholder="Price"
-                    label={'Price'}
+                    placeholder="Цена"
+                    label={'Цена'}
                     value={variant.price || ""}
                     onChange={(e) =>
                       handleVariantChange(index, "price", e.target.value)
@@ -446,8 +444,8 @@ const CreateProduct = () => {
                 <div className="flex flex-col">
                   <Input
                     type="text"
-                    placeholder="Discount"
-                    label={'Discount'}
+                    placeholder="Скидка"
+                    label={'Скидка'}
                     value={variant.discount || ""}
                     onChange={(e) =>
                       handleVariantChange(index, "discount", e.target.value)
@@ -459,8 +457,8 @@ const CreateProduct = () => {
                 <div className="flex flex-col">
                   <Input
                     type="text"
-                    placeholder="Quanity"
-                    label={'Quantity'}
+                    placeholder="Количество"
+                    label={'Количество'}
                     value={variant.quantity || ""}
                     onChange={(e) =>
                       handleVariantChange(index, "quantity", e.target.value)
@@ -470,7 +468,7 @@ const CreateProduct = () => {
                 </div>
               </div>
               <div className="mt-4 w-full flex flex-wrap border rounded p-2">
-                <h3 className="font-semibold mb-2 w-full">Attributes</h3>
+                <h3 className="font-semibold mb-2 w-full">Атрибуты</h3>
                 {variant.product_variant_attributes.map((attr, attrIndex) => (
                   <div key={attrIndex} className="flex items-center gap-4 mb-2 w-full">
                     <select
@@ -512,7 +510,7 @@ const CreateProduct = () => {
                   }}
                   disabled={id !== ':id'}
                 >
-                  Add Attribute
+                  Добавить атрибут
                 </button>
               </div>
             </div>
@@ -525,14 +523,14 @@ const CreateProduct = () => {
             }}
             disabled={id !== ':id'}
           >
-              Add Variant
+              Добавить вариант
             </button>
          </div>
         
         {id === ':id' && (
           <div className="w-full flex">
             <Button
-              text={loading ? 'Loading...' : (id !== ':id' ? "Update Product" : "Create Product")}
+              text={loading ? 'Loading...' : (id !== ':id' ? "Обновить продукт" : "Создать продукт")}
               style={{backgroundColor: currentColor}}
               className="text-white rounded flex ml-auto disabled:opacity-25"
               onClick={postProduct}

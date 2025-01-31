@@ -13,7 +13,7 @@ const DetailNav = ({id, name, status}) => {
         <div className="w-full flex gap-3">
           <div className="cursor-pointer flex flex-col items-center w-[5%] border-r border-gray-200" onClick={() => navigate(-1)}>
             <HiArrowUturnUp style={{ color: currentColor }} className="size-6" />
-            <span className={'text-xs mt-1'}>orqaga</span>
+            <span className={'text-xs mt-1'}>Назад</span>
           </div>
           <div className={'flex items-center gap-3'}>
             <div>

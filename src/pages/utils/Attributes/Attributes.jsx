@@ -21,13 +21,13 @@ const Attributes = () => {
   return (
     <div className={'card'}>
       <div className={'flex items-start justify-between mb-4'}>
-        <Header category="Page" title="Attributes"/>
+        <Header category="Страница" title="Атрибуты"/>
         <button
           className={'px-4 py-2 rounded text-white'}
           style={{backgroundColor: currentColor}}
           onClick={() => navigate('/attributes/:id')}
         >
-          Create Attribute
+          Создать атрибут
         </button>
       </div>
 
@@ -43,8 +43,8 @@ const Attributes = () => {
               >
               <tr>
                 <th scope="col" className="px-3 py-3"></th>
-                <th scope="col" className="px-4 py-3">Name</th>
-                <th scope="col" className="px-4 py-3">Action</th>
+                <th scope="col" className="px-4 py-3">Имя атрибута</th>
+                <th scope="col" className="px-4 py-3">Действие</th>
               </tr>
               </thead>
               <tbody>

@@ -15,11 +15,11 @@ import {useStateContext} from "../../../contexts/ContextProvider";
 
 const tabs = [
   {
-    title: 'Create Parent Category',
+    title: 'Создать родительскую категорию',
     active: true
   },
   {
-    title: "Create Child Category",
+    title: "Создать дочернюю категорию",
     active: false
   }
 ]
@@ -114,13 +114,13 @@ const CreateCategory = () => {
             <Input
               value={name || ""}
               onChange={(e) => setName(e.target.value)}
-              label="Category Name"
+              label="Название категории"
               type="text"
               className="w-full mb-4"
             />
             <Input
               onChange={(e) => handleFile(e)}
-              label="Category Icon"
+              label="Значок категории"
               type="file"
               className="w-full mb-4"
             />
@@ -128,7 +128,7 @@ const CreateCategory = () => {
               <img loading="lazy" className="w-20 aspect-auto" src={category?.image} alt="img"/>
             )}
             <Button
-              text={id !== ':id' ? "Update Category" : "Create Parent Category"}
+              text={id !== ':id' ? "Обновить категорию" : "Создать родительскую категорию"}
               style={{backgroundColor: currentColor}}
               className="text-white rounded flex ml-auto"
               onClick={postCategory}
@@ -143,7 +143,7 @@ const CreateCategory = () => {
             <div>
               <label
                 className="block text-gray-700 text-sm font-bold mb-2 ml-3"
-                htmlFor="category">Parent Category</label>
+                htmlFor="category">Родительская категория</label>
               <select
                 name="category"
                 id="category"
@@ -160,19 +160,19 @@ const CreateCategory = () => {
             <Input
               value={name || ""}
               onChange={(e) => setName(e.target.value)}
-              label="Category Name"
+              label="Название категории"
               type="text"
               className="w-full mb-4"
             />
             <Input
               onChange={(e) => handleFile(e)}
-              label="Category Icon"
+              label="Значок категории"
               type="file"
               className="w-full mb-4"
               accept=".jpg,.jpeg"
             />
             <Button
-              text="Create Child Category"
+              text="Создать дочернюю категорию"
               style={{backgroundColor: currentColor}}
               className="text-white rounded flex ml-auto"
               onClick={postCategory}

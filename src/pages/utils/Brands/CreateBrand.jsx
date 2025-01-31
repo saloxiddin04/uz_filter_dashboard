@@ -88,13 +88,13 @@ const CreateBrand = () => {
         <Input
 	        value={name || ""}
 	        onChange={(e) => setName(e.target.value)}
-	        label="Brand Name"
+	        label="Название бренда"
 	        type="text"
 	        className="w-full mb-4"
         />
         <Input
           onChange={(e) => handleFileUpload(e)}
-          label="Brand Icon"
+          label="Значок бренда"
           type="file"
           className="w-full mb-4"
           accept=".jpg,.jpeg"
@@ -103,7 +103,7 @@ const CreateBrand = () => {
 		      <img loading="lazy" className="w-20 aspect-auto" src={brand?.image} alt="img"/>
 	      )}
         <Button
-	        text={loading ? 'Loading...' : (id !== ':id' ? "Update Brand" : "Create Brand")}
+	        text={loading ? 'Loading...' : (id !== ':id' ? "Обновить бренд" : "Создать бренд")}
           style={{backgroundColor: currentColor}}
           className="text-white rounded flex ml-auto disabled:opacity-25"
           onClick={postBrand}

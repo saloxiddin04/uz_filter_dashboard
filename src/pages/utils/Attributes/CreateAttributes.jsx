@@ -62,13 +62,13 @@ const CreateAttributes = () => {
         <Input
           value={name || ""}
           onChange={(e) => setName(e.target.value)}
-          label="Attribe Name"
+          label="Имя атрибута"
           type="text"
           className="w-full mb-4"
         />
 
         <Button
-          text={loading ? 'Loading...' : (id !== ':id' ? "Update Attribute" : "Create Attribute")}
+          text={loading ? 'Loading...' : (id !== ':id' ? "Обновить атрибут" : "Создать атрибут")}
           style={{backgroundColor: currentColor}}
           className="text-white rounded flex ml-auto disabled:opacity-25"
           disabled={loading}
