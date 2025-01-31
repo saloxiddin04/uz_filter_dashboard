@@ -12,16 +12,16 @@ const menuData = [
     path: "/dashboard",
   },
   {
+    title: "Продукты",
+    path: '/products'
+  },
+  {
     title: "Утилиты",
     children: [
       { name: "Категория", path: "/category" },
       { name: "Атрибуты", path: "/attributes" },
       { name: "Бренды", path: "/brands" },
     ],
-  },
-  {
-    title: "Продукты",
-    path: '/products'
   },
 ]
 
