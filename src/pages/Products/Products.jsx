@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Header, Pagination} from "../../components";
 import {useStateContext} from "../../contexts/ContextProvider";
 import {useNavigate} from "react-router-dom";
@@ -6,7 +6,8 @@ import {useDispatch, useSelector} from "react-redux";
 import Loader from "../../components/Loader";
 import {getAllProducts} from "../../redux/slices/products/productSlice";
 import moment from "moment";
-import {EyeIcon, PencilIcon} from "@heroicons/react/16/solid";
+import {ArrowPathIcon, EyeIcon, FunnelIcon, PencilIcon} from "@heroicons/react/16/solid";
+import {getAllCategories} from "../../redux/slices/utils/category/categorySlice";
 
 const Products = () => {
   const dispatch = useDispatch()
@@ -14,10 +15,21 @@ const Products = () => {
   const {currentColor} = useStateContext();
   
   const {loading, products} = useSelector((state) => state.product)
+  const {categories} = useSelector(state => state.category)
+  
+  const [handleFilter, setFilter] = useState(false)
+  const [name, setName] = useState(undefined)
+  const [category, setCategory] = useState(undefined)
   
   useEffect(() => {
     dispatch(getAllProducts())
   }, []);
+  
+  useEffect(() => {
+    if (handleFilter) {
+      dispatch(getAllCategories())
+    }
+  }, [handleFilter, dispatch])
   
   const handlePageChange = (page) => {
     dispatch(getAllProducts({page, page_size: 10}))
@@ -27,13 +39,81 @@ const Products = () => {
     <div className="card">
       <div className={'flex items-start justify-between mb-4'}>
         <Header category="Страница" title="Продукты" />
-        <button
-          className={'px-4 py-2 rounded text-white'}
-          style={{backgroundColor: currentColor}}
-          onClick={() => navigate('/products/:id')}
-        >
-          Создать продукт
-        </button>
+        
+        {handleFilter && (
+          <>
+            <div className="flex justify-center gap-4 items-center w-[65%]">
+              <div className={'flex flex-col w-[35%]'}>
+								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+									Название продукта
+								</label>
+								<input
+                  value={name || ""}
+                  onChange={(e) => setName(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      if (!name) {
+                        // toast.error('Shartnoma raqamini kitiring')
+                      } else {
+                        // postFilteredContracts()
+                      }
+                    }
+                  }}
+                  name="amount"
+                  id="amount"
+                  type="text"
+                  className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                />
+							</div>
+              <div className={'flex flex-col w-[35%]'}>
+                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="mounting_type">Категория</label>
+                <select
+                  className={'w-full px-1 py-1 rounded focus:outline-none focus:shadow focus:border-blue-500 border mb-1'}
+                  value={category || ''}
+                  onChange={(e) => setCategory(e.target.value)}
+                  name="mounting_type"
+                  id="mounting_type"
+                >
+                  <option value={undefined} disabled={category}>Tanlang</option>
+                  {categories?.map((item) => (
+                    <option value={item?.id} key={item?.id}>{item?.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </>
+        )}
+        
+        <div className="flex items-center gap-6 pt-5">
+          {handleFilter ? (
+            <button
+              className={`px-2 py-1 rounded border text-center`}
+              style={{borderColor: currentColor}}
+              onClick={() => {
+                // setPage(1)
+                setFilter(false)
+                // setContractNumber(undefined)
+                // setContractStatus(undefined)
+                // setTin(undefined)
+                dispatch(getAllProducts())
+              }}
+            >
+              <ArrowPathIcon className="size-6" fill={currentColor} />
+            </button>
+          ) : (
+            <button title="filter" onClick={() => setFilter(true)}>
+              <FunnelIcon className="size-6" color={currentColor} />
+            </button>
+          )}
+          
+          <button
+            className={'px-4 py-2 rounded text-white'}
+            style={{backgroundColor: currentColor}}
+            onClick={() => navigate('/products/:id')}
+          >
+            Создать продукт
+          </button>
+        </div>
       </div>
       
       <div className="relative overflow-x-auto shadow-md sm:rounded">
