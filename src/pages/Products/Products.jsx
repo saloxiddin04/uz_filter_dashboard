@@ -130,6 +130,7 @@ const Products = () => {
                 <th scope="col" className="px-3 py-3"></th>
                 <th scope="col" className="px-4 py-3">Название продукта</th>
                 <th scope="col" className="px-4 py-3">Категория</th>
+                <th scope="col" className="px-4 py-3">Изображения</th>
                 <th scope="col" className="px-4 py-3">Время создания</th>
                 <th scope="col" className="px-4 py-3">Действие</th>
               </tr>
@@ -145,6 +146,11 @@ const Products = () => {
                   </td>
                   <td className={'px-3 py-1'}>
                     {item?.category?.name}
+                  </td>
+                  <td className={'px-3 py-1'}>
+                    {item?.product_files[0]?.image?.file && (
+                      <img className="w-16 aspect-auto" loading="lazy" src={item?.product_files[0]?.image?.file} alt={item?.product_files[0]?.image?.file} />
+                    )}
                   </td>
                   <td className={'px-3 py-1'}>
                     {moment(item?.created_time).format('DD-MM-YYYY')}
