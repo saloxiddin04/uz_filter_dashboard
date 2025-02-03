@@ -75,6 +75,7 @@ const Sidebar = () => {
     
     if (warehouseMenu) {
       warehouseMenu.children = [
+        {name: "Все склады", path: '/warehouse'},
         ...(warehouses?.map((warehouse) => ({
           name: warehouse?.name,
           path: `/warehouse/${warehouse?.id}`,
