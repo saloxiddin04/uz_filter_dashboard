@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, DetailNav, Input} from "../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {useStateContext} from "../../contexts/ContextProvider";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {getAllUsers} from "../../redux/slices/users/usersSlice";
 import {toast} from "react-toastify";
 import {createWarehouse, getWarehouse, updateWarehouse} from "../../redux/slices/warehouse/warehouseSlice";
@@ -11,6 +11,7 @@ const CreateWarehouse = () => {
   const dispatch = useDispatch()
   const {currentColor} = useStateContext()
   const {id} = useParams()
+  const {pathname} = useLocation()
   const navigate = useNavigate()
   
   const {warehouse, loading} = useSelector(state => state.warehouse)
@@ -24,6 +25,13 @@ const CreateWarehouse = () => {
   const [name, setName] = useState(null)
   const [address, setAddress] = useState(null)
   const [phone_number, setPhoneNumber] = useState(null)
+  
+  useEffect(() => {
+    setWarehouseManager(null)
+    setName(null)
+    setAddress(null)
+    setPhoneNumber(null)
+  }, [pathname])
   
   useEffect(() => {
     if (id !== ':id') {

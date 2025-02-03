@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { MdOutlineCancel } from 'react-icons/md';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 
 import { useStateContext } from '../contexts/ContextProvider';
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {getAllWarehouses} from "../redux/slices/warehouse/warehouseSlice";
 
 const menuData = [
   {
@@ -13,7 +14,8 @@ const menuData = [
   },
   {
     title: "Склады",
-    path: "/warehouse"
+    path: "/warehouse",
+    children: []
   },
   {
     title: "Продукты",
@@ -34,12 +36,19 @@ const menuData = [
 ]
 
 const Sidebar = () => {
+  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user);
   const { currentColor, activeMenu, setActiveMenu, screenSize, setPage } = useStateContext();
   const { pathname } = useLocation();
+  
+  const {warehouses} = useSelector(state => state.warehouse)
 
   // Track open/close state for parent menus with children
   const [openMenus, setOpenMenus] = useState({});
+  
+  useEffect(() => {
+    dispatch(getAllWarehouses())
+  }, [])
 
   const toggleMenu = (title) => {
     setOpenMenus((prevState) => ({
@@ -60,9 +69,27 @@ const Sidebar = () => {
   // Check if a parent menu is active based on the current path
   const isParentActive = (children) =>
     children?.some((child) => pathname.startsWith(child.path));
+  
+  const updateMenuDataWithWarehouses = (menuData, warehouses) => {
+    const warehouseMenu = menuData.find((item) => item.title === "Склады");
+    
+    if (warehouseMenu) {
+      warehouseMenu.children = [
+        ...(warehouses?.map((warehouse) => ({
+          name: warehouse?.name,
+          path: `/warehouse/${warehouse?.id}`,
+        })) || []),
+        {name: "Создать склад", path: '/warehouse/:id'},
+      ];
+    }
+    
+    return menuData;
+  };
+  
+  const updatedMenuData = updateMenuDataWithWarehouses(menuData, warehouses);
 
   return (
-    <div className="h-screen md:overflow-hidden overflow-auto md:hover:overflow-auto pb-10">
+    <div className="h-screen pb-10">
       {activeMenu && (
         <>
           <div className="pl-3 flex justify-between items-center py-2" style={{ backgroundColor: currentColor }}>
@@ -82,66 +109,68 @@ const Sidebar = () => {
               <MdOutlineCancel />
             </button>
           </div>
-
-          {menuData.map((item) => (
-            <div key={item.title} className="m-2">
-              {/* Check if the item has children */}
-              {item.children ? (
-                <>
+          
+          <div className="flex-1 overflow-y-auto max-h-[calc(100vh-80px)]">
+            {updatedMenuData.map((item) => (
+              <div key={item.title} className="m-2">
+                {/* Check if the item has children */}
+                {item.children ? (
+                  <>
                   {/* Parent Section */}
-                  <button
-                    onClick={() => toggleMenu(item.title)}
-                    className={`flex justify-between items-center w-[95%] p-4 rounded hover:bg-light-gray ${
-                      isParentActive(item.children) ? activeLink : normalLink
-                    }`}
-                    style={{
-                      backgroundColor: isParentActive(item.children) ? currentColor : ''
+                    <button
+                      onClick={() => toggleMenu(item.title)}
+                      className={`flex justify-between items-center w-[95%] p-4 rounded hover:bg-light-gray ${
+                        isParentActive(item.children) ? activeLink : normalLink
+                      }`}
+                      style={{
+                        backgroundColor: isParentActive(item.children) ? currentColor : ''
+                      }}
+                    >
+                    <span className="capitalize">{item.title}</span>
+                      {openMenus[item.title] ? <AiOutlineUp /> : <AiOutlineDown />}
+                  </button>
+                    
+                    {/* Render children if the parent is open */}
+                    {openMenus[item.title] && (
+                      <div className="pl-6">
+                        {item.children.map((child) => (
+                          <NavLink
+                            key={child.name}
+                            to={child.path}
+                            onClick={() => {
+                              setPage(1);
+                              localStorage.setItem("currentPage", '1');
+                            }}
+                            style={({ isActive }) => ({
+                              backgroundColor: isActive ? currentColor : '',
+                            })}
+                            className={({ isActive }) => (isActive ? activeLink : normalLink)}
+                          >
+                            <span className="capitalize">{child.name}</span>
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                </>
+                ) : (
+                  // Render a flat link for items without children
+                  <NavLink
+                    to={item.path}
+                    onClick={() => {
+                      setPage(1);
+                      localStorage.setItem("currentPage", '1');
                     }}
+                    style={({ isActive }) => ({
+                      backgroundColor: isActive ? currentColor : '',
+                    })}
+                    className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     <span className="capitalize">{item.title}</span>
-                    {openMenus[item.title] ? <AiOutlineUp /> : <AiOutlineDown />}
-                  </button>
-
-                  {/* Render children if the parent is open */}
-                  {openMenus[item.title] && (
-                    <div className="pl-6">
-                      {item.children.map((child) => (
-                        <NavLink
-                          key={child.name}
-                          to={child.path}
-                          onClick={() => {
-                            setPage(1);
-                            localStorage.setItem("currentPage", '1');
-                          }}
-                          style={({ isActive }) => ({
-                            backgroundColor: isActive ? currentColor : '',
-                          })}
-                          className={({ isActive }) => (isActive ? activeLink : normalLink)}
-                        >
-                          <span className="capitalize">{child.name}</span>
-                        </NavLink>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                // Render a flat link for items without children
-                <NavLink
-                  to={item.path}
-                  onClick={() => {
-                    setPage(1);
-                    localStorage.setItem("currentPage", '1');
-                  }}
-                  style={({ isActive }) => ({
-                    backgroundColor: isActive ? currentColor : '',
-                  })}
-                  className={({ isActive }) => (isActive ? activeLink : normalLink)}
-                >
-                  <span className="capitalize">{item.title}</span>
-                </NavLink>
-              )}
-            </div>
-          ))}
+                  </NavLink>
+                )}
+              </div>
+            ))}
+          </div>
         </>
       )}
     </div>
