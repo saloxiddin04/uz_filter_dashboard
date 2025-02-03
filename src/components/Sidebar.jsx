@@ -80,7 +80,6 @@ const Sidebar = () => {
           name: warehouse?.name,
           path: `/warehouse/${warehouse?.id}`,
         })) || []),
-        {name: "Создать склад", path: '/warehouse/:id'},
       ];
     }
     
