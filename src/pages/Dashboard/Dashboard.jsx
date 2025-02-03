@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {Header} from "../../components";
 import {LineChart, PieChart} from "@mui/x-charts";
 
 const Dashboard = () => {
+  
+  const lineChart = useRef(null)
   
   const colors = ['#1A97F5', '#03C9D7', '#7352FF', '#1E4DB7', '#FB9678']
   
@@ -113,7 +115,7 @@ const Dashboard = () => {
           <div className={'w-full h-2/4'}>
             <h1 className={'text-2xl p-4 font-bold'}>Продано по месяцам</h1>
             <div className={'w-full h-full relative overflow-hidden shadow-md sm:rounded flex'}>
-              <div>
+              <div ref={lineChart} className="w-full overflow-hidden">
                 <LineChart
                   xAxis={[
                     {
@@ -126,7 +128,7 @@ const Dashboard = () => {
                   series={[
                     {label: "Продано", data: seriesData[0]},
                   ]}
-                  width={1000}
+                  width={lineChart?.current?.offsetWidth}
                   height={400}
                 />
               </div>
