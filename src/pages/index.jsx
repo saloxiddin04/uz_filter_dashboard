@@ -16,6 +16,9 @@ export { default as CreateProduct } from './Products/CreateProduct'
 
 export {default as Employees} from './Employees/Employees'
 
+export {default as Warehouse} from './Warehouse/Warehouse'
+export {default as CreateWarehouse} from './Warehouse/CreateWarehouse'
+
 export {default as Profile} from './profile/Profile';
 
 export {default as NotFound} from './PageNotFound';

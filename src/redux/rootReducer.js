@@ -5,6 +5,7 @@ import attributeSlice from "./slices/utils/attributes/attributeSlice";
 import brandSlice from "./slices/utils/brands/brandSlice";
 import productSlice from "./slices/products/productSlice";
 import usersSlice from "./slices/users/usersSlice";
+import warehouseSlice from "./slices/warehouse/warehouseSlice";
 
 const appReducer = combineReducers({
   user: authSlice,
@@ -12,7 +13,8 @@ const appReducer = combineReducers({
   attribute: attributeSlice,
   brand: brandSlice,
   product: productSlice,
-  users: usersSlice
+  users: usersSlice,
+  warehouse: warehouseSlice
 });
 
 const rootReducer = (state, action) => {

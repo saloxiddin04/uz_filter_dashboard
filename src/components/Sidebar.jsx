@@ -12,6 +12,10 @@ const menuData = [
     path: "/dashboard",
   },
   {
+    title: "Склады",
+    path: "/warehouse"
+  },
+  {
     title: "Продукты",
     path: '/products'
   },
