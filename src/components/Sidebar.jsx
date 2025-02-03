@@ -23,6 +23,10 @@ const menuData = [
       { name: "Бренды", path: "/brands" },
     ],
   },
+  {
+    title: "Cотрудники",
+    path: '/employees'
+  }
 ]
 
 const Sidebar = () => {

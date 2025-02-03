@@ -39,64 +39,33 @@ export const userProfileData = [
   },
 ];
 
-export const colocationStatus = [
-  { title: "Yangi", value: 1 },
-  { title: "To'lov kutilmoqda", value: 2 },
-  { title: "Aktiv", value: 3 },
-  { title: "Rad etilgan", value: 4 },
-  { title: "Bekor qilingan", value: 5 },
-  { title: "Yakunlangan", value: 6 },
-  { title: "Qo'shimcha shartnoma mavjud", value: 7 },
-  { title: "Shartnomani to'xtatish kutilmoqda", value: 8 },
-  { title: "Shartnomani raqami bron qilingan", value: 9 },
-  { title: "Mijoz imzolashi kutilmoqda", value: 10 },
-]
-
-export const e_xat = [
-  { title: "Yangi", value: 1 },
-  { title: "To'lov kutilmoqda", value: 2 },
-  { title: "Aktiv", value: 3 },
-  { title: "Rad etilgan", value: 4 },
-  { title: "Bekor qilingan", value: 5 },
-  { title: "Yakunlangan", value: 6 },
-  { title: "Qo'shimcha shartnoma mavjud", value: 7 },
-  { title: "Shartnomani to'xtatish kutilmoqda", value: 8 },
-  { title: "Shartnomani raqami bron qilingan", value: 9 },
-  { title: "Lot raqami kutilmoqda", value: 10 },
-  { title: "Qoralama", value: 0 },
-]
-
-export const tte_certification = [
-  { title: "Yangi", value: 1 },
-  { title: "To'lov kutilmoqda", value: 2 },
-  { title: "Aktiv", value: 3 },
-  { title: "Rad etilgan", value: 4 },
-  { title: "Bekor qilingan", value: 5 },
-  { title: "Yakunlangan", value: 6 },
-  { title: "Mijoz imzolashi kutilmoqda", value: 7 },
-  { title: "Shartnomani raqami bron qilingan", value: 9 },
-]
-
-export const expertiseStatus = [
-  { title: "Yangi", value: 1 },
-  { title: "Mijoz imzolashi kutilmoqda", value: 2 },
-  { title: "To'lov kutilmoqda", value: 3 },
-  { title: "Aktiv", value: 4 },
-  { title: "Rad etilgan", value: 5 },
-  { title: "Bekor qilingan", value: 6 },
-  { title: "Yakunlangan", value: 7 },
-  { title: "Shartnomani raqami bron qilingan", value: 8 },
-]
-
-
-export const vpsStatus = [
-  { title: "Yangi", value: 1 },
-  { title: "To'lov kutilmoqda", value: 2 },
-  { title: "Aktiv", value: 3 },
-  { title: "Rad etilgan", value: 4 },
-  { title: "Bekor qilingan", value: 5 },
-  { title: "Yakunlangan", value: 6 },
-  { title: "Qo'shimcha shartnoma mavjud", value: 7 },
-  { title: "Shartnomani to'xtatish kutilmoqda", value: 8 },
-  { title: "Mijoz imzolashi kutilmoqda", value: 10 }
+export const usersRoles = [
+  {
+    title: "СОТРУДНИК",
+    value: "employee"
+  },
+  {
+    title: "ОПЕРАТОР",
+    value: "operator"
+  },
+  {
+    title: "АДМИН",
+    value: "admin"
+  },
+  {
+    title: "ДИРЕКТОР",
+    value: "director"
+  },
+  {
+    title: "БУХГАЛТЕР",
+    value: "accountant"
+  },
+  {
+    title: "СКЛАД_МЕНЕДЖЕР",
+    value: "warehouse_manager"
+  },
+  {
+    title: "МЕНЕДЖЕР ПО ПРОДАЖАМ",
+    value: "sales_manager"
+  }
 ]

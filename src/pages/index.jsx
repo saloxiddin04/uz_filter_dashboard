@@ -14,6 +14,8 @@ export {default as CreateBrands} from './utils/Brands/CreateBrand';
 export { default as Products } from './Products/Products'
 export { default as CreateProduct } from './Products/CreateProduct'
 
+export {default as Employees} from './Employees/Employees'
+
 export {default as Profile} from './profile/Profile';
 
 export {default as NotFound} from './PageNotFound';
