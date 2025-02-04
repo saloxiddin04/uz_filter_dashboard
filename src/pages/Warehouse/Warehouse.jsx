@@ -26,7 +26,7 @@ const Warehouse = () => {
         <button
           className={'px-4 py-2 rounded text-white'}
           style={{backgroundColor: currentColor}}
-          onClick={() => navigate('/warehouse/:id')}
+          onClick={() => navigate('/warehouses/:id')}
         >
           Создать склад
         </button>
@@ -77,12 +77,12 @@ const Warehouse = () => {
                     <EyeIcon
                       style={{color: currentColor}}
                       className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
-                      onClick={() => navigate(`/warehouse/${item.id}`)}
+                      onClick={() => navigate(`/warehouses/${item.id}`)}
                     />
                     <PencilIcon
                       style={{color: currentColor}}
                       className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
-                      onClick={() => navigate(`/warehouse/${item.id}`)}
+                      onClick={() => navigate(`/warehouses/${item.id}`)}
                     />
                   </td>
                 </tr>

@@ -75,10 +75,10 @@ const Sidebar = () => {
     
     if (warehouseMenu) {
       warehouseMenu.children = [
-        {name: "Все склады", path: '/warehouse'},
+        {name: "Все склады", path: '/warehouses'},
         ...(warehouses?.map((warehouse) => ({
           name: warehouse?.name,
-          path: `/warehouse/${warehouse?.id}`,
+          path: `/warehouse/products/${warehouse?.id}`,
         })) || []),
       ];
     }
