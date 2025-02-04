@@ -60,7 +60,7 @@ const CreateWarehouse = () => {
       dispatch(createWarehouse({warehouse_manager, name, address, phone_number})).then(({payload}) => {
         if (payload?.id) {
           toast.success('Создано успешно')
-          navigate('/warehouse')
+          navigate('/warehouses')
           setWarehouseManager(null)
           setName(null)
           setAddress(null)
@@ -77,7 +77,7 @@ const CreateWarehouse = () => {
       dispatch(updateWarehouse({id, data})).then(({payload}) => {
         if (payload?.id) {
           toast.success('Изменено успешно')
-          navigate('/warehouse')
+          navigate('/warehouses')
           setWarehouseManager(null)
           setName(null)
           setAddress(null)
