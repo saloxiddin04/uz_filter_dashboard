@@ -55,6 +55,18 @@ export const updateWarehouse = createAsyncThunk(
   },
 )
 
+export const addProductWarehouse = createAsyncThunk(
+  "warehouse/addProductWarehouse",
+  async (data) => {
+    try {
+      const response = await instance.post('warehouse/add-products-to-warehouse', data)
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const warehouseSlice = createSlice({
   name: "warehouse",
   initialState,
@@ -108,6 +120,18 @@ const warehouseSlice = createSlice({
         state.loading = false
       })
       .addCase(createWarehouse.rejected, (state) => {
+        state.loading = false
+      })
+    
+    // addProductWarehouse
+    builder
+      .addCase(addProductWarehouse.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(addProductWarehouse.fulfilled, (state) => {
+        state.loading = false
+      })
+      .addCase(addProductWarehouse.rejected, (state) => {
         state.loading = false
       })
   }
