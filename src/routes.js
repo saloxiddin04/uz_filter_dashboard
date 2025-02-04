@@ -10,7 +10,7 @@ import {
   CreateBrands,
   Products,
   CreateProduct,
-  Employees, Warehouse, CreateWarehouse, CreateProductWarehouse
+  Employees, Warehouse, CreateWarehouse, CreateProductWarehouse, AddProductWarehouse
 } from './pages';
 
 export const routes = [
@@ -37,4 +37,5 @@ export const routes = [
   {path: '/warehouses', element: Warehouse},
   {path: '/warehouses/:id', element: CreateWarehouse},
   {path: '/warehouse/products/:id', element: CreateProductWarehouse},
+  {path: '/warehouse/products/:id/addProduct', element: AddProductWarehouse},
 ]
