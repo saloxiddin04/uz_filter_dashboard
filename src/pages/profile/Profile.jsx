@@ -42,14 +42,14 @@ const Profile = () => {
 
   return (
     <div className="m-1 md:mx-4 md:my-10 mt-24 p-2 md:px-4 md:py-10 dark:bg-secondary-dark-bg bg-white rounded">
-      <Header category="Sahifa" title="Profil"/>
+      <Header category="Страница" title="Профил"/>
       <div className="relative container overflow-x-auto shadow-md sm:rounded">
         <div className={'flex justify-between items-center flex-wrap gap-4 md:px-4 md:py-4'}>
           <div className={'w-[49%]'}>
             <Input
               type={'text'}
-              placeholder={'First name'}
-              label="Ism"
+              placeholder={'Имя'}
+              label="Имя"
               value={first_name || ''}
               onChange={(e) => setFirstName(e.target.value)}
             />
@@ -57,8 +57,8 @@ const Profile = () => {
           <div className={'w-[49%]'}>
             <Input
               type={'text'}
-              placeholder={'Last Name'}
-              label="Familiya"
+              placeholder={'Фамилия'}
+              label="Фамилия"
               value={last_name || ''}
               onChange={(e) => setLastName(e.target.value)}
             />
@@ -66,8 +66,8 @@ const Profile = () => {
           <div className={'w-[49%]'}>
             <Input
               type={'text'}
-              placeholder={'Telefon raqami'}
-              label="Telefon raqami"
+              placeholder={'Телефон номер'}
+              label="Телефон номер"
               value={user?.phone_number || ''}
               disabled={true}
             />
@@ -75,10 +75,19 @@ const Profile = () => {
           <div className={'w-[49%]'}>
             <Input
               type={'email'}
-              placeholder={'Email'}
-              label="Email"
+              placeholder={'Емаил'}
+              label="Емаил"
               value={email || ''}
               onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className={'w-[49%]'}>
+            <Input
+              type={'email'}
+              placeholder={'Рол'}
+              label="Рол"
+              value={user?.user_roles || ''}
+              disabled={true}
             />
           </div>
           <div className="flex ml-auto">
