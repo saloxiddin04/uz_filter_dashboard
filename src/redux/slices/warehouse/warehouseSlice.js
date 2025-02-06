@@ -4,7 +4,8 @@ import instance from "../../../API";
 const initialState = {
   loading: false,
   warehouses: null,
-  warehouse: null
+  warehouse: null,
+  productsForWarehouse: null
 }
 
 export const getAllWarehouses = createAsyncThunk(
@@ -53,6 +54,18 @@ export const updateWarehouse = createAsyncThunk(
       return e;
     }
   },
+)
+
+export const getProductsForWarehouse = createAsyncThunk(
+  "warehouse/productsForWarehouse",
+  async ({ warehouse_id, filters }) => {
+    try {
+      const response = await instance.get(`warehouse/list-products-warehouse/${warehouse_id}`, {params: filters})
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
 )
 
 export const addProductWarehouse = createAsyncThunk(
@@ -132,6 +145,20 @@ const warehouseSlice = createSlice({
         state.loading = false
       })
       .addCase(addProductWarehouse.rejected, (state) => {
+        state.loading = false
+      })
+    
+    // productsForWarehouse
+    builder
+      .addCase(getProductsForWarehouse.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(getProductsForWarehouse.fulfilled, (state, {payload}) => {
+        state.productsForWarehouse = payload
+        state.loading = false
+      })
+      .addCase(getProductsForWarehouse.rejected, (state) => {
+        state.productsForWarehouse = null
         state.loading = false
       })
   }
