@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Header, Pagination} from "../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
@@ -15,12 +15,26 @@ const CreateProductWarehouse = () => {
   
   const {loading, warehouse, productsForWarehouse} = useSelector(state => state.warehouse)
   
+  const [handleFilter, setFilter] = useState(false)
+  const [unique_code, setUniqueCode] = useState(undefined)
+  const [product_name, setProductName] = useState(undefined)
+  const [category, setCategory] = useState(undefined)
+  
   useEffect(() => {
-    dispatch(getProductsForWarehouse({warehouse_id: id}))
+    dispatch(getProductsForWarehouse({
+      warehouse_id: id,
+      filters: {page: 1, page_size: 10},
+    }))
     dispatch(getWarehouse(id))
   }, [id, dispatch])
   
-  console.log(productsForWarehouse?.result[0]?.product?.product_files[0])
+  const handleChangePage = (page) => {
+    dispatch(getProductsForWarehouse({
+      filters: {page, page_size: 10},
+      warehouse_id: id
+    }))
+  }
+  
   
   return (
     <div className="card">
@@ -108,7 +122,7 @@ const CreateProductWarehouse = () => {
       <Pagination
         totalItems={productsForWarehouse?.count}
         itemsPerPage={10}
-        // onPageChange={handlePageChange}
+        onPageChange={handleChangePage}
       />
     </div>
   );
