@@ -137,6 +137,7 @@ const Sidebar = () => {
                           <NavLink
                             key={child.name}
                             to={child.path}
+                            state={{name: child.name}}
                             onClick={() => {
                               setPage(1);
                               localStorage.setItem("currentPage", '1');

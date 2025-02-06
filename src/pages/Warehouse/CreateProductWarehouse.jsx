@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Header, Pagination} from "../../components";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {getProductsForWarehouse, getWarehouse} from "../../redux/slices/warehouse/warehouseSlice";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {getProductsForWarehouse} from "../../redux/slices/warehouse/warehouseSlice";
 import {useStateContext} from "../../contexts/ContextProvider";
 import Loader from "../../components/Loader";
-import {ArrowPathIcon, EyeIcon, FunnelIcon, PencilIcon} from "@heroicons/react/16/solid";
+import {ArrowPathIcon, EyeIcon, FunnelIcon} from "@heroicons/react/16/solid";
 import {getAllCategories} from "../../redux/slices/utils/category/categorySlice";
 import {Debounce} from "../../utils/Debounce";
 
@@ -14,8 +14,9 @@ const CreateProductWarehouse = () => {
   const navigate = useNavigate()
   const {currentColor} = useStateContext()
   const {id} = useParams()
+  const {state} = useLocation()
   
-  const {loading, warehouse, productsForWarehouse} = useSelector(state => state.warehouse)
+  const {loading, productsForWarehouse} = useSelector(state => state.warehouse)
   const {categories} = useSelector(state => state.category)
   
   const [handleFilter, setFilter] = useState(false)
@@ -28,7 +29,6 @@ const CreateProductWarehouse = () => {
       warehouse_id: id,
       filters: {page: 1, page_size: 10},
     }))
-    dispatch(getWarehouse(id))
     dispatch(getAllCategories())
   }, [id, dispatch])
   
@@ -59,18 +59,18 @@ const CreateProductWarehouse = () => {
   return (
     <div className="card">
       <div className={'flex items-start justify-between mb-4'}>
-        <Header category="Страница" title={warehouse?.name} />
+        <Header category="Страница" title={state?.name} />
         
         {handleFilter && (
           <>
             <div className="flex justify-center gap-4 items-center w-[65%]">
               <div className={'flex flex-col w-[35%]'}>
 								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-									Название продукта
+									Код продукта
 								</label>
 								<input
-                  value={product_name || ""}
-                  onChange={(e) => setProductName(e.target.value)}
+                  value={unique_code || ""}
+                  onChange={(e) => setUniqueCode(e.target.value)}
                   name="amount"
                   id="amount"
                   type="text"
@@ -88,19 +88,27 @@ const CreateProductWarehouse = () => {
                   name="mounting_type"
                   id="mounting_type"
                 >
-                  <option value={undefined} disabled={category}>Tanlang</option>
+                  <option value={''}>Tanlang</option>
                   {categories?.map((item) => (
-                    <option value={item?.id} key={item?.id}>{item?.name}</option>
+                    <React.Fragment key={item?.id}>
+                      <option value={item?.id}>{item?.name}</option>
+                      
+                      {item?.children?.map((el) => (
+                        <option key={el?.id} value={el?.id}>
+                          &nbsp;&nbsp;&nbsp; - {el?.name}
+                        </option>
+                      ))}
+                    </React.Fragment>
                   ))}
                 </select>
               </div>
               <div className={'flex flex-col w-[35%]'}>
 								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-									Код продукта
+									Название продукта
 								</label>
 								<input
-                  value={unique_code || ""}
-                  onChange={(e) => setUniqueCode(e.target.value)}
+                  value={product_name || ""}
+                  onChange={(e) => setProductName(e.target.value)}
                   name="amount"
                   id="amount"
                   type="text"
@@ -157,12 +165,14 @@ const CreateProductWarehouse = () => {
               >
               <tr>
                 <th scope="col" className="px-3 py-3"></th>
+                <th scope="col" className="px-4 py-3">Код продукта</th>
                 <th scope="col" className="px-4 py-3">Название продукта</th>
+                <th scope="col" className="px-4 py-3">Количество</th>
+                <th scope="col" className="px-4 py-3">Общая сумма</th>
+                <th scope="col" className="px-4 py-3">Скидка (%)</th>
                 <th scope="col" className="px-4 py-3">Категория</th>
                 <th scope="col" className="px-4 py-3">Бренд</th>
-                <th scope="col" className="px-4 py-3">Количество</th>
                 <th scope="col" className="px-4 py-3">Изображения</th>
-                <th scope="col" className="px-4 py-3">Общая сумма</th>
                 <th scope="col" className="px-4 py-3">Действие</th>
               </tr>
               </thead>
@@ -173,16 +183,25 @@ const CreateProductWarehouse = () => {
                     {index + 1}
                   </td>
                   <td className={'px-3 py-1'}>
+                    {item?.product_variant?.unique_code}
+                  </td>
+                  <td className={'px-3 py-1'}>
                     {item?.product?.name?.length > 25 ? `${item?.product?.name?.slice(0, 25)}...` : item?.product?.name}
                   </td>
                   <td className={'px-3 py-1'}>
-                    {item?.product_variant?.category?.name}
+                    {item?.quantity?.toLocaleString("ru-Ru")}
+                  </td>
+                  <td className={'px-3 py-1'}>
+                    {item?.quantity_price?.toLocaleString("ru-RU")}
+                  </td>
+                  <td className={'px-3 py-1'}>
+                    {item?.product_variant?.discount}
+                  </td>
+                  <td className={'px-3 py-1'}>
+                    {item?.product?.category?.name}
                   </td>
                   <td className={'px-3 py-1'}>
                     {item?.product_variant?.brand?.name}
-                  </td>
-                  <td className={'px-3 py-1'}>
-                    {item?.quantity?.toLocaleString("ru-Ru")}
                   </td>
                   <td className={'px-3 py-1'}>
                     {item?.product?.product_files && item?.product?.product_files[0]?.image?.file && (
@@ -193,15 +212,7 @@ const CreateProductWarehouse = () => {
                         alt={item?.product?.product_files[0]?.image?.file} />
                     )}
                   </td>
-                  <td className={'px-3 py-1'}>
-                    {item?.quantity_price?.toLocaleString("ru-RU")}
-                  </td>
                   <td className="px-4 py-4 flex">
-                    <PencilIcon
-                      style={{color: currentColor}}
-                      className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
-                      // onClick={() => navigate(`addProduct/${item.id}`)}
-                    />
                     <EyeIcon
                       style={{color: currentColor}}
                       className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
