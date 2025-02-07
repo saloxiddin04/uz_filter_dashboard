@@ -123,6 +123,7 @@ const CreateProduct = () => {
       updatedVariants[index][field] = Number(value) || 0;
     } else {
       updatedVariants[index][field] = value;
+      updatedVariants[index]['category'] = category;
     }
     // updatedVariants[index][field] = value;
     setProductVariants(updatedVariants);
@@ -230,10 +231,10 @@ const CreateProduct = () => {
         return false;
       }
       
-      if (!variant.quantity || isNaN(variant.quantity) || variant.quantity <= 0) {
-        toast.error(`Variant ${i + 1}: Quantity must be a positive number.`);
-        return false;
-      }
+      // if (!variant.quantity || isNaN(variant.quantity) || variant.quantity <= 0) {
+      //   toast.error(`Variant ${i + 1}: Quantity must be a positive number.`);
+      //   return false;
+      // }
       
       for (let j = 0; j < variant.product_variant_attributes.length; j++) {
         const attribute = variant.product_variant_attributes[j];
@@ -313,8 +314,16 @@ const CreateProduct = () => {
               id="category"
             >
               <option value={null}>Select...</option>
-              {categories && categories?.map((item) => (
-                <option value={item?.id} key={item?.id}>{item?.name}</option>
+              {categories?.map((item) => (
+                <React.Fragment key={item?.id}>
+                  <option value={item?.id}>{item?.name}</option>
+                  
+                  {item?.children?.map((el) => (
+                    <option key={el?.id} value={el?.id}>
+                      &nbsp;&nbsp;&nbsp; - {el?.name}
+                    </option>
+                  ))}
+                </React.Fragment>
               ))}
             </select>
           </div>
@@ -378,24 +387,32 @@ const CreateProduct = () => {
                 <TrashIcon className="w-5 h-5" />
               </button>
               <div className="grid grid-cols-3 gap-4 items-end w-full">
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="category"
-                    className="block text-gray-700 text-sm font-bold mb-2 ml-3">Продукт Категория</label>
-                  <select
-                    value={variant.category || ""}
-                    onChange={(e) =>
-                      handleVariantChange(index, "category", e.target.value)
-                    }
-                    className={`w-full border rounded py-1.5 px-3 shadow`}
-                    id="category"
-                  >
-                    <option value={null}>Select...</option>
-                    {categories && categories?.map((item) => (
-                      <option value={item?.id} key={item?.id}>{item?.name}</option>
-                    ))}
-                  </select>
-                </div>
+                {/*<div className="flex flex-col">*/}
+                {/*  <label*/}
+                {/*    htmlFor="category"*/}
+                {/*    className="block text-gray-700 text-sm font-bold mb-2 ml-3">Продукт Категория</label>*/}
+                {/*  <select*/}
+                {/*    value={variant.category || ""}*/}
+                {/*    onChange={(e) =>*/}
+                {/*      handleVariantChange(index, "category", e.target.value)*/}
+                {/*    }*/}
+                {/*    className={`w-full border rounded py-1.5 px-3 shadow`}*/}
+                {/*    id="category"*/}
+                {/*  >*/}
+                {/*    <option value={''}>Select...</option>*/}
+                {/*    {categories?.map((item) => (*/}
+                {/*      <React.Fragment key={item?.id}>*/}
+                {/*        <option value={item?.id}>{item?.name}</option>*/}
+                {/*        */}
+                {/*        {item?.children?.map((el) => (*/}
+                {/*          <option key={el?.id} value={el?.id}>*/}
+                {/*            &nbsp;&nbsp;&nbsp; - {el?.name}*/}
+                {/*          </option>*/}
+                {/*        ))}*/}
+                {/*      </React.Fragment>*/}
+                {/*    ))}*/}
+                {/*  </select>*/}
+                {/*</div>*/}
                 
                 <div className="flex flex-col">
                   <label
@@ -454,18 +471,18 @@ const CreateProduct = () => {
                   />
                 </div>
                 
-                <div className="flex flex-col">
-                  <Input
-                    type="text"
-                    placeholder="Количество"
-                    label={'Количество'}
-                    value={variant.quantity || ""}
-                    onChange={(e) =>
-                      handleVariantChange(index, "quantity", e.target.value)
-                    }
-                    className={'w-full'}
-                  />
-                </div>
+                {/*<div className="flex flex-col">*/}
+                {/*  <Input*/}
+                {/*    type="text"*/}
+                {/*    placeholder="Количество"*/}
+                {/*    label={'Количество'}*/}
+                {/*    value={variant.quantity || ""}*/}
+                {/*    onChange={(e) =>*/}
+                {/*      handleVariantChange(index, "quantity", e.target.value)*/}
+                {/*    }*/}
+                {/*    className={'w-full'}*/}
+                {/*  />*/}
+                {/*</div>*/}
               </div>
               <div className="mt-4 w-full flex flex-wrap border rounded p-2">
                 <h3 className="font-semibold mb-2 w-full">Атрибуты</h3>
@@ -479,7 +496,7 @@ const CreateProduct = () => {
                       className={`w-full border rounded py-1.5 px-3 shadow`}
                       id="category"
                     >
-                      <option value={null}>Select...</option>
+                      <option value={''}>Select...</option>
                       {attributes && attributes?.map((item) => (
                         <option value={item?.id} key={item?.id}>{item?.name}</option>
                       ))}
