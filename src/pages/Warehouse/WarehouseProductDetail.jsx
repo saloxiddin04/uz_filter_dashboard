@@ -209,7 +209,7 @@ const WarehouseProductDetail = () => {
                   <textarea
                     cols="10"
                     rows="10"
-                    value={item?.warehouse_action?.description}
+                    value={item?.warehouse_action?.description || ""}
                     disabled={true}
                     id="description"
                     className="border rounded p-2 w-full focus:outline-none"
