@@ -216,7 +216,7 @@ const CreateProductWarehouse = () => {
                     <EyeIcon
                       style={{color: currentColor}}
                       className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
-                      // onClick={() => navigate(`addProduct/${item.id}`)}
+                      onClick={() => navigate(`/warehouse/product/${item.id}`)}
                     />
                   </td>
                 </tr>

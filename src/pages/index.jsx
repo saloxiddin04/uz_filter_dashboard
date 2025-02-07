@@ -20,6 +20,7 @@ export {default as Warehouse} from './Warehouse/Warehouse'
 export {default as CreateWarehouse} from './Warehouse/CreateWarehouse'
 export {default as CreateProductWarehouse} from './Warehouse/CreateProductWarehouse'
 export {default as AddProductWarehouse} from './Warehouse/AddProductWarehouse'
+export {default as WarehouseProductDetail} from './Warehouse/WarehouseProductDetail'
 
 export {default as Profile} from './profile/Profile';
 

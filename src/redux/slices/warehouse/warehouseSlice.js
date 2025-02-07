@@ -5,7 +5,8 @@ const initialState = {
   loading: false,
   warehouses: null,
   warehouse: null,
-  productsForWarehouse: null
+  productsForWarehouse: null,
+  productForWarehouse: null
 }
 
 export const getAllWarehouses = createAsyncThunk(
@@ -73,6 +74,18 @@ export const addProductWarehouse = createAsyncThunk(
   async (data) => {
     try {
       const response = await instance.post('warehouse/add-products-to-warehouse', data)
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
+export const getProductForWarehouse = createAsyncThunk(
+  "warehouse/getProductWarehouse",
+  async (id) => {
+    try {
+      const response = await instance.get(`warehouse/detail-products-warehouse/${id}`)
       return response.data
     } catch (e) {
       return e;
@@ -159,6 +172,20 @@ const warehouseSlice = createSlice({
       })
       .addCase(getProductsForWarehouse.rejected, (state) => {
         state.productsForWarehouse = null
+        state.loading = false
+      })
+    
+    // getProductForWarehouse
+    builder
+      .addCase(getProductForWarehouse.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(getProductForWarehouse.fulfilled, (state, {payload}) => {
+        state.productForWarehouse = payload
+        state.loading = false
+      })
+      .addCase(getProductForWarehouse.rejected, (state) => {
+        state.productForWarehouse = null
         state.loading = false
       })
   }
