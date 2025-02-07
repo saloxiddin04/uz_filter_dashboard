@@ -70,7 +70,7 @@ const WarehouseProductDetail = () => {
               />
             </div>
             
-            <div className="mb-6 w-full flex flex-wrap">
+            <div className="mb-6 w-full flex flex-wrap gap-5">
               <h2 className="text-lg font-semibold mb-3 w-full">Изображения продуктов</h2>
               {productForWarehouse?.product?.product_files && productForWarehouse?.product?.product_files?.map((file) => (
                 <div key={file?.id} className="w-52 aspect-auto">
