@@ -73,14 +73,14 @@ const WarehouseProductDetail = () => {
             <div className="mb-6 w-full flex flex-wrap">
               <h2 className="text-lg font-semibold mb-3 w-full">Изображения продуктов</h2>
               {productForWarehouse?.product?.product_files && productForWarehouse?.product?.product_files?.map((file) => (
-                <div key={file?.id} className="w-2/4 aspect-auto">
+                <div key={file?.id} className="w-52 aspect-auto">
                   <img loading="lazy" className="object-cover" src={file?.image?.file} alt={file?.image?.file} />
                 </div>
               ))}
             </div>
             
             <div className="mt-4 w-full flex flex-wrap justify-between">
-              <div className="w-[49%] flex flex-col">
+              <div className="w-[24%] flex flex-col">
                 <Input
                   type="text"
                   label={"Количество"}
@@ -90,12 +90,32 @@ const WarehouseProductDetail = () => {
                   className={'w-full'}
                 />
               </div>
-              <div className="w-[49%] flex flex-col">
+              <div className="w-[24%] flex flex-col">
                 <Input
                   type="text"
                   label={"Общая сумма"}
                   placeholder={"Общая сумма"}
                   value={productForWarehouse?.quantity_price?.toLocaleString("ru-Ru") || ""}
+                  disabled={true}
+                  className={'w-full'}
+                />
+              </div>
+              <div className="w-[24%] flex flex-col">
+                <Input
+                  type="text"
+                  label={"Код продукта"}
+                  placeholder={"Код продукта"}
+                  value={productForWarehouse?.product_variant?.unique_code || ""}
+                  disabled={true}
+                  className={'w-full'}
+                />
+              </div>
+              <div className="w-[24%] flex flex-col">
+                <Input
+                  type="text"
+                  label={"Скидка (%)"}
+                  placeholder={"Скидка (%)"}
+                  value={productForWarehouse?.product_variant?.discount || ""}
                   disabled={true}
                   className={'w-full'}
                 />
