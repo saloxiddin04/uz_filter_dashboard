@@ -6,7 +6,8 @@ const initialState = {
   warehouses: null,
   warehouse: null,
   productsForWarehouse: null,
-  productForWarehouse: null
+  productForWarehouse: null,
+  historyProductForWarehouse: null
 }
 
 export const getAllWarehouses = createAsyncThunk(
@@ -93,10 +94,36 @@ export const getProductForWarehouse = createAsyncThunk(
   }
 )
 
+export const getHistoryProductForWarehouse = createAsyncThunk(
+  "warehouse/getProductForWarehouse",
+  async ({id, params}) => {
+    try {
+      const response = await instance.get(`warehouse/history-products-warehouse/${id}`, {params})
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const warehouseSlice = createSlice({
   name: "warehouse",
   initialState,
   extraReducers: builder => {
+    // getHistoryProductForWarehouse
+    builder
+      .addCase(getHistoryProductForWarehouse.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(getHistoryProductForWarehouse.fulfilled, (state, {payload}) => {
+        state.historyProductForWarehouse = payload
+        state.loading = false
+      })
+      .addCase(getHistoryProductForWarehouse.rejected, (state) => {
+        state.loading = false
+        state.historyProductForWarehouse = null
+      })
+    
     // getAllWarehouses
     builder
       .addCase(getAllWarehouses.pending, (state) => {

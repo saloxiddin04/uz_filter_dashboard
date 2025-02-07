@@ -2,8 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {DetailNav, Input, TabsRender} from "../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
-import {getProductForWarehouse} from "../../redux/slices/warehouse/warehouseSlice";
+import {getHistoryProductForWarehouse, getProductForWarehouse} from "../../redux/slices/warehouse/warehouseSlice";
 import {useStateContext} from "../../contexts/ContextProvider";
+import {AiOutlineDownload} from "react-icons/ai";
 
 const tabs = [
   {
@@ -21,15 +22,23 @@ const WarehouseProductDetail = () => {
   const {id} = useParams()
   const {currentColor} = useStateContext();
   
-  const {loading, productForWarehouse} = useSelector(state => state.warehouse)
+  const {loading, productForWarehouse, historyProductForWarehouse} = useSelector(state => state.warehouse)
   
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
   
   useEffect(() => {
-    if (id) {
+    if (id && openTab === 0) {
       dispatch(getProductForWarehouse(id))
+    } else {
+      dispatch(getHistoryProductForWarehouse({
+        id,
+        params: {
+          page: 1,
+          page_size: 10
+        }
+      }))
     }
-  }, [id, dispatch])
+  }, [id, dispatch, openTab])
   
   const renderDetail = () => {
     switch (openTab) {
@@ -149,7 +158,104 @@ const WarehouseProductDetail = () => {
         )
       case 1:
         return (
-          <></>
+          <>
+            {historyProductForWarehouse?.result?.map((item) => (
+              <div key={item?.id} className="p-2 border rounded flex justify-between items-end flex-wrap gap-4">
+                <div className={'flex flex-col w-[35%]'}>
+                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                    Название склада
+                  </label>
+                  <input
+                    value={item?.warehouse_action?.warehouse?.name || ""}
+                    // onChange={(e) => setProductName(e.target.value)}
+                    disabled={true}
+                    name="amount"
+                    id="amount"
+                    type="text"
+                    className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                </div>
+                <div className={'flex flex-col w-[35%]'}>
+                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                    Тел. склада
+                  </label>
+                  <input
+                    value={item?.warehouse_action?.warehouse?.phone_number || ""}
+                    disabled={true}
+                    name="amount"
+                    id="amount"
+                    type="text"
+                    className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                  />
+                </div>
+                {item?.warehouse_action?.file && (
+                  <div className="w-[10%]">
+                    <a
+                      href={item.warehouse_action.file}
+                      download
+                      target="_blank"
+                      className="p-2 rounded border flex items-center justify-center"
+                      style={{borderColor: currentColor}}
+                    >
+                      <AiOutlineDownload className="size-6" style={{color: currentColor}} />
+                    </a>
+                  </div>
+                )}
+                
+                <div className="w-full flex flex-col">
+                  <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="description">
+                    Описания склада
+                  </label>
+                  <textarea
+                    cols="10"
+                    rows="10"
+                    value={item?.warehouse_action?.description}
+                    disabled={true}
+                    id="description"
+                    className="border rounded p-2 w-full focus:outline-none"
+                  />
+                </div>
+                
+                <div className="w-full flex flex-wrap justify-between border rounded p-2">
+                  <h3 className="font-semibold mb-2 w-full">Действие продукта</h3>
+                  <div className={'flex flex-col w-[48%]'}>
+                    <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="quantity">
+                      Количество
+                    </label>
+                    <input
+                      value={item?.product_action?.quantity || ""}
+                      disabled={true}
+                      name="quantity"
+                      id="quantity"
+                      type="text"
+                      className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                    />
+                  </div>
+                  <div className={'flex flex-col w-[48%]'}>
+                    <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="quantity">
+                      Тип действия
+                    </label>
+                    <input
+                      value={
+                        item?.product_action?.action_type === 0 ?
+                          "Добавлен товар" :
+                          item?.product_action?.action_type === 1 ?
+                            "Удаленный продукт" :
+                            item?.product_action?.action_type === 2 ?
+                              "Проданный продукт" : ""
+                              || ""
+                      }
+                      disabled={true}
+                      name="quantity"
+                      id="quantity"
+                      type="text"
+                      className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
         )
       default:
         return <p>Wrong tab</p>
