@@ -26,7 +26,7 @@ const TransferWarehouse = () => {
           <button
             className={'px-4 py-2 rounded text-white'}
             style={{backgroundColor: currentColor}}
-            onClick={() => navigate('/createTransfer')}
+            onClick={() => navigate('/transfer/:id')}
           >
             Создать перенос
           </button>
@@ -57,13 +57,13 @@ const TransferWarehouse = () => {
                     {index + 1}
                   </td>
                   <td className={'px-3 py-1'}>
-                    {item?.from_warehouse?.name}
+                    {item?.from_warehouse?.name + " / " + item?.from_warehouse?.phone_number}
                   </td>
                   <td className={'px-3 py-1'}>
-                    {item?.to_warehouse?.name}
+                    {item?.to_warehouse?.name + " / " + item?.to_warehouse?.name}
                   </td>
                   <td className={'px-3 py-1'}>
-                    {item?.action_user?.first_name + "/" + item?.action_user?.phone_number}
+                    {item?.action_user?.first_name + " / " + item?.action_user?.phone_number}
                   </td>
                   <td className={'px-3 py-1'}>
                     {item?.status}

@@ -47,5 +47,5 @@ export const routes = [
   {path: '/warehouse/product/:id', element: WarehouseProductDetail},
   
   {path: "/transfer", element: TransferWarehouse},
-  {path: "/createTransfer", element: CreateTransferWarehouse}
+  {path: "/transfer/:id", element: CreateTransferWarehouse}
 ]
