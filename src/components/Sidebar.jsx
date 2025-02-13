@@ -30,8 +30,12 @@ const menuData = [
     ],
   },
   {
-    title: "Cотрудники",
+    title: "Сотрудники",
     path: '/employees'
+  },
+  {
+    title: "Складской перенос",
+    path: "/transfer"
   }
 ]
 

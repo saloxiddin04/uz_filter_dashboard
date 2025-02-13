@@ -22,6 +22,9 @@ export {default as CreateProductWarehouse} from './Warehouse/CreateProductWareho
 export {default as AddProductWarehouse} from './Warehouse/AddProductWarehouse'
 export {default as WarehouseProductDetail} from './Warehouse/WarehouseProductDetail'
 
+export {default as TransferWarehouse} from "./TransferWarehouse/TransferWarehouse"
+export {default as CreateTransferWarehouse} from "./TransferWarehouse/CreateTransfer"
+
 export {default as Profile} from './profile/Profile';
 
 export {default as NotFound} from './PageNotFound';
