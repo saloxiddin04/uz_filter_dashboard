@@ -72,7 +72,7 @@ const TransferWarehouse = () => {
                     <EyeIcon
                       style={{color: currentColor}}
                       className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
-                      // onClick={() => navigate(`/warehouse/product/${item.id}`)}
+                      onClick={() => navigate(`/transfer/${item.id}`)}
                     />
                   </td>
                 </tr>
