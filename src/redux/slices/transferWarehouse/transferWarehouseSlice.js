@@ -43,10 +43,34 @@ export const createTransfer = createAsyncThunk(
   }
 )
 
+export const transferConfirmation = createAsyncThunk(
+  "transfer/transferConfirmation",
+  async ({data, id}) => {
+    try {
+      const response = await instance.post(`warehouse/transfers-confirm/${id}`, {agreement_status: Number(data)})
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const transferSlice = createSlice({
   name: "transfer",
   initialState,
   extraReducers: (builder) => {
+    // transferConfirmation
+    builder
+      .addCase(transferConfirmation.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(transferConfirmation.fulfilled, (state) => {
+        state.loading = false
+      })
+      .addCase(transferConfirmation.rejected, (state) => {
+        state.loading = false
+      })
+    
     // getAllTransfers
     builder
       .addCase(getAllTransfers.pending, (state) => {

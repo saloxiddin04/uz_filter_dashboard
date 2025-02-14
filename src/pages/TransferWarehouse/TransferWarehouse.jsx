@@ -6,6 +6,7 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import {getAllTransfers} from "../../redux/slices/transferWarehouse/transferWarehouseSlice";
 import Loader from "../../components/Loader";
 import {EyeIcon} from "@heroicons/react/16/solid";
+import moment from "moment";
 
 const TransferWarehouse = () => {
   const dispatch = useDispatch()
@@ -47,6 +48,7 @@ const TransferWarehouse = () => {
                 <th scope="col" className="px-4 py-3">На склад</th>
                 <th scope="col" className="px-4 py-3">Сотрудник</th>
                 <th scope="col" className="px-4 py-3">Статус</th>
+                <th scope="col" className="px-4 py-3">Дата создание</th>
                 <th scope="col" className="px-4 py-3">Действие</th>
               </tr>
               </thead>
@@ -67,6 +69,9 @@ const TransferWarehouse = () => {
                   </td>
                   <td className={'px-3 py-1'}>
                     {item?.status}
+                  </td>
+                  <td className={'px-3 py-1'}>
+                    {moment(item?.created_time).format("DD-MM-YYYY")}
                   </td>
                   <td className="px-4 py-4 flex">
                     <EyeIcon

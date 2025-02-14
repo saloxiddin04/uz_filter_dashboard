@@ -5,7 +5,11 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import {toast} from "react-toastify";
 import {getAllProducts, setLoading} from "../../redux/slices/products/productSlice";
 import {fileUpload} from "../../redux/slices/utils/category/categorySlice";
-import {createTransfer, getTransfer} from "../../redux/slices/transferWarehouse/transferWarehouseSlice";
+import {
+  createTransfer,
+  getTransfer,
+  transferConfirmation
+} from "../../redux/slices/transferWarehouse/transferWarehouseSlice";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {Button, DetailNav, Input, TabsRender} from "../../components";
 
@@ -31,6 +35,8 @@ const CreateTransfer = () => {
   const {loading, transfer} = useSelector(state => state.transfer)
   
   const [openTab, setOpenTab] = useState(tabs.findIndex(tab => tab.active));
+  
+  const [agreement_status, setAgreementStatus] = useState(1)
   
   const [from_warehouse, setFromWarehouse] = useState(null)
   const [to_warehouse, setToWarehouse] = useState(null)
@@ -91,7 +97,7 @@ const CreateTransfer = () => {
     }
     
     const formData = new FormData();
-    const type = file.name.split('.').pop()
+    const type = file?.name?.substring(file?.name?.lastIndexOf('.') + 1);
     formData.append('file', file);
     formData.append('type', type);
     
@@ -136,78 +142,95 @@ const CreateTransfer = () => {
     })
   }
   
+  const confirmTransform = () => {
+    dispatch(transferConfirmation({id, data: agreement_status})).then(({payload}) => {
+      if (payload?.message) {
+        setAgreementStatus(1)
+        dispatch(getTransfer({id})).then(({payload}) => {
+          setFromWarehouse(payload?.from_warehouse?.id)
+          setToWarehouse(payload?.to_warehouse?.id)
+          setDescription(payload?.description)
+          setFile(payload?.file)
+          
+          const config = payload?.configs?.map((item) => ({
+            product: item?.product?.id,
+            product_variant: item?.product_variant?.id,
+            quantity: item?.quantity
+          }))
+          setConfigs(config)
+        })
+      }
+    })
+  }
+  
   const renderDetail = () => {
     switch (openTab) {
       case 0:
         return (
           <>
-            <div className="mb-6 w-full flex flex-wrap">
-              
-              <div className="grid grid-cols-2 gap-4 items-end w-full mb-3">
-                <div className="flex flex-col">
-                  <label htmlFor={`from_warehouse`} className="block text-gray-700 text-sm font-bold mb-2 ml-3">
-                    Со склада
-                  </label>
-                  <select
-                    value={from_warehouse || ""}
-                    onChange={(e) => setFromWarehouse(e.target.value)}
-                    className="w-full border rounded py-1.5 px-3 shadow"
-                    id={`from_warehouse`}
-                    disabled={id !== ":id"}
-                  >
-                    <option value={null}>Выбирай склад...</option>
-                    {warehouses && warehouses?.filter((el) => el?.id !== to_warehouse)?.map((item) => (
-                      <option key={item?.id} value={item?.id}>{item?.name}</option>
-                    ))}
-                  </select>
-                </div>
+            <div className="p-2 mb-6 border rounded">
+              <div className="w-full flex flex-wrap">
                 
-                <div className="flex flex-col">
-                  <label htmlFor={`to_warehouse`} className="block text-gray-700 text-sm font-bold mb-2 ml-3">
-                    На склад
-                  </label>
-                  <select
-                    value={to_warehouse || ""}
-                    onChange={(e) => setToWarehouse(e.target.value)}
-                    className="w-full border rounded py-1.5 px-3 shadow"
-                    id={`to_warehouse`}
-                    disabled={id !== ":id"}
-                  >
-                    <option value={null}>Выбирай склад...</option>
-                    {warehouses && warehouses?.filter((el) => el?.id !== from_warehouse)?.map((item) => (
-                      <option key={item?.id} value={item?.id}>{item?.name}</option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-2 gap-4 items-end w-full mb-3">
+                  <div className="flex flex-col">
+                    <label htmlFor={`from_warehouse`} className="block text-gray-700 text-sm font-bold mb-2 ml-3">
+                      Со склада
+                    </label>
+                    <select
+                      value={from_warehouse || ""}
+                      onChange={(e) => setFromWarehouse(e.target.value)}
+                      className="w-full border rounded py-1.5 px-3 shadow"
+                      id={`from_warehouse`}
+                      disabled={id !== ":id"}
+                    >
+                      <option value={null}>Выбирай склад...</option>
+                      {warehouses && warehouses?.filter((el) => el?.id !== to_warehouse)?.map((item) => (
+                        <option key={item?.id} value={item?.id}>{item?.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <label htmlFor={`to_warehouse`} className="block text-gray-700 text-sm font-bold mb-2 ml-3">
+                      На склад
+                    </label>
+                    <select
+                      value={to_warehouse || ""}
+                      onChange={(e) => setToWarehouse(e.target.value)}
+                      className="w-full border rounded py-1.5 px-3 shadow"
+                      id={`to_warehouse`}
+                      disabled={id !== ":id"}
+                    >
+                      <option value={null}>Выбирай склад...</option>
+                      {warehouses && warehouses?.filter((el) => el?.id !== from_warehouse)?.map((item) => (
+                        <option key={item?.id} value={item?.id}>{item?.name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="mb-6">
-              <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2 ml-3">Комментария</label>
-              <textarea
-                className="w-full border rounded shadow focus:outline-none p-2"
-                rows={5}
-                value={description || ''}
-                onChange={(e) => setDescription(e.target.value)}
-                id="description"
-                disabled={id !== ":id"}
-              />
-            </div>
-            
-            <div className="mb-6 w-full flex flex-wrap">
-              {id !== ":id" && file ? (
-                <a href={file} target="_blank" download={"download"}
-                   className="text-blue-400 cursor-pointer underline underline-offset-1">Номенклатура продуктов</a>
-              ) : (
-                <>
-                  <label className="block text-gray-700 text-sm font-bold mb-2 ml-3">Номенклатура продуктов</label>
-                  <input
-                    type="file"
-                    className="block w-full border rounded-lg p-2"
-                    onChange={(e) => handleFileUpload(e)}
+              
+              {description && (
+                <div className="mb-6">
+                  <label htmlFor="description"
+                         className="block text-gray-700 text-sm font-bold mb-2 ml-3">Комментария</label>
+                  <textarea
+                    className="w-full border rounded shadow focus:outline-none p-2"
+                    rows={5}
+                    value={description || ''}
+                    onChange={(e) => setDescription(e.target.value)}
+                    id="description"
+                    disabled={id !== ":id"}
                   />
-                </>
+                </div>
               )}
+              
+              <div className="mb-6 w-full flex flex-wrap">
+                {id !== ":id" && file && (
+                  <a href={file} target="_blank" download={"download"}
+                     className="text-blue-400 cursor-pointer underline underline-offset-1">Номенклатура продуктов</a>
+                )}
+              </div>
             </div>
             
             {id === ":id" && (
@@ -223,36 +246,65 @@ const CreateTransfer = () => {
             )}
             
             {id !== ":id" && (
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead
-                  className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-                >
-                <tr>
-                  <th scope="col" className="px-3 py-3"></th>
-                  <th scope="col" className="px-4 py-3">Пользователь-участник</th>
-                  <th scope="col" className="px-4 py-3">Пользователь-участник тел</th>
-                  <th scope="col" className="px-4 py-3">Статус</th>
-                </tr>
-                </thead>
-                <tbody>
-                {transfer?.participants?.map((item, index) => (
-                  <tr key={item?.id} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
-                    <td className={'px-4 py-1'}>
-                      {index + 1}
-                    </td>
-                    <td className={'px-3 py-1'}>
-                      {item?.participant_user?.first_name}
-                    </td>
-                    <td className={'px-3 py-1'}>
-                      {item?.participant_user?.phone_number}
-                    </td>
-                    <td className={'px-3 py-1'}>
-                      {item?.agreement_status}
-                    </td>
-                  </tr>
+              <>
+                <h2 className="text-lg font-semibold mb-3 w-full">Обзор процесса</h2>
+                {transfer?.participants?.map((item) => (
+                  <table key={item?.id} className="w-full mb-4 border text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <tbody>
+                    <tr
+                      className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+                    >
+                      <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Имя</th>
+                      <td className={'text-center px-2 py-2'}>{item?.participant_user?.first_name}</td>
+                    </tr>
+                    <tr
+                      className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+                    >
+                      <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Телефон номер</th>
+                      <td className={'text-center px-2 py-2'}>{item?.participant_user?.phone_number}</td>
+                    </tr>
+                    <tr
+                      className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+                    >
+                      <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Роль</th>
+                      <td className={'text-center px-2 py-2'}>{item?.user_roles}</td>
+                    </tr>
+                    <tr
+                      className={'text-start hover:bg-gray-100 hover:dark:bg-gray-800 hover:dark:text-white font-medium whitespace-nowrap border-b-1'}
+                    >
+                      <th className={'text-start w-2/4 border-r-1 px-2 py-2'}>Статус</th>
+                      <td className={'text-center px-2 py-2'}>{item?.agreement_status}</td>
+                    </tr>
+                    </tbody>
+                  </table>
                 ))}
-                </tbody>
-              </table>
+                <div className="w-full flex justify-between items-end mt-4">
+                  <div className="flex flex-col w-full">
+                    <label htmlFor={`confirm`} className="block text-gray-700 text-sm font-bold mb-2 ml-3">
+                      Подтверждение
+                    </label>
+                    <select
+                      value={agreement_status || ""}
+                      onChange={(e) => setAgreementStatus(e.target.value)}
+                      className="w-full border rounded py-1.5 px-3 shadow"
+                      id={`confirm`}
+                    >
+                      <option value={1}>Выбирай статус...</option>
+                      <option value={2}>Подтверждение</option>
+                      <option value={3}>Отмена</option>
+                    </select>
+                  </div>
+                  <div className="w-1/3 flex">
+                    <Button
+                      text={loading ? 'Loading...' : ("Передача продуктов")}
+                      style={{backgroundColor: currentColor}}
+                      className="text-white rounded flex ml-auto disabled:opacity-25"
+                      onClick={confirmTransform}
+                      disabled={loading || agreement_status === 1}
+                    />
+                  </div>
+                </div>
+              </>
             )}
           </>
         )
@@ -325,14 +377,6 @@ const CreateTransfer = () => {
                 </div>
               </div>
             ))}
-            <button
-              className="text-white px-4 py-2 rounded-lg mx-auto disabled:opacity-25"
-              onClick={handleAddConfigs}
-              disabled={id !== ":id"}
-              style={{backgroundColor: currentColor}}
-            >
-              Добавить товар
-            </button>
           </>
         )
       default:
@@ -345,7 +389,7 @@ const CreateTransfer = () => {
       <div className="card">
         <DetailNav
           id={id !== ':id' ? transfer?.id : ''}
-          name={id !== ':id' ? transfer?.name : ''}
+          name={id !== ':id' ? transfer?.status : ''}
           status={''}
         />
       </div>
