@@ -115,7 +115,7 @@ const CreateWarehouse = () => {
             {users && users?.map((item) => (
               <option
                 value={item?.id}
-                key={item?.id}>{item?.first_name} / {item?.last_name} / {item?.phone_number}</option>
+                key={item?.id}>{item?.first_name} / {item?.last_name} / {item?.phone_number} / {item?.user_roles}</option>
             ))}
           </select>
         </div>
