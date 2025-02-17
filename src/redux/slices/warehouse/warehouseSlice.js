@@ -106,10 +106,37 @@ export const getHistoryProductForWarehouse = createAsyncThunk(
   }
 )
 
+export const downloadExcelWarehouse = createAsyncThunk(
+  "warehouse/downloadExcelWarehouse",
+  async ({id}) => {
+    try {
+      const response = await instance.post(`warehouse/excel/${id}`, {}, {
+        headers: {"Content-type": "blob"},
+        responseType: "arraybuffer"
+      })
+      return response.data
+    } catch (e) {
+      return e;
+    }
+  }
+)
+
 const warehouseSlice = createSlice({
   name: "warehouse",
   initialState,
   extraReducers: builder => {
+    // downloadExcelWarehouse
+    builder
+      .addCase(downloadExcelWarehouse.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(downloadExcelWarehouse.fulfilled, (state) => {
+        state.loading = false
+      })
+      .addCase(downloadExcelWarehouse.rejected, (state) => {
+        state.loading = false
+      })
+    
     // getHistoryProductForWarehouse
     builder
       .addCase(getHistoryProductForWarehouse.pending, (state) => {

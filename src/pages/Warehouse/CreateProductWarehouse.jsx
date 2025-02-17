@@ -2,10 +2,10 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {Header, Pagination} from "../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {getProductsForWarehouse} from "../../redux/slices/warehouse/warehouseSlice";
+import {downloadExcelWarehouse, getProductsForWarehouse} from "../../redux/slices/warehouse/warehouseSlice";
 import {useStateContext} from "../../contexts/ContextProvider";
 import Loader from "../../components/Loader";
-import {ArrowPathIcon, EyeIcon, FunnelIcon} from "@heroicons/react/16/solid";
+import {ArrowPathIcon, EyeIcon, FolderIcon, FunnelIcon} from "@heroicons/react/16/solid";
 import {getAllCategories} from "../../redux/slices/utils/category/categorySlice";
 import {Debounce} from "../../utils/Debounce";
 
@@ -56,19 +56,74 @@ const CreateProductWarehouse = () => {
     }))
   }
   
+  const handleExcel = () => {
+    dispatch(downloadExcelWarehouse({id})).then((res) => {
+      if (res.meta?.requestStatus === "fulfilled") {
+        console.log(res)
+        const fileURL = URL.createObjectURL(new Blob([res.payload]));
+        const link = document.createElement("a");
+        link.href = fileURL;
+        link.setAttribute("download", `${state?.name}.xls`);
+        document.body.appendChild(link);
+        link.click();
+      } else {
+      }
+    })
+  }
+  
   return (
     <div className="card">
-      <div className={'flex items-start justify-between mb-4'}>
-        <Header category="Страница" title={state?.name} />
+      <div className={'flex items-start justify-between mb-4 flex-wrap'}>
+        <Header category="Страница" title={state?.name}/>
+        
+        <div className="flex items-center gap-6 pt-5">
+          {handleFilter ? (
+            <button
+              className={`px-2 py-1 rounded border text-center`}
+              style={{borderColor: currentColor}}
+              onClick={() => {
+                setFilter(false)
+                setProductName(undefined)
+                setUniqueCode(undefined)
+                setCategory(undefined)
+                dispatch(getProductsForWarehouse({
+                  warehouse_id: id,
+                  filters: {page: 1, page_size: 10},
+                }))
+              }}
+            >
+              <ArrowPathIcon className="size-6" fill={currentColor}/>
+            </button>
+          ) : (
+            <button title="filter" onClick={() => setFilter(true)}>
+              <FunnelIcon className="size-6" color={currentColor}/>
+            </button>
+          )}
+          
+          <button
+            title="Excel" onClick={handleExcel} className="rounded px-3 py-1 disabled:opacity-25"
+            style={{border: `1px solid ${currentColor}`}}
+          >
+            <FolderIcon className="size-6" fill={currentColor}/>
+          </button>
+          
+          <button
+            className={'px-4 py-2 rounded text-white'}
+            style={{backgroundColor: currentColor}}
+            onClick={() => navigate('addProduct')}
+          >
+            Добавить товар
+          </button>
+        </div>
         
         {handleFilter && (
           <>
             <div className="flex justify-center gap-4 items-center w-[65%]">
               <div className={'flex flex-col w-[35%]'}>
-								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-									Код продукта
-								</label>
-								<input
+                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                  Код продукта
+                </label>
+                <input
                   value={unique_code || ""}
                   onChange={(e) => setUniqueCode(e.target.value)}
                   name="amount"
@@ -76,7 +131,7 @@ const CreateProductWarehouse = () => {
                   type="text"
                   className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
                 />
-							</div>
+              </div>
               <div className={'flex flex-col w-[35%]'}>
                 <label
                   className="block text-gray-700 text-sm font-bold mb-1 ml-3"
@@ -103,10 +158,10 @@ const CreateProductWarehouse = () => {
                 </select>
               </div>
               <div className={'flex flex-col w-[35%]'}>
-								<label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
-									Название продукта
-								</label>
-								<input
+                <label className="block text-gray-700 text-sm font-bold mb-1 ml-3" htmlFor="amount">
+                  Название продукта
+                </label>
+                <input
                   value={product_name || ""}
                   onChange={(e) => setProductName(e.target.value)}
                   name="amount"
@@ -114,50 +169,17 @@ const CreateProductWarehouse = () => {
                   type="text"
                   className="rounded w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow focus:border-blue-500 border mb-1"
                 />
-							</div>
+              </div>
             </div>
           </>
         )}
-        
-        <div className="flex items-center gap-6 pt-5">
-          {handleFilter ? (
-            <button
-              className={`px-2 py-1 rounded border text-center`}
-              style={{borderColor: currentColor}}
-              onClick={() => {
-                setFilter(false)
-                setProductName(undefined)
-                setUniqueCode(undefined)
-                setCategory(undefined)
-                dispatch(getProductsForWarehouse({
-                  warehouse_id: id,
-                  filters: {page: 1, page_size: 10},
-                }))
-              }}
-            >
-              <ArrowPathIcon className="size-6" fill={currentColor} />
-            </button>
-          ) : (
-            <button title="filter" onClick={() => setFilter(true)}>
-              <FunnelIcon className="size-6" color={currentColor} />
-            </button>
-          )}
-          
-          <button
-            className={'px-4 py-2 rounded text-white'}
-            style={{backgroundColor: currentColor}}
-            onClick={() => navigate('addProduct')}
-          >
-            Добавить товар
-          </button>
-        </div>
       </div>
       
       <div className="relative overflow-x-auto shadow-md sm:rounded">
         {
           loading
             ?
-            <Loader />
+            <Loader/>
             :
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead
