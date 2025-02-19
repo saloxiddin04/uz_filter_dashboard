@@ -16,7 +16,7 @@ import {
   CreateProductWarehouse,
   AddProductWarehouse,
   WarehouseProductDetail,
-  TransferWarehouse, CreateTransferWarehouse
+  TransferWarehouse, CreateTransferWarehouse, Discounts, CreateDiscounts, CreateDiscountAssignments, DiscountAssignments
 } from './pages';
 
 export const routes = [
@@ -37,6 +37,12 @@ export const routes = [
   
   {path: '/products', element: Products},
   {path: '/products/:id', element: CreateProduct},
+  
+  {path: "/discounts", element: Discounts},
+  {path: "/discounts/:id", element: CreateDiscounts},
+  
+  {path: "/discounts_assignments", element: DiscountAssignments},
+  {path: "/discounts_assignments/:id", element: CreateDiscountAssignments},
   
   {path: '/employees', element: Employees},
   

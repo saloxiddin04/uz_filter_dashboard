@@ -14,6 +14,12 @@ export {default as CreateBrands} from './utils/Brands/CreateBrand';
 export { default as Products } from './Products/Products'
 export { default as CreateProduct } from './Products/CreateProduct'
 
+export {default as Discounts} from './Discounts/Discounts'
+export {default as CreateDiscounts} from './Discounts/CreateDiscounts'
+
+export {default as DiscountAssignments} from './DiscountAssignments/DiscountAssignments'
+export {default as CreateDiscountAssignments} from './DiscountAssignments/CreateAssignments'
+
 export {default as Employees} from './Employees/Employees'
 
 export {default as Warehouse} from './Warehouse/Warehouse'

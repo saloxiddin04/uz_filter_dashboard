@@ -19,7 +19,11 @@ const menuData = [
   },
   {
     title: "Продукты",
-    path: '/products'
+    children: [
+      {name: "Товары", path: "/products"},
+      {name: "Скидки", path: "/discounts"},
+      {name: "Скидочные назначения", path: "/discounts_assignments"}
+    ]
   },
   {
     title: "Утилиты",
