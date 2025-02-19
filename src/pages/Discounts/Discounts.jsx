@@ -4,7 +4,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {useStateContext} from "../../contexts/ContextProvider";
 import Loader from "../../components/Loader";
-import {getAllDiscounts} from "../../redux/slices/discounts/discountSlice";
+import {deleteDiscount, getAllDiscounts} from "../../redux/slices/discounts/discountSlice";
+import moment from "moment";
+import {EyeIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {toast} from "react-toastify";
 
 const Discounts = () => {
 	const dispatch = useDispatch()
@@ -15,10 +18,20 @@ const Discounts = () => {
 	
 	useEffect(() => {
 		dispatch(getAllDiscounts({page: currentPage, page_size: 10}))
-	}, [])
+	}, [dispatch])
 	
 	const handlePageChange = (page) => {
 		dispatch(getAllDiscounts({page, page_size: 10}))
+	}
+	
+	const handleDeleteDiscount = async (id) => {
+		try {
+			await dispatch(deleteDiscount({id}))
+			dispatch(getAllDiscounts({page: currentPage, page_size: 10}))
+			toast.success("Успешно")
+		} catch (e) {
+			toast.success("Ошибка")
+		}
 	}
 	
 	return (
@@ -48,14 +61,48 @@ const Discounts = () => {
 								>
 								<tr>
 									<th scope="col" className="px-3 py-3"></th>
-									<th scope="col" className="px-4 py-3">Название продукта</th>
-									<th scope="col" className="px-4 py-3">Категория</th>
-									<th scope="col" className="px-4 py-3">Изображения</th>
+									<th scope="col" className="px-4 py-3">Название скидка</th>
+									<th scope="col" className="px-4 py-3">Скидка (%)</th>
+									<th scope="col" className="px-4 py-3">Статус</th>
+									<th scope="col" className="px-4 py-3">Дата оканчания скидка</th>
 									<th scope="col" className="px-4 py-3">Время создания</th>
 									<th scope="col" className="px-4 py-3">Действие</th>
 								</tr>
 								</thead>
 								<tbody>
+								{discounts?.result?.map((item, index) => (
+									<tr key={item?.id} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
+										<td className={'px-4 py-1'}>
+											{index + 1}
+										</td>
+										<td className={'px-3 py-1'}>
+											{item?.name}
+										</td>
+										<td className={'px-3 py-1'}>
+											{item?.discount}
+										</td>
+										<td className={'px-3 py-1'}>
+											{item?.active ? "Актив" : "Не актив"}
+										</td>
+										<td className={'px-3 py-1'}>
+											{moment(item?.deadline).format("DD-MM-YYYY")}
+										</td>
+										<td className={'px-3 py-1'}>
+											{moment(item?.created_time).format("DD-MM-YYYY")}
+										</td>
+										<td className="px-4 py-4 flex">
+											<EyeIcon
+												style={{color: currentColor}}
+												className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
+												onClick={() => navigate(`/discounts/${item.id}`)}
+											/>
+											<TrashIcon
+												className={`size-6 text-red-500 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
+												onClick={() => handleDeleteDiscount(item?.id)}
+											/>
+										</td>
+									</tr>
+								))}
 								</tbody>
 							</table>
 					}

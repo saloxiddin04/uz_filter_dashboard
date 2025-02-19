@@ -12,7 +12,7 @@ export const getAllDiscounts = createAsyncThunk(
 	"discounts/getAllDiscounts",
 	async (params) => {
 		try {
-			const response = await instance.get('product/discounts', {params})
+			const response = await instance.get('product/discounts/', {params})
 			return response.data
 		} catch (e) {
 			return e;
@@ -24,7 +24,7 @@ export const getDiscount = createAsyncThunk(
 	"discounts/getDiscount",
 	async ({id}) => {
 		try {
-			const response = await instance.get(`product/discounts/${id}`)
+			const response = await instance.get(`product/discounts/${id}/`)
 			return response.data
 		} catch (e) {
 			return e;
