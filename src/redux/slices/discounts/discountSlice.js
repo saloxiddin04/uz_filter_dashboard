@@ -1,6 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import instance from "../../../API";
-import dashboard from "../../../pages/Dashboard/Dashboard";
 
 const initialState = {
 	discounts: null,

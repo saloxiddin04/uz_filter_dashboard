@@ -8,6 +8,7 @@ import usersSlice from "./slices/users/usersSlice";
 import warehouseSlice from "./slices/warehouse/warehouseSlice";
 import transferWarehouseSlice from "./slices/transferWarehouse/transferWarehouseSlice";
 import discountSlice from "./slices/discounts/discountSlice";
+import discountAssignmentSlice from "./slices/discountAssignment/discountAssignmentSlice";
 
 const appReducer = combineReducers({
   user: authSlice,
@@ -18,7 +19,8 @@ const appReducer = combineReducers({
   users: usersSlice,
   warehouse: warehouseSlice,
   transfer: transferWarehouseSlice,
-  discount: discountSlice
+  discount: discountSlice,
+  discountAssignment: discountAssignmentSlice
 });
 
 const rootReducer = (state, action) => {
