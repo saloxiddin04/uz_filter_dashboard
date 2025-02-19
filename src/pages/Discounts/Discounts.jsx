@@ -6,7 +6,7 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import Loader from "../../components/Loader";
 import {deleteDiscount, getAllDiscounts} from "../../redux/slices/discounts/discountSlice";
 import moment from "moment";
-import {EyeIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {toast} from "react-toastify";
 
 const Discounts = () => {
@@ -92,6 +92,11 @@ const Discounts = () => {
 										</td>
 										<td className="px-4 py-4 flex">
 											<EyeIcon
+												style={{color: currentColor}}
+												className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
+												onClick={() => navigate(`/discounts/${item.id}`)}
+											/>
+											<PencilIcon
 												style={{color: currentColor}}
 												className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
 												onClick={() => navigate(`/discounts/${item.id}`)}
