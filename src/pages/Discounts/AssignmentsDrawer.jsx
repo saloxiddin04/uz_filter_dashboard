@@ -122,6 +122,7 @@ const AssignmentsDrawer = ({id, onclose}) => {
 								onChange={(e) => setDiscount(e.target.value)}
 								className="w-full border rounded py-1.5 px-3 shadow"
 								id={`product`}
+								disabled={true}
 							>
 								<option value={null}>Выбрать...</option>
 								{discounts?.result?.map((item) => (
