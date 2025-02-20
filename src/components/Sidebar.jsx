@@ -22,7 +22,6 @@ const menuData = [
     children: [
       {name: "Товары", path: "/products"},
       {name: "Скидки", path: "/discounts"},
-      {name: "Скидочные назначения", path: "/discounts_assignments"}
     ]
   },
   {

@@ -47,7 +47,7 @@ export const patchDiscount = createAsyncThunk(
 	"discounts/patchDiscount",
 	async ({data, id}) => {
 		try {
-			const response = await instance.patch(`product/discounts/${id}`, data)
+			const response = await instance.patch(`product/discounts/${id}/`, data)
 			return response.data
 		} catch (e) {
 			return e;

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Header, Pagination} from "../../components";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
@@ -6,8 +6,9 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import Loader from "../../components/Loader";
 import {deleteDiscount, getAllDiscounts} from "../../redux/slices/discounts/discountSlice";
 import moment from "moment";
-import {EyeIcon, PencilIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {EyeIcon, PencilIcon, PlusIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {toast} from "react-toastify";
+import AssignmentsDrawer from "./AssignmentsDrawer";
 
 const Discounts = () => {
 	const dispatch = useDispatch()
@@ -15,6 +16,9 @@ const Discounts = () => {
 	const {currentColor, currentPage} = useStateContext()
 	
 	const {loading, discounts} = useSelector(state => state.discount)
+	
+	const [drawer, setDrawer] = useState(false)
+	const [id, setId] = useState(null)
 	
 	useEffect(() => {
 		dispatch(getAllDiscounts({page: currentPage, page_size: 10}))
@@ -101,6 +105,14 @@ const Discounts = () => {
 												className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
 												onClick={() => navigate(`/discounts/${item.id}`)}
 											/>
+											<PlusIcon
+												style={{color: currentColor}}
+												className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
+												onClick={() => {
+													setId(item?.id)
+													setDrawer(true)
+												}}
+											/>
 											<TrashIcon
 												className={`size-6 text-red-500 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
 												onClick={() => handleDeleteDiscount(item?.id)}
@@ -118,6 +130,16 @@ const Discounts = () => {
 					itemsPerPage={10}
 					onPageChange={handlePageChange}
 				/>
+				
+				{drawer && (
+					<AssignmentsDrawer
+						id={id}
+						onclose={() => {
+							setDrawer(false)
+							setId(null)
+						}}
+					/>
+				)}
 			</div>
 		</>
 	);

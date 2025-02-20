@@ -5,6 +5,9 @@ import {useStateContext} from "../../contexts/ContextProvider";
 import {createDiscount, getDiscount, patchDiscount} from "../../redux/slices/discounts/discountSlice";
 import {Button, DetailNav, Input} from "../../components";
 import {toast} from "react-toastify";
+import moment from "moment/moment";
+import {EyeIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {deleteAssignment} from "../../redux/slices/discountAssignment/discountAssignmentSlice";
 
 const CreateDiscounts = () => {
 	const dispatch = useDispatch()
@@ -15,7 +18,7 @@ const CreateDiscounts = () => {
 	const {loading, discount} = useSelector(state => state.discount)
 	
 	const [name, setName] = useState(null)
-	const [active, setActive] = useState(false)
+	const [active, setActive] = useState(true)
 	const [discountState, setDiscount] = useState(null)
 	const [deadline, setDeadline] = useState(null)
 	
@@ -87,6 +90,22 @@ const CreateDiscounts = () => {
 		}
 	}
 	
+	const handleDeleteAssignment = async (idParams) => {
+		try {
+			await dispatch(deleteAssignment({id: idParams})).then(() => {
+				toast.success("Успешно")
+			})
+			dispatch(getDiscount({id})).then(({payload}) => {
+				setName(payload?.name)
+				setActive(payload?.active)
+				setDiscount(payload?.discount)
+				setDeadline(payload?.deadline?.split("T")[0])
+			})
+		} catch (e) {
+			return e;
+		}
+	}
+	
 	return (
 		<>
 			<div className="card">
@@ -155,6 +174,61 @@ const CreateDiscounts = () => {
 						disabled={loading}
 					/>
 				</div>
+				
+				{id !== ":id" && (
+					<div className="relative overflow-x-auto mt-6">
+						<h2 className="text-lg font-semibold mb-3 w-full">Список скидочные товары</h2>
+						<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+							<thead
+								className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+							>
+							<tr>
+								<th scope="col" className="px-3 py-3"></th>
+								<th scope="col" className="px-4 py-3">Название продукта</th>
+								<th scope="col" className="px-4 py-3">Категория</th>
+								<th scope="col" className="px-4 py-3">Изображения</th>
+								<th scope="col" className="px-4 py-3">Время создания</th>
+								<th scope="col" className="px-4 py-3">Действие</th>
+							</tr>
+							</thead>
+							<tbody>
+							{discount?.assignments?.map((item, index) => (
+								<tr key={item?.id} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
+									<td className={'px-4 py-1'}>
+										{index + 1}
+									</td>
+									<td className={'px-3 py-1'}>
+										{item?.product?.name}
+									</td>
+									<td className={'px-3 py-1'}>
+										{item?.product?.category?.name}
+									</td>
+									<td className={'px-3 py-1'}>
+										{item?.product?.product_files[0]?.image?.file && (
+											<img className="w-16 aspect-auto" loading="lazy" src={item?.product?.product_files[0]?.image?.file}
+											     alt={item?.product?.product_files[0]?.image?.file}/>
+										)}
+									</td>
+									<td className={'px-3 py-1'}>
+										{moment(item?.created_time).format('DD-MM-YYYY')}
+									</td>
+									<td className="px-4 py-6 flex">
+										<EyeIcon
+											style={{color: currentColor}}
+											className={`size-6 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
+											onClick={() => navigate(`/products/${item?.product?.id}`)}
+										/>
+										<TrashIcon
+											className={`size-6 text-red-500 dark:text-blue-500 hover:underline cursor-pointer mr-auto`}
+											onClick={() => handleDeleteAssignment(item?.id)}
+										/>
+									</td>
+								</tr>
+							))}
+							</tbody>
+						</table>
+					</div>
+				)}
 			</div>
 		</>
 	);

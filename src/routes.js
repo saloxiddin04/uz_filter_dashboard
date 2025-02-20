@@ -41,9 +41,6 @@ export const routes = [
   {path: "/discounts", element: Discounts},
   {path: "/discounts/:id", element: CreateDiscounts},
   
-  {path: "/discounts_assignments", element: DiscountAssignments},
-  {path: "/discounts_assignments/:id", element: CreateDiscountAssignments},
-  
   {path: '/employees', element: Employees},
   
   {path: '/warehouses', element: Warehouse},
