@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import instance from "../../../API";
+import {toast} from "react-toastify";
 
 const initialState = {
   loading: false,
@@ -50,6 +51,7 @@ export const transferConfirmation = createAsyncThunk(
       const response = await instance.post(`warehouse/transfers-confirm/${id}`, {agreement_status: Number(data)})
       return response.data
     } catch (e) {
+      toast.error(e?.response?.data?.errors?.participant || e?.response?.data?.errors?.error)
       return e;
     }
   }
