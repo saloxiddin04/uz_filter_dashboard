@@ -76,46 +76,6 @@ const CreateProductWarehouse = () => {
       <div className={'flex items-start justify-between mb-4 flex-wrap'}>
         <Header category="Страница" title={state?.name}/>
         
-        <div className="flex items-center gap-6 pt-5">
-          {handleFilter ? (
-            <button
-              className={`px-2 py-1 rounded border text-center`}
-              style={{borderColor: currentColor}}
-              onClick={() => {
-                setFilter(false)
-                setProductName(undefined)
-                setUniqueCode(undefined)
-                setCategory(undefined)
-                dispatch(getProductsForWarehouse({
-                  warehouse_id: id,
-                  filters: {page: 1, page_size: 10},
-                }))
-              }}
-            >
-              <ArrowPathIcon className="size-6" fill={currentColor}/>
-            </button>
-          ) : (
-            <button title="filter" onClick={() => setFilter(true)}>
-              <FunnelIcon className="size-6" color={currentColor}/>
-            </button>
-          )}
-          
-          <button
-            title="Excel" onClick={handleExcel} className="rounded px-3 py-1 disabled:opacity-25"
-            style={{border: `1px solid ${currentColor}`}}
-          >
-            <FolderIcon className="size-6" fill={currentColor}/>
-          </button>
-          
-          <button
-            className={'px-4 py-2 rounded text-white'}
-            style={{backgroundColor: currentColor}}
-            onClick={() => navigate('addProduct')}
-          >
-            Добавить товар
-          </button>
-        </div>
-        
         {handleFilter && (
           <>
             <div className="flex justify-center gap-4 items-center w-[65%]">
@@ -173,6 +133,46 @@ const CreateProductWarehouse = () => {
             </div>
           </>
         )}
+        
+        <div className="flex items-center gap-6 pt-5">
+          {handleFilter ? (
+            <button
+              className={`px-2 py-1 rounded border text-center`}
+              style={{borderColor: currentColor}}
+              onClick={() => {
+                setFilter(false)
+                setProductName(undefined)
+                setUniqueCode(undefined)
+                setCategory(undefined)
+                dispatch(getProductsForWarehouse({
+                  warehouse_id: id,
+                  filters: {page: 1, page_size: 10},
+                }))
+              }}
+            >
+              <ArrowPathIcon className="size-6" fill={currentColor}/>
+            </button>
+          ) : (
+            <button title="filter" onClick={() => setFilter(true)}>
+              <FunnelIcon className="size-6" color={currentColor}/>
+            </button>
+          )}
+          
+          <button
+            title="Excel" onClick={handleExcel} className="rounded px-3 py-1 disabled:opacity-25"
+            style={{border: `1px solid ${currentColor}`}}
+          >
+            <FolderIcon className="size-6" fill={currentColor}/>
+          </button>
+          
+          <button
+            className={'px-4 py-2 rounded text-white'}
+            style={{backgroundColor: currentColor}}
+            onClick={() => navigate('addProduct')}
+          >
+            Добавить товар
+          </button>
+        </div>
       </div>
       
       <div className="relative overflow-x-auto shadow-md sm:rounded">

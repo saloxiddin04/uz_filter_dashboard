@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {toast} from "react-toastify";
 import {getUserDetail, login, setAccessToken, setRefresh, setUser} from "../../redux/slices/auth/authSlice";
+import logo from "../../assets/images/logo.svg"
 
 const Login = () => {
 
@@ -45,15 +46,27 @@ const Login = () => {
   return (
     <>
       <div className="flex">
-        <div className={'flex justify-center items-center h-screen bg-login-bg w-2/4'}>
+        <div className={'flex flex-col justify-center items-center h-screen bg-login-bg w-2/4 px-10 text-center'}>
+          <img src={logo} alt="logo"/>
+          <h1 className="text-white text-xl">
+            Uzfiltr – Лидер в фильтрации
+          </h1>
+          <div className="w-full border border-white h-[1px] my-4"></div>
+          <p className="text-white">
+            «Узфильтр» — ведущий поставщик пневмолент, фильтровальных рукавов и иглоподобных тканей в Центральной Азии.
+            Мы помогаем очищать воздух и жидкости и защищать окружающую среду с помощью инновационных технологий.
+          </p>
+          <div className="w-full border border-white h-[1px] my-4"></div>
         </div>
-
+        
         <div className="flex flex-col justify-center items-center h-screen w-2/4">
           <div className="w-8/12 mx-auto">
             <div className={'flex flex-col'}>
-              <Input value={phone_number || ""} onChange={handlePhone} type={'text'} label={'Phone number'} className={'mb-4'} />
-              <Input value={password || ""} onChange={(e) => setPassword(e.target.value)} type={'password'} label={'Password'} className={'mb-4'} />
-              <Button text={'Login'} color={'white'} bg={'bg-blue-500'} className={'rounded'} onClick={handleLogin} />
+              <Input value={phone_number || ""} onChange={handlePhone} type={'text'} label={'Телефон номер'}
+                     className={'mb-4'}/>
+              <Input value={password || ""} onChange={(e) => setPassword(e.target.value)} type={'password'}
+                     label={'Пароль'} className={'mb-4'}/>
+              <Button text={'Логин'} color={'white'} bg={'bg-blue-500'} className={'rounded'} onClick={handleLogin}/>
             </div>
           </div>
         </div>

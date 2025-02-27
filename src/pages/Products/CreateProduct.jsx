@@ -36,7 +36,6 @@ const CreateProduct = () => {
       brand: null,
       unique_code: null,
       price: null,
-      discount: null,
       quantity: null,
       product_variant_attributes: [{
         attribute: null,
@@ -66,7 +65,6 @@ const CreateProduct = () => {
             brand: item?.brand?.id || null,
             unique_code: item?.unique_code || null,
             price: item?.price || null,
-            discount: item?.discount || null,
             quantity: item?.quantity || null,
             product_variant_attributes: item?.product_variant_attributes?.map((attr) => ({
               attribute: attr?.attribute?.id || null,
@@ -137,7 +135,6 @@ const CreateProduct = () => {
         brand: null,
         unique_code: null,
         price: null,
-        discount: null,
         quantity: null,
         product_variant_attributes: [
           {
@@ -223,11 +220,6 @@ const CreateProduct = () => {
       
       if (!variant.price || isNaN(variant.price) || variant.price <= 0) {
         toast.error(`Variant ${i + 1}: Price must be a positive number.`);
-        return false;
-      }
-      
-      if (variant.discount && (isNaN(variant.discount) || variant.discount < 0)) {
-        toast.error(`Variant ${i + 1}: Discount must be a valid number.`);
         return false;
       }
       
@@ -458,18 +450,18 @@ const CreateProduct = () => {
                   />
                 </div>
                 
-                <div className="flex flex-col">
-                  <Input
-                    type="text"
-                    placeholder="Скидка"
-                    label={'Скидка'}
-                    value={variant.discount || ""}
-                    onChange={(e) =>
-                      handleVariantChange(index, "discount", e.target.value)
-                    }
-                    className={'w-full'}
-                  />
-                </div>
+                {/*<div className="flex flex-col">*/}
+                {/*  <Input*/}
+                {/*    type="text"*/}
+                {/*    placeholder="Скидка"*/}
+                {/*    label={'Скидка'}*/}
+                {/*    value={variant.discount || ""}*/}
+                {/*    onChange={(e) =>*/}
+                {/*      handleVariantChange(index, "discount", e.target.value)*/}
+                {/*    }*/}
+                {/*    className={'w-full'}*/}
+                {/*  />*/}
+                {/*</div>*/}
                 
                 {/*<div className="flex flex-col">*/}
                 {/*  <Input*/}
