@@ -15,16 +15,18 @@ const CreateProduct = () => {
   const navigate = useNavigate()
   const {currentColor} = useStateContext();
   const {id} = useParams()
-  
+
   const {loading, product} = useSelector((state) => state.product)
-  
+
   const {categories} = useSelector(state => state.category)
   const {brands} = useSelector(state => state.brand)
   const {attributes} = useSelector(state => state.attribute)
-  
+
   const [name, setName] = useState(null)
   const [description, setDescription] = useState(null)
   const [category, setCategory] = useState(null)
+  const [product_type, setProductType] = useState(null)
+  const [unit_type, setUnitType] = useState(null)
   const [product_files, setProductFiles] = useState([
     {
       image: null
@@ -43,13 +45,13 @@ const CreateProduct = () => {
       }]
     }
   ])
-  
+
   useEffect(() => {
     dispatch(getAllBrands())
     dispatch(getAllAttributes())
     dispatch(getAllCategories())
   }, []);
-  
+
   useEffect(() => {
     if (id !== ':id') {
       dispatch(getProduct(id)).then(({payload}) => {
@@ -75,26 +77,26 @@ const CreateProduct = () => {
       })
     }
   }, [id, dispatch]);
-  
+
   const handleAddFile = () => {
     setProductFiles([...product_files, {image: null}]);
   };
-  
+
   const handleRemoveFile = (index) => {
     const updatedFiles = product_files?.filter((_, i) => i !== index);
     setProductFiles(updatedFiles);
   };
-  
+
   const handleFileUpload = (e, index) => {
     const file = e.target.files[0];
-    
+
     if (!file) {
       return toast.error('No file selected');
     }
-    
+
     const formData = new FormData();
     formData.append('file', file);
-    
+
     dispatch(setLoading(true));
     dispatch(fileUpload(formData))
       .then(({payload}) => {
@@ -113,10 +115,10 @@ const CreateProduct = () => {
         return toast.error('Something went wrong');
       });
   };
-  
+
   const handleVariantChange = (index, field, value) => {
     const updatedVariants = [...product_variants];
-    
+
     if (field === "quantity" || field === "price") {
       updatedVariants[index][field] = Number(value) || 0;
     } else {
@@ -126,7 +128,7 @@ const CreateProduct = () => {
     // updatedVariants[index][field] = value;
     setProductVariants(updatedVariants);
   };
-  
+
   const handleAddVariant = () => {
     setProductVariants([
       ...product_variants,
@@ -145,18 +147,18 @@ const CreateProduct = () => {
       },
     ]);
   };
-  
+
   const handleRemoveVariant = (index) => {
     const updatedVariants = product_variants.filter((_, i) => i !== index);
     setProductVariants(updatedVariants);
   };
-  
+
   const handleAttributeChange = (variantIndex, attrIndex, field, value) => {
     const updatedVariants = [...product_variants];
     updatedVariants[variantIndex].product_variant_attributes[attrIndex][field] = value;
     setProductVariants(updatedVariants);
   };
-  
+
   const handleAddAttribute = (variantIndex) => {
     const updatedVariants = [...product_variants];
     updatedVariants[variantIndex].product_variant_attributes.push({
@@ -165,7 +167,7 @@ const CreateProduct = () => {
     });
     setProductVariants(updatedVariants);
   };
-  
+
   const handleRemoveAttribute = (variantIndex, attrIndex) => {
     const updatedVariants = [...product_variants];
     updatedVariants[variantIndex].product_variant_attributes = updatedVariants[
@@ -173,92 +175,104 @@ const CreateProduct = () => {
       ].product_variant_attributes.filter((_, i) => i !== attrIndex);
     setProductVariants(updatedVariants);
   };
-  
+
   const validateProduct = () => {
     if (!name || name.trim() === "") {
       toast.error("Product name is required.");
       return false;
     }
-    
+
     if (!description || description.trim() === "") {
       toast.error("Product description is required.");
       return false;
     }
-    
+
     if (!category) {
       toast.error("Please select a category.");
       return false;
     }
-    
+
+    if (!product_type) {
+      toast.error("Please select a product type.");
+      return false;
+    }
+
+    if (!unit_type) {
+      toast.error("Please select a unit type.");
+      return false;
+    }
+
     if (product_files.length === 0 || product_files.some(file => !file.image)) {
       toast.error("Please upload at least one product image.");
       return false;
     }
-    
+
     for (let i = 0; i < product_variants.length; i++) {
       const variant = product_variants[i];
-      
+
       if (!variant.category || variant.category.trim() === "") {
         toast.error(`Variant ${i + 1}: Category is required.`);
         return false;
       }
-      
+
       if (!variant.brand || variant.brand.trim() === "") {
         toast.error(`Variant ${i + 1}: Brand is required.`);
         return false;
       }
-      
+
       if (!variant.unique_code || variant.unique_code.trim() === "") {
         toast.error(`Variant ${i + 1}: Unique code is required.`);
         return false;
       }
-      
+
       if (product_variants.some((v, index) => v.unique_code === variant.unique_code && index !== i)) {
         toast.error(`Variant ${i + 1}: Unique code must be unique.`);
         return false;
       }
-      
+
       if (!variant.price || isNaN(variant.price) || variant.price <= 0) {
         toast.error(`Variant ${i + 1}: Price must be a positive number.`);
         return false;
       }
-      
+
       // if (!variant.quantity || isNaN(variant.quantity) || variant.quantity <= 0) {
       //   toast.error(`Variant ${i + 1}: Quantity must be a positive number.`);
       //   return false;
       // }
-      
+
       for (let j = 0; j < variant.product_variant_attributes.length; j++) {
         const attribute = variant.product_variant_attributes[j];
-        
+
         if (!attribute.attribute || attribute.attribute.trim() === "") {
           toast.error(`Variant ${i + 1}, Attribute ${j + 1}: Attribute name is required.`);
           return false;
         }
-        
+
         if (!attribute.value || attribute.value.trim() === "") {
           toast.error(`Variant ${i + 1}, Attribute ${j + 1}: Attribute value is required.`);
           return false;
         }
       }
     }
-    
+
     return true;
   };
-  
+
   const postProduct = () => {
     if (!validateProduct()) {
       return;
     }
-    
+
     const productData = {
       name,
       description,
       category,
       product_files,
       product_variants,
+      product_type,
+      unit_type
     };
-    
+
     dispatch(setLoading(true));
     dispatch(createProduct(productData))
       .then(() => {
@@ -272,7 +286,7 @@ const CreateProduct = () => {
         dispatch(setLoading(false));
       });
   }
-  
+
   return (
     <>
       <div className="card">
@@ -282,7 +296,7 @@ const CreateProduct = () => {
           status={''}
         />
       </div>
-      
+
       <div className="card">
         <div className="mb-6 flex items-center justify-between">
           <div className="w-[49%]">
@@ -298,7 +312,8 @@ const CreateProduct = () => {
           <div className="w-[49%] flex flex-col">
             <label
               htmlFor="category"
-              className="block text-gray-700 text-sm font-bold mb-2 ml-3">Продукт Категория</label>
+              className="block text-gray-700 text-sm font-bold mb-2 ml-3"
+            >Продукт Категория</label>
             <select
               value={category || ""}
               onChange={(e) => setCategory(e.target.value)}
@@ -309,7 +324,7 @@ const CreateProduct = () => {
               {categories?.map((item) => (
                 <React.Fragment key={item?.id}>
                   <option value={item?.id}>{item?.name}</option>
-                  
+
                   {item?.children?.map((el) => (
                     <option key={el?.id} value={el?.id}>
                       &nbsp;&nbsp;&nbsp; - {el?.name}
@@ -320,7 +335,51 @@ const CreateProduct = () => {
             </select>
           </div>
         </div>
-        
+
+        <div className="mb-6 flex items-center justify-between">
+          <div className="w-[49%] flex flex-col">
+            <label
+              htmlFor="category"
+              className="block text-gray-700 text-sm font-bold mb-2 ml-3"
+            >
+              Продукт тип
+            </label>
+            <select
+              value={product_type || ""}
+              onChange={(e) => setProductType(e.target.value)}
+              className={`w-full border rounded py-1.5 px-3 shadow focus:border focus:border-[${currentColor}]`}
+              id="category"
+            >
+              <option value={null}>Select...</option>
+              <option value={0}>продукт</option>
+              <option value={1}>сырье и материалы</option>
+            </select>
+          </div>
+
+          <div className="w-[49%] flex flex-col">
+            <label
+              htmlFor="category"
+              className="block text-gray-700 text-sm font-bold mb-2 ml-3"
+            >
+              Единица измерения
+            </label>
+            <select
+              value={unit_type || ""}
+              onChange={(e) => setUnitType(e.target.value)}
+              className={`w-full border rounded py-1.5 px-3 shadow focus:border focus:border-[${currentColor}]`}
+              id="category"
+            >
+              <option value={null}>Select...</option>
+              <option value={0}>шт.</option>
+              <option value={1}>миллиметр</option>
+              <option value={2}>сантиметр</option>
+              <option value={3}>метр</option>
+              <option value={4}>квадратсантиметр</option>
+              <option value={5}>квадратметр</option>
+            </select>
+          </div>
+        </div>
+
         <div className="mb-6">
           <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2 ml-3">Описание</label>
           <textarea
@@ -331,13 +390,13 @@ const CreateProduct = () => {
             id="description"
           />
         </div>
-        
+
         <div className="mb-6 w-full flex flex-wrap">
           <h2 className="text-lg font-semibold mb-3 w-full">Изображения продуктов</h2>
           {product_files.map((file, index) => (
             id !== ':id' ? (
               <div key={index} className="w-2/4 aspect-auto">
-                <img className="object-cover" src={file?.image} alt={file?.image} />
+                <img className="object-cover" src={file?.image} alt={file?.image}/>
               </div>
             ) : (
               <div key={index} className="flex flex-col gap-4 mb-3 border rounded p-2 w-full">
@@ -346,7 +405,7 @@ const CreateProduct = () => {
                   onClick={() => handleRemoveFile(index)}
                   disabled={product_files?.length === 1}
                 >
-                  <TrashIcon className="w-5 h-5" />
+                  <TrashIcon className="w-5 h-5"/>
                 </button>
                 <input
                   type="file"
@@ -366,7 +425,7 @@ const CreateProduct = () => {
             </button>
           )}
         </div>
-        
+
         <div className="mb-6 w-full flex flex-wrap">
           <h2 className="text-lg font-semibold mb-3 w-full">Варианты продукта</h2>
           {product_variants.map((variant, index) => (
@@ -376,7 +435,7 @@ const CreateProduct = () => {
                 onClick={() => handleRemoveVariant(index)}
                 disabled={id !== ':id' ? true : product_variants.length === 1}
               >
-                <TrashIcon className="w-5 h-5" />
+                <TrashIcon className="w-5 h-5"/>
               </button>
               <div className="grid grid-cols-3 gap-4 items-end w-full">
                 {/*<div className="flex flex-col">*/}
@@ -405,11 +464,12 @@ const CreateProduct = () => {
                 {/*    ))}*/}
                 {/*  </select>*/}
                 {/*</div>*/}
-                
+
                 <div className="flex flex-col">
                   <label
                     htmlFor="brand"
-                    className="block text-gray-700 text-sm font-bold mb-2 ml-3">Бренд продукта</label>
+                    className="block text-gray-700 text-sm font-bold mb-2 ml-3"
+                  >Бренд продукта</label>
                   <select
                     value={variant.brand || ""}
                     onChange={(e) =>
@@ -436,7 +496,7 @@ const CreateProduct = () => {
                     className={'w-full'}
                   />
                 </div>
-                
+
                 <div className="flex flex-col">
                   <Input
                     type="text"
@@ -449,7 +509,7 @@ const CreateProduct = () => {
                     className={'w-full'}
                   />
                 </div>
-                
+
                 {/*<div className="flex flex-col">*/}
                 {/*  <Input*/}
                 {/*    type="text"*/}
@@ -462,7 +522,7 @@ const CreateProduct = () => {
                 {/*    className={'w-full'}*/}
                 {/*  />*/}
                 {/*</div>*/}
-                
+
                 {/*<div className="flex flex-col">*/}
                 {/*  <Input*/}
                 {/*    type="text"*/}
@@ -507,7 +567,7 @@ const CreateProduct = () => {
                       onClick={() => handleRemoveAttribute(index, attrIndex)}
                       disabled={id !== ':id' ? true : variant.product_variant_attributes.length === 1}
                     >
-                      <TrashIcon className="w-5 h-5" />
+                      <TrashIcon className="w-5 h-5"/>
                     </button>
                   </div>
                 ))}
@@ -532,10 +592,10 @@ const CreateProduct = () => {
             }}
             disabled={id !== ':id'}
           >
-              Добавить вариант
-            </button>
-         </div>
-        
+            Добавить вариант
+          </button>
+        </div>
+
         {id === ':id' && (
           <div className="w-full flex">
             <Button
@@ -549,7 +609,8 @@ const CreateProduct = () => {
         )}
       </div>
     </>
-  );
+  )
+    ;
 };
 
 export default CreateProduct;
