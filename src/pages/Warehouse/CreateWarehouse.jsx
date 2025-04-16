@@ -13,26 +13,27 @@ const CreateWarehouse = () => {
   const {id} = useParams()
   const {pathname} = useLocation()
   const navigate = useNavigate()
-  
+
   const {warehouse, loading} = useSelector(state => state.warehouse)
   const {users} = useSelector(state => state.users)
-  
+
   useEffect(() => {
     dispatch(getAllUsers())
   }, [dispatch])
-  
+
   const [warehouse_manager, setWarehouseManager] = useState(null)
   const [name, setName] = useState(null)
   const [address, setAddress] = useState(null)
   const [phone_number, setPhoneNumber] = useState(null)
-  
+  const [warehouse_type, setWarehouseType] = useState(null)
+
   useEffect(() => {
     setWarehouseManager(null)
     setName(null)
     setAddress(null)
     setPhoneNumber(null)
   }, [pathname])
-  
+
   useEffect(() => {
     if (id !== ':id') {
       dispatch(getWarehouse(id)).then(({payload}) => {
@@ -43,21 +44,21 @@ const CreateWarehouse = () => {
       })
     }
   }, [id, dispatch])
-  
+
   const validate = () => {
-    if (!warehouse_manager || !name || !address || !phone_number) {
+    if (!warehouse_manager || !name || !address || !phone_number || (id === ":id" && !warehouse_type)) {
       toast.error('Все поля обязательны')
       return false
     }
-    
+
     return true
   }
-  
+
   const postWarehouse = () => {
     if (!validate()) return;
-    
+
     if (id === ':id') {
-      dispatch(createWarehouse({warehouse_manager, name, address, phone_number})).then(({payload}) => {
+      dispatch(createWarehouse({warehouse_manager, name, address, phone_number, warehouse_type})).then(({payload}) => {
         if (payload?.id) {
           toast.success('Создано успешно')
           navigate('/warehouses')
@@ -67,9 +68,9 @@ const CreateWarehouse = () => {
           setPhoneNumber(null)
         }
       })
-      .catch(() => {
-        return toast.error("Ошибка")
-      })
+        .catch(() => {
+          return toast.error("Ошибка")
+        })
     } else {
       const data = {
         warehouse_manager, name, address, phone_number
@@ -84,12 +85,12 @@ const CreateWarehouse = () => {
           setPhoneNumber(null)
         }
       })
-      .catch(() => {
-        return toast.error("Ошибка")
-      })
+        .catch(() => {
+          return toast.error("Ошибка")
+        })
     }
   }
-  
+
   return (
     <>
       <div className="card">
@@ -99,12 +100,13 @@ const CreateWarehouse = () => {
           status={''}
         />
       </div>
-      
+
       <div className="card">
         <div className="flex flex-col">
           <label
             htmlFor="employee"
-            className="block text-gray-700 text-sm font-bold mb-2 ml-3">Сотрудник</label>
+            className="block text-gray-700 text-sm font-bold mb-2 ml-3"
+          >Сотрудник</label>
           <select
             value={warehouse_manager || ""}
             onChange={(e) => setWarehouseManager(e.target.value)}
@@ -115,11 +117,33 @@ const CreateWarehouse = () => {
             {users && users?.map((item) => (
               <option
                 value={item?.id}
-                key={item?.id}>{item?.first_name} / {item?.last_name} / {item?.phone_number} / {item?.user_roles}</option>
+                key={item?.id}
+              >{item?.first_name} / {item?.last_name} / {item?.phone_number} / {item?.user_roles}</option>
             ))}
           </select>
         </div>
-        
+
+        {id === ':id' && (
+          <div className="flex flex-col my-4">
+            <label
+              htmlFor="warehouse_type"
+              className="block text-gray-700 text-sm font-bold mb-2 ml-3"
+            >
+              Тип склада
+            </label>
+            <select
+              value={warehouse_type || ""}
+              onChange={(e) => setWarehouseType(e.target.value)}
+              className={`w-full border rounded py-1.5 px-3 shadow`}
+              id="warehouse_type"
+            >
+              <option value={null}>Выбирать...</option>
+              <option value={0}>продукт</option>
+              <option value={1}>сырье и материалы</option>
+            </select>
+          </div>
+        )}
+
         <div className="flex flex-col my-4">
           <Input
             type="text"
@@ -130,7 +154,7 @@ const CreateWarehouse = () => {
             className={'w-full'}
           />
         </div>
-        
+
         <div className="flex flex-col">
           <Input
             type="text"
@@ -141,7 +165,7 @@ const CreateWarehouse = () => {
             className={'w-full'}
           />
         </div>
-        
+
         <div className="flex flex-col my-4">
           <Input
             type="text"
@@ -152,7 +176,7 @@ const CreateWarehouse = () => {
             className={'w-full'}
           />
         </div>
-        
+
         <div className="w-full flex">
           <Button
             text={loading ? 'Загрузка...' : (id !== ':id' ? "Обновить склад" : "Создать склад")}
