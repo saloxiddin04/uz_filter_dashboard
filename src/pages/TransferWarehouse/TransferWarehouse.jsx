@@ -59,10 +59,10 @@ const TransferWarehouse = () => {
                     {index + 1}
                   </td>
                   <td className={'px-3 py-1'}>
-                    {item?.from_warehouse?.name + " / " + item?.from_warehouse?.phone_number}
+                    {item?.from_warehouse?.name + " / " + item?.from_warehouse?.phone_number} / {item?.from_warehouse?.warehouse_type ? "продукт" : "сырье и материалы"}
                   </td>
                   <td className={'px-3 py-1'}>
-                    {item?.to_warehouse?.name + " / " + item?.to_warehouse?.name}
+                    {item?.to_warehouse?.name + " / " + item?.to_warehouse?.name} / {item?.to_warehouse?.warehouse_type ? "продукт" : "сырье и материалы"}
                   </td>
                   <td className={'px-3 py-1'}>
                     {item?.action_user?.first_name + " / " + item?.action_user?.phone_number}

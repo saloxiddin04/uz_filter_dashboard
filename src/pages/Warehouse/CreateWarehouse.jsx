@@ -41,6 +41,7 @@ const CreateWarehouse = () => {
         setName(payload?.name)
         setAddress(payload?.address)
         setPhoneNumber(payload?.phone_number)
+        setWarehouseType(payload?.warehouse_type?.toString())
       })
     }
   }, [id, dispatch])
@@ -123,26 +124,26 @@ const CreateWarehouse = () => {
           </select>
         </div>
 
-        {id === ':id' && (
-          <div className="flex flex-col my-4">
-            <label
-              htmlFor="warehouse_type"
-              className="block text-gray-700 text-sm font-bold mb-2 ml-3"
-            >
-              Тип склада
-            </label>
-            <select
-              value={warehouse_type || ""}
-              onChange={(e) => setWarehouseType(e.target.value)}
-              className={`w-full border rounded py-1.5 px-3 shadow`}
-              id="warehouse_type"
-            >
-              <option value={null}>Выбирать...</option>
-              <option value={0}>продукт</option>
-              <option value={1}>сырье и материалы</option>
-            </select>
-          </div>
-        )}
+
+        <div className="flex flex-col my-4">
+          <label
+            htmlFor="warehouse_type"
+            className="block text-gray-700 text-sm font-bold mb-2 ml-3"
+          >
+            Тип склада
+          </label>
+          <select
+            value={warehouse_type || ""}
+            onChange={(e) => setWarehouseType(e.target.value)}
+            className={`w-full border rounded py-1.5 px-3 shadow`}
+            id="warehouse_type"
+            disabled={id !== ":id"}
+          >
+            <option value={null}>Выбирать...</option>
+            <option value={0}>продукт</option>
+            <option value={1}>сырье и материалы</option>
+          </select>
+        </div>
 
         <div className="flex flex-col my-4">
           <Input

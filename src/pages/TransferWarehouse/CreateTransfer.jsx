@@ -162,6 +162,25 @@ const CreateTransfer = () => {
       }
     })
   }
+
+  const renderUnitType = (type) => {
+    switch (type) {
+      case 0:
+        return "шт."
+      case 1:
+        return "миллиметр"
+      case 2:
+        return "сантиметр"
+      case 3:
+        return "метр"
+      case 4:
+        return "квадратсантиметр"
+      case 5:
+        return "квадратметр"
+      default:
+        return ""
+    }
+  }
   
   const renderDetail = () => {
     switch (openTab) {
@@ -383,6 +402,12 @@ const CreateTransfer = () => {
         return <p>Ошибка...</p>
     }
   }
+
+  const selectedWarehouse =
+    warehouses?.find(w => w.id === from_warehouse) ||
+    warehouses?.find(w => w.id === to_warehouse);
+
+  const selectedType = selectedWarehouse?.warehouse_type;
   
   return (
     <>
@@ -423,9 +448,16 @@ const CreateTransfer = () => {
                     disabled={id !== ":id"}
                   >
                     <option value={null}>Выбирай склад...</option>
-                    {warehouses && warehouses?.filter((el) => el?.id !== to_warehouse)?.map((item) => (
-                      <option key={item?.id} value={item?.id}>{item?.name}</option>
-                    ))}
+                    {warehouses
+                      ?.filter(el =>
+                        el.id !== to_warehouse &&
+                        (selectedType === undefined || el.warehouse_type === selectedType)
+                      )
+                      ?.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.name} / {item.warehouse_type === 0 ? "продукт" : "сырье и материалы"}
+                        </option>
+                      ))}
                   </select>
                 </div>
                 
@@ -441,9 +473,16 @@ const CreateTransfer = () => {
                     disabled={id !== ":id"}
                   >
                     <option value={null}>Выбирай склад...</option>
-                    {warehouses && warehouses?.filter((el) => el?.id !== from_warehouse)?.map((item) => (
-                      <option key={item?.id} value={item?.id}>{item?.name}</option>
-                    ))}
+                    {warehouses
+                      ?.filter(el =>
+                        el.id !== from_warehouse &&
+                        (selectedType === undefined || el.warehouse_type === selectedType)
+                      )
+                      ?.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.name} / {item.warehouse_type === 0 ? "продукт" : "сырье и материалы"}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>

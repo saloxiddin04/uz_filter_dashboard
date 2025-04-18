@@ -46,6 +46,7 @@ const Warehouse = () => {
                 <th scope="col" className="px-3 py-3"></th>
                 <th scope="col" className="px-4 py-3">Название склада</th>
                 <th scope="col" className="px-4 py-3">Адрес склада</th>
+                <th scope="col" className="px-4 py-3">Тип склада</th>
                 <th scope="col" className="px-4 py-3">Склад телефонного номера</th>
                 <th scope="col" className="px-4 py-3">Менеджер склада</th>
                 <th scope="col" className="px-4 py-3">Время создания</th>
@@ -63,6 +64,9 @@ const Warehouse = () => {
                   </td>
                   <td className={'px-3 py-1'}>
                     {item?.address}
+                  </td>
+                  <td className={'px-3 py-1'}>
+                    {item?.warehouse_type === 0 ? "продукт" : "сырье и материалы"}
                   </td>
                   <td className={'px-3 py-1'}>
                     {item?.phone_number}

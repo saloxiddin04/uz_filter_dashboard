@@ -29,7 +29,7 @@ const AddProductWarehouse = () => {
       action_type: 0
     }
   ])
-  
+
   useEffect(() => {
     dispatch(getWarehouse(id))
     dispatch(getAllProducts({page: 1, page_size: 1000000}))
@@ -73,10 +73,16 @@ const AddProductWarehouse = () => {
       updatedProductActions[index][field] = Number(value) || 0
     } else {
       updatedProductActions[index][field] = value
+
+      const selectedProduct = products?.result?.find(p => p?.id === value);
+      if (selectedProduct) {
+        updatedProductActions[index].unit_type = selectedProduct.unit_type;
+      }
     }
     setProductActions(updatedProductActions)
   }
-  
+
+
   const handleValidate = () => {
     for (let i = 0; i < product_actions.length; i++) {
       const variant = product_actions[i]
@@ -145,6 +151,25 @@ const AddProductWarehouse = () => {
       }
     })
   }
+
+  const renderUnitType = (type) => {
+    switch (type) {
+      case 0:
+        return "шт."
+      case 1:
+        return "миллиметр"
+      case 2:
+        return "сантиметр"
+      case 3:
+        return "метр"
+      case 4:
+        return "квадратсантиметр"
+      case 5:
+        return "квадратметр"
+      default:
+        return ""
+    }
+  }
   
   return (
     <>
@@ -176,14 +201,16 @@ const AddProductWarehouse = () => {
                   </label>
                   <select
                     value={item?.product || ""}
-                    onChange={(e) => handleChangeProductActions(index, "product", e.target.value)}
+                    onChange={(e) => {
+                      handleChangeProductActions(index, "product", e.target.value)
+                    }}
                     className="w-full border rounded py-1.5 px-3 shadow"
                     id={`product-${index}`}
                   >
                     <option value={null}>Select product...</option>
-                    {products?.result?.map((product) => (
+                    {products?.result?.filter((el) => el?.product_type === warehouse?.warehouse_type)?.map((product) => (
                       <option key={product?.id} value={product?.id}>
-                        {product?.name} / {product?.category?.name}
+                        {product?.name} / {product?.category?.name} / {product?.product_type === 0 ? "продукт" : "сырье и материалы"}
                       </option>
                     ))}
                   </select>
@@ -213,7 +240,7 @@ const AddProductWarehouse = () => {
                   <Input
                     type="text"
                     placeholder="Количество"
-                    label={'Количество'}
+                    label={`Количество ${renderUnitType(item?.unit_type)}`}
                     value={item.quantity || ""}
                     onChange={(e) =>
                       handleChangeProductActions(index, "quantity", e.target.value)
