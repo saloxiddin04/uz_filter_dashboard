@@ -9,9 +9,11 @@ import warehouseSlice from "./slices/warehouse/warehouseSlice";
 import transferWarehouseSlice from "./slices/transferWarehouse/transferWarehouseSlice";
 import discountSlice from "./slices/discounts/discountSlice";
 import discountAssignmentSlice from "./slices/discountAssignment/discountAssignmentSlice";
+import dashboardSlice from "./slices/dashboard/dashboardSlice";
 
 const appReducer = combineReducers({
   user: authSlice,
+  dashboard: dashboardSlice,
   category: categorySlice,
   attribute: attributeSlice,
   brand: brandSlice,
