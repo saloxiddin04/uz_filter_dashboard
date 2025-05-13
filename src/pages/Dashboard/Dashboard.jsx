@@ -2,18 +2,33 @@ import React, {useEffect, useRef} from 'react';
 import {Header, Loader} from "../../components";
 import {LineChart, PieChart} from "@mui/x-charts";
 import {useDispatch, useSelector} from "react-redux";
-import {getProductActionStatistics, getWarehouseStatistics} from "../../redux/slices/dashboard/dashboardSlice";
+import {
+  getAddedProductActions,
+  getProductActionStatistics, getRemovedProductActions, getSolProductActions,
+  getWarehouseStatistics
+} from "../../redux/slices/dashboard/dashboardSlice";
+import moment from "moment/moment";
 
 const Dashboard = () => {
   const dispatch = useDispatch()
   
-  const {loading, warehouse, productActions} = useSelector(state => state.dashboard)
+  const {
+    loading,
+    warehouse,
+    productActions,
+    addedProductActions,
+    removedProductActions,
+    soldProductActions
+  } = useSelector(state => state.dashboard)
   
   const lineChart = useRef(null)
   
   useEffect(() => {
     dispatch(getWarehouseStatistics())
     dispatch(getProductActionStatistics())
+    dispatch(getAddedProductActions())
+    dispatch(getRemovedProductActions())
+    dispatch(getSolProductActions())
   }, [dispatch])
   
   const colors = ['#1A97F5', '#03C9D7', '#7352FF', '#1E4DB7', '#FB9678']
@@ -94,7 +109,7 @@ const Dashboard = () => {
           </div>
           
           <div className="w-[49%] h-2/4">
-          <h1 className="text-2xl p-4 font-bold">Продукты</h1>
+            <h1 className="text-2xl p-4 font-bold">Продукты</h1>
             <div className="w-full h-full relative overflow-hidden shadow-md sm:rounded flex">
               <div>
                 <PieChart
@@ -124,28 +139,172 @@ const Dashboard = () => {
             </div>
           </div>
           
-          <div className={'w-full h-2/4'}>
-            <h1 className={'text-2xl p-4 font-bold'}>Продано по месяцам</h1>
-            <div className={'w-full h-full relative overflow-hidden shadow-md sm:rounded flex'}>
-              <div ref={lineChart} className="w-full overflow-hidden">
-                <LineChart
-                  xAxis={[
-                    {
-                      data: xAxisData,
-                      tickInterval: xAxisData,
-                      scaleType: "band",
-                      valueFormatter: (date) => date
-                    },
-                  ]}
-                  series={[
-                    {label: "Продано", data: seriesData[0]},
-                  ]}
-                  width={lineChart?.current?.offsetWidth}
-                  height={400}
-                />
-              </div>
+          <div className="w-full">
+            <h1 className={'text-2xl p-4 font-bold'}>Топ добавленных товаров</h1>
+            <div className="w-full relative overflow-hidden shadow-md sm:rounded">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead
+                  className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                >
+                <tr>
+                  <th scope="col" className="px-3 py-3"></th>
+                  <th scope="col" className="px-4 py-3">Название продукта</th>
+                  <th scope="col" className="px-4 py-3">Название склад</th>
+                  <th scope="col" className="px-4 py-3">Уникальный код</th>
+                  <th scope="col" className="px-4 py-3">Время создания</th>
+                  <th scope="col" className="px-4 py-3">Общая сумма (сум)</th>
+                  <th scope="col" className="px-4 py-3">Количество</th>
+                </tr>
+                </thead>
+                <tbody>
+                {addedProductActions?.map((item, index) => (
+                  <tr key={index} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
+                    <td className={'px-4 py-1'}>
+                      {index + 1}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.product?.name}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.warehouse?.name}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.product_variant?.unique_code}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {moment(item?.created_time).format('DD-MM-YYYY')}
+                    </td>
+                    <td className="px-3 py-1 text-center">
+                      {item?.total_price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+                    </td>
+                    <td className="px-3 py-1 text-center">
+                      {item?.total_quantity?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+                    </td>
+                  </tr>
+                ))}
+                </tbody>
+              </table>
             </div>
           </div>
+          
+          <div className="w-full">
+            <h1 className={'text-2xl p-4 font-bold'}>Топ продаваемые продукты</h1>
+            <div className="w-full relative overflow-hidden shadow-md sm:rounded">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead
+                  className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                >
+                <tr>
+                  <th scope="col" className="px-3 py-3"></th>
+                  <th scope="col" className="px-4 py-3">Название продукта</th>
+                  <th scope="col" className="px-4 py-3">Название склад</th>
+                  <th scope="col" className="px-4 py-3">Уникальный код</th>
+                  <th scope="col" className="px-4 py-3">Время создания</th>
+                  <th scope="col" className="px-4 py-3">Общая сумма (сум)</th>
+                  <th scope="col" className="px-4 py-3">Количество</th>
+                </tr>
+                </thead>
+                <tbody>
+                {soldProductActions?.map((item, index) => (
+                  <tr key={index} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
+                    <td className={'px-4 py-1'}>
+                      {index + 1}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.product?.name}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.warehouse?.name}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.product_variant?.unique_code}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {moment(item?.created_time).format('DD-MM-YYYY')}
+                    </td>
+                    <td className="px-3 py-1 text-center">
+                      {item?.total_price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+                    </td>
+                    <td className="px-3 py-1 text-center">
+                      {item?.total_quantity?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+                    </td>
+                  </tr>
+                ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div className="w-full">
+            <h1 className={'text-2xl p-4 font-bold'}>Топ удаленних продукты</h1>
+            <div className="w-full relative overflow-hidden shadow-md sm:rounded">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead
+                  className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                >
+                <tr>
+                  <th scope="col" className="px-3 py-3"></th>
+                  <th scope="col" className="px-4 py-3">Название продукта</th>
+                  <th scope="col" className="px-4 py-3">Название склад</th>
+                  <th scope="col" className="px-4 py-3">Уникальный код</th>
+                  <th scope="col" className="px-4 py-3">Время создания</th>
+                  <th scope="col" className="px-4 py-3">Общая сумма (сум)</th>
+                  <th scope="col" className="px-4 py-3">Количество</th>
+                </tr>
+                </thead>
+                <tbody>
+                {removedProductActions?.map((item, index) => (
+                  <tr key={index} className={'hover:bg-gray-100 hover:dark:bg-gray-800 border-b-1'}>
+                    <td className={'px-4 py-1'}>
+                      {index + 1}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.product?.name}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.warehouse?.name}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {item?.product_variant?.unique_code}
+                    </td>
+                    <td className={'px-3 py-1'}>
+                      {moment(item?.created_time).format('DD-MM-YYYY')}
+                    </td>
+                    <td className="px-3 py-1 text-center">
+                      {item?.total_price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+                    </td>
+                    <td className="px-3 py-1 text-center">
+                      {item?.total_quantity?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+                    </td>
+                  </tr>
+                ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          {/*<div className={'w-full h-2/4'}>*/}
+          {/*<h1 className={'text-2xl p-4 font-bold'}>Продано по месяцам</h1>*/}
+          {/*  <div className={'w-full h-full relative overflow-hidden shadow-md sm:rounded flex'}>*/}
+          {/*    <div ref={lineChart} className="w-full overflow-hidden">*/}
+          {/*      <LineChart*/}
+          {/*        xAxis={[*/}
+          {/*          {*/}
+          {/*            data: xAxisData,*/}
+          {/*            tickInterval: xAxisData,*/}
+          {/*            scaleType: "band",*/}
+          {/*            valueFormatter: (date) => date*/}
+          {/*          },*/}
+          {/*        ]}*/}
+          {/*        series={[*/}
+          {/*          {label: "Продано", data: seriesData[0]},*/}
+          {/*        ]}*/}
+          {/*        width={lineChart?.current?.offsetWidth}*/}
+          {/*        height={400}*/}
+          {/*      />*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
         </div>
       </div>
     </div>
